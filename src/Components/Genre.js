@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Badge, Card, CardBody, Col, Container, Row,Navbar,Nav, Pagination, Form, Image } from 'react-bootstrap';
+import { Badge, Card, CardBody, Col, Container, Row,Navbar,Nav, Pagination, Form, Image, Dropdown } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
@@ -78,23 +78,40 @@ export const Genre = () => {
             {user ? (
               <>
                 <Nav.Item className="d-flex align-items-center me-2">
-                  <Image
-                    src={user.photoURL || defaultAvatar} // Ảnh mặc định
-                    roundedCircle
-                    width="30"
-                    height="30"
-                    className="me-2"
-                    alt="User avatar"
-                  />
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      as={Image}
+                      src={user.photoURL || defaultAvatar}
+                      roundedCircle
+                      width="30"
+                      height="30"
+                      className="me-2"
+                      alt="User avatar"
+                    />
+                    <Dropdown.Menu>
+                      <Dropdown.Item as={Link} to="/history">
+                        {" "}
+                        Lịch sử{" "}
+                      </Dropdown.Item>
+                      <Dropdown.Item as={Link} to="/favorites">
+                        Yêu thích
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                   <span>{user.displayName || user.email || "Người dùng"}</span>
                 </Nav.Item>
-                <Button variant="outline-danger" onClick={handleLogout}>
-                  Đăng xuất
-                </Button>
               </>
             ) : (
               <>
-                <Button variant="outline-primary" className="me-2" as={Link} to="/login">
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
+                  as={Link}
+                  to="/login"
+                >
                   Đăng nhập
                 </Button>
                 <Button variant="primary" as={Link} to="/register">

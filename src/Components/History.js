@@ -1,10 +1,25 @@
 // src/Components/History.js
 import React, { useEffect, useState } from "react";
-import { Button, Container, Navbar, Nav, ListGroup, Image, Card } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Navbar,
+  Nav,
+  ListGroup,
+  Image,
+  Card,
+  Dropdown,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { auth } from "../Components/Include/Firebase";
 import { db } from "../Components/Include/Firebase";
-import { collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  limit,
+} from "firebase/firestore";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { Menu } from "../Components/Include/Menu";
 
@@ -12,7 +27,8 @@ const History = () => {
   const [user, setUser] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const defaultAvatar = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+  const defaultAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     // Lấy lịch sử tạm thời từ localStorage khi khởi động
@@ -76,44 +92,61 @@ const History = () => {
 
   return (
     <>
-       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-              <Container>
-                 {/* Logo */}
-                
-                <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-                  <Menu />
-                </Navbar.Brand>
-                <Nav className="ms-auto align-items-center">
-                  {user ? (
-                    <>
-                      <Nav.Item className="d-flex align-items-center me-2">
-                        <Image
-                          src={user.photoURL || defaultAvatar} // Dùng ảnh mặc định nếu không có photoURL
-                          roundedCircle
-                          width="30"
-                          height="30"
-                          className="me-2"
-                          alt="User avatar"
-                        />
-                        <span>{user.displayName || user.email || "Người dùng"}</span>
-                      </Nav.Item>
-                      <Button variant="outline-danger" onClick={handleLogout} className="rounded-pill px-3 py-1">
-                        Log Out
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant="outline-primary"  as={Link} to="/login" className=" px-3 py-1 me-2">
-                        Đăng Nhập
-                      </Button>
-                      <Button variant="primary" as={Link} to="/register" className=" px-3 py-1">
-                        Đăng Kí
-                      </Button>
-                    </>
-                  )}
-                </Nav>
-              </Container>
-            </Navbar>
+      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
+        <Container>
+          {/* Logo */}
+
+          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
+            <Menu />
+          </Navbar.Brand>
+          <Nav className="ms-auto align-items-center">
+            {user ? (
+              <>
+                <Nav.Item className="d-flex align-items-center me-2">
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      as={Image}
+                      src={user.photoURL || defaultAvatar}
+                      roundedCircle
+                      width="30"
+                      height="30"
+                      className="me-2"
+                      alt="User avatar"
+                    />
+                    <Dropdown.Menu>
+                      <Dropdown.Item as={Link} to="/history">
+                        {" "}
+                        Lịch sử{" "}
+                      </Dropdown.Item>
+                      <Dropdown.Item as={Link} to="/favorites">
+                        Yêu thích
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <span>{user.displayName || user.email || "Người dùng"}</span>
+                </Nav.Item>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
+                  as={Link}
+                  to="/login"
+                >
+                  Đăng nhập
+                </Button>
+                <Button variant="primary" as={Link} to="/register">
+                  Đăng ký
+                </Button>
+              </>
+            )}
+          </Nav>
+        </Container>
+      </Navbar>
 
       <Container>
         <Card.Title className="text-primary fw-bold display-6">
@@ -125,7 +158,12 @@ const History = () => {
           history.length > 0 ? (
             <ListGroup>
               {history.map((item) => (
-                <ListGroup.Item key={item.id || item.slug} as={Link} to={`/comics/${item.slug}`} action>
+                <ListGroup.Item
+                  key={item.id || item.slug}
+                  as={Link}
+                  to={`/comics/${item.slug}`}
+                  action
+                >
                   <strong>{item.name}</strong>
                   {item.chapter && <span> - Chapter: {item.chapter}</span>}
                   <br />
