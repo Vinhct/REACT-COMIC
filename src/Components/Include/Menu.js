@@ -1,3 +1,4 @@
+// src/Include/Menu.js
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from "react-bootstrap";
@@ -53,7 +54,7 @@ export const Menu = () => {
         <Container>
           {/* Logo */}
           <Navbar.Brand as={Link} to="/" className="me-4 fw-bold">
-            Home 
+            Home
           </Navbar.Brand>
 
           {/* Toggle Button */}
@@ -98,9 +99,20 @@ export const Menu = () => {
                 name="keyword"
                 placeholder="Tìm truyện, tác giả..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pe-4 rounded-pill" // Bo tròn thanh tìm kiếm
-                style={{ minWidth: "250px", height: "40px" }} // Điều chỉnh chiều cao
+                onChange={(e) => {
+                  console.log("Input changed to:", e.target.value);
+                  setSearchQuery(e.target.value);
+                }}
+                onClick={(e) => {
+                  console.log("Clicked on search input");
+                  e.preventDefault(); // Ngăn hành vi mặc định khi click
+                }}
+                onFocus={(e) => {
+                  console.log("Focused on search input");
+                  e.preventDefault(); // Ngăn hành vi mặc định khi focus
+                }}
+                className="pe-4 rounded-pill"
+                style={{ minWidth: "250px", height: "40px" }}
               />
               <BsSearch
                 className="position-absolute top-50 end-0 translate-middle-y me-2"
@@ -108,10 +120,7 @@ export const Menu = () => {
                 onClick={handleSearch}
               />
             </Form>
-
-           
           </Navbar.Collapse>
-          
         </Container>
       </Navbar>
     </div>

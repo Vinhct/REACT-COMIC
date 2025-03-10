@@ -15,17 +15,24 @@ const History = () => {
   const defaultAvatar = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
+    // Lấy lịch sử tạm thời từ localStorage khi khởi động
     const localHistory = JSON.parse(localStorage.getItem("history") || "[]");
-    setHistory(localHistory);
+    if (localHistory.length > 0) {
+      setHistory(localHistory);
+      console.log("Loaded history from localStorage:", localHistory);
+    }
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      console.log("Auth state changed, user:", currentUser);
+
       if (currentUser) {
         const q = query(
           collection(db, `users/${currentUser.uid}/history`),
           orderBy("timestamp", "desc"),
           limit(5) // Giới hạn 5 truyện
         );
+
         const unsubscribeSnapshot = onSnapshot(
           q,
           (snapshot) => {
@@ -33,21 +40,27 @@ const History = () => {
               id: doc.id,
               ...doc.data(),
             }));
+            console.log("Fetched history from Firestore:", historyData);
             setHistory(historyData);
-            localStorage.setItem("history", JSON.stringify(historyData)); // Đồng bộ localStorage
+            localStorage.setItem("history", JSON.stringify(historyData)); // Đồng bộ Firestore với localStorage
             setLoading(false);
           },
           (error) => {
-            console.error("Error fetching history:", error);
+            console.error("Error fetching history from Firestore:", error);
             setLoading(false);
+            // Nếu Firestore lỗi, giữ lịch sử từ localStorage
+            setHistory(localHistory);
           }
         );
+
         return () => unsubscribeSnapshot();
       } else {
+        console.log("No user, using localStorage history:", localHistory);
         setHistory(localHistory.slice(0, 5)); // Giới hạn 5 trong localStorage
         setLoading(false);
       }
     });
+
     return () => unsubscribeAuth();
   }, []);
 
@@ -55,6 +68,7 @@ const History = () => {
     try {
       await signOut(auth);
       setUser(null);
+      console.log("Logged out, clearing user state");
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -62,47 +76,49 @@ const History = () => {
 
   return (
     <>
-      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-            <Menu />
-          </Navbar.Brand>
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Image
-                    src={user.photoURL || defaultAvatar}
-                    roundedCircle
-                    width="30"
-                    height="30"
-                    className="me-2"
-                    alt="User avatar"
-                  />
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-                <Button variant="outline-danger" onClick={handleLogout}>
-                  Đăng xuất
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline-primary" className="me-2" as={Link} to="/login">
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
-      </Navbar>
+       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
+              <Container>
+                 {/* Logo */}
+                
+                <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
+                  <Menu />
+                </Navbar.Brand>
+                <Nav className="ms-auto align-items-center">
+                  {user ? (
+                    <>
+                      <Nav.Item className="d-flex align-items-center me-2">
+                        <Image
+                          src={user.photoURL || defaultAvatar} // Dùng ảnh mặc định nếu không có photoURL
+                          roundedCircle
+                          width="30"
+                          height="30"
+                          className="me-2"
+                          alt="User avatar"
+                        />
+                        <span>{user.displayName || user.email || "Người dùng"}</span>
+                      </Nav.Item>
+                      <Button variant="outline-danger" onClick={handleLogout} className="rounded-pill px-3 py-1">
+                        Log Out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="outline-primary"  as={Link} to="/login" className=" px-3 py-1 me-2">
+                        Đăng Nhập
+                      </Button>
+                      <Button variant="primary" as={Link} to="/register" className=" px-3 py-1">
+                        Đăng Kí
+                      </Button>
+                    </>
+                  )}
+                </Nav>
+              </Container>
+            </Navbar>
 
       <Container>
-      <Card.Title className="text-primary fw-bold display-6">
-                 Lịch sử đọc truyện
-            </Card.Title>
+        <Card.Title className="text-primary fw-bold display-6">
+          Lịch sử đọc truyện
+        </Card.Title>
         {loading ? (
           <p>Đang tải lịch sử...</p>
         ) : user ? (
