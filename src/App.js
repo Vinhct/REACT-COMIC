@@ -11,6 +11,7 @@ import  Login  from './Components/Include/Login';    // Import từ Include
 import Register  from './Components/Include/Register'; // Import từ Include
 import History from './Components/History';
 import Search from './Components/Search';
+import FavoritesPage from './Components/FavoritesPage';
 
 function App() {
   return( 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/history" element={<History />} />
         <Route path="/search" element={<Search /> }/>
+        <Route path="/favorites" element={<FavoritesPage />} />
       </Routes>
     </Router>
   );

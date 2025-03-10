@@ -16,9 +16,10 @@ import {
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import { Menu } from './Include/Menu';
+import { Menu } from "./Include/Menu";
 import { auth } from "./Include/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import { Dropdown } from "react-bootstrap";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -29,7 +30,8 @@ const Home = () => {
   const itemsPerPage = 24;
 
   // Ảnh mặc định
-  const defaultAvatar = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+  const defaultAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,36 +82,54 @@ const Home = () => {
 
       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
         <Container>
-           {/* Logo */}
-          
+          {/* Logo */}
+
           <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
             <Menu />
           </Navbar.Brand>
+
           <Nav className="ms-auto align-items-center">
             {user ? (
               <>
                 <Nav.Item className="d-flex align-items-center me-2">
-                  <Image
-                    src={user.photoURL || defaultAvatar} // Dùng ảnh mặc định nếu không có photoURL
-                    roundedCircle
-                    width="30"
-                    height="30"
-                    className="me-2"
-                    alt="User avatar"
-                  />
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      as={Image}
+                      src={user.photoURL || defaultAvatar}
+                      roundedCircle
+                      width="30"
+                      height="30"
+                      className="me-2"
+                      alt="User avatar"
+                    />
+                    <Dropdown.Menu>
+                      <Dropdown.Item as={Link} to="/history">
+                        {" "}
+                        Lịch sử{" "}
+                      </Dropdown.Item>
+                      <Dropdown.Item as={Link} to="/favorites">
+                        Yêu thích
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                   <span>{user.displayName || user.email || "Người dùng"}</span>
                 </Nav.Item>
-                <Button variant="outline-danger" onClick={handleLogout} className="rounded-pill px-3 py-1">
-                  Log Out
-                </Button>
               </>
             ) : (
               <>
-                <Button variant="outline-primary"  as={Link} to="/login" className=" px-3 py-1 me-2">
-                  Đăng Nhập
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
+                  as={Link}
+                  to="/login"
+                >
+                  Đăng nhập
                 </Button>
-                <Button variant="primary" as={Link} to="/register" className=" px-3 py-1">
-                  Đăng Kí
+                <Button variant="primary" as={Link} to="/register">
+                  Đăng ký
                 </Button>
               </>
             )}
@@ -121,7 +141,10 @@ const Home = () => {
       <Container>
         <Row className="mb-4">
           <Col>
-            <Card className="shadow border-0" style={{ backgroundColor: "#f8f9fa" }}>
+            <Card
+              className="shadow border-0"
+              style={{ backgroundColor: "#f8f9fa" }}
+            >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">
                   {getdata.data?.seoOnPage?.titleHead}
@@ -160,7 +183,8 @@ const Home = () => {
                     <Card.Text>
                       {item.category && item.category.length > 0 ? (
                         item.category.map((category, index) => (
-                          <Badge bg="info" key={index} className="me-2 mb-1">
+                          <Badge bg="info" key={index} className="me-2 mb-1"  as={Link}
+                            style={{ textDecoration: "none" }}>
                             {category.name}
                           </Badge>
                         ))
@@ -215,7 +239,9 @@ const Home = () => {
               return null;
             })}
             <Pagination.Next
-              onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+              onClick={() =>
+                currentPage < totalPages && paginate(currentPage + 1)
+              }
               disabled={currentPage === totalPages}
             />
           </Pagination>

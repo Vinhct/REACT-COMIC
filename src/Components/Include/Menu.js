@@ -72,9 +72,7 @@ export const Menu = () => {
               <Nav.Link as={Link} to="/sap-ra-mat" className="mx-2">
                 Sắp ra mắt
               </Nav.Link>
-              <Nav.Link as={Link} to="/history" className="mx-2">
-                Lịch sử
-              </Nav.Link>
+            
               <NavDropdown title="Thể loại" id="basic-nav-dropdown" className="mx-2">
                 {items && items.length > 0 ? (
                   items.map((item, index) => (

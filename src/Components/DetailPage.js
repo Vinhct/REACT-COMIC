@@ -1,15 +1,42 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, ListGroup, Modal, Nav, Navbar, Row, Image, Form } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
-import { Link, useParams } from 'react-router-dom';
-import { Menu } from './Include/Menu';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Container,
+  ListGroup,
+  Modal,
+  Nav,
+  Navbar,
+  Row,
+  Image,
+  Form,
+} from "react-bootstrap";
+import { Helmet } from "react-helmet";
+import { Link, useParams } from "react-router-dom";
+import { Menu } from "./Include/Menu";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Components/Include/Firebase";
 import { db } from "../Components/Include/Firebase"; // Thêm Firestore
-import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, deleteDoc, doc, onSnapshot } from "firebase/firestore"; // Thêm Firestore functions
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore"; // Thêm Firestore functions
 import debounce from "lodash/debounce";
 import { Rating } from "react-simple-star-rating"; // Cần cài đặt: npm install react-simple-star-rating
+import { Dropdown } from "react-bootstrap";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -24,8 +51,11 @@ const DetailPage = () => {
   const [commentText, setCommentText] = useState(""); // Nội dung bình luận
   const [commentError, setCommentError] = useState(null); // Thông báo lỗi bình luận
   const [commentSuccess, setCommentSuccess] = useState(null); // Thông báo thành công
+  const [favorites, setFavorites] = useState([]); // Danh sách yêu thích
+  const [isFavorite, setIsFavorite] = useState(false); // Trạng thái yêu thích
   const item = getdata?.data?.data?.item;
-  const defaultAvatar = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+  const defaultAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   // Hàm lưu lịch sử với kiểm tra trùng lặp và giới hạn 5
   const saveHistory = debounce(async (historyItem) => {
@@ -35,46 +65,63 @@ const DetailPage = () => {
     const q = query(historyRef, where("slug", "==", historyItem.slug));
     const querySnapshot = await getDocs(q);
 
-    // Nếu slug đã tồn tại, không thêm mới
     if (!querySnapshot.empty) return;
 
-    // Kiểm tra số lượng truyện trong lịch sử
     const allHistoryQuery = query(historyRef, orderBy("timestamp", "desc"));
     const allHistorySnapshot = await getDocs(allHistoryQuery);
     const historyCount = allHistorySnapshot.size;
 
-    // Nếu đã có 5 truyện, xóa truyện cũ nhất
     if (historyCount >= 5) {
       const oldestDoc = allHistorySnapshot.docs[historyCount - 1];
       await deleteDoc(doc(db, `users/${user.uid}/history`, oldestDoc.id));
     }
 
-    // Thêm truyện mới
     await addDoc(historyRef, historyItem);
 
-    // Cập nhật localStorage
     const localHistory = JSON.parse(localStorage.getItem("history") || "[]");
-    const updatedLocal = localHistory.filter((h) => h.slug !== historyItem.slug); // Xóa trùng
+    const updatedLocal = localHistory.filter(
+      (h) => h.slug !== historyItem.slug
+    );
     updatedLocal.unshift(historyItem);
-    localStorage.setItem("history", JSON.stringify(updatedLocal.slice(0, 5))); // Giới hạn 5
+    localStorage.setItem("history", JSON.stringify(updatedLocal.slice(0, 5)));
   }, 1000);
 
-  // Lấy thông tin người dùng
+  // Lấy thông tin người dùng và danh sách yêu thích
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const favoritesRef = collection(
+          db,
+          `users/${currentUser.uid}/favorites`
+        );
+        const q = query(favoritesRef, where("slug", "==", slug));
+        getDocs(q).then((snapshot) => {
+          setIsFavorite(!snapshot.empty); // Kiểm tra xem truyện đã yêu thích chưa
+        });
+
+        const unsubscribeFavorites = onSnapshot(favoritesRef, (snapshot) => {
+          const favoritesData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setFavorites(favoritesData);
+        });
+        return () => unsubscribeFavorites();
+      }
     });
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribeAuth();
+  }, [slug]);
 
   // Lấy dữ liệu truyện
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://otruyenapi.com/v1/api/truyen-tranh/${slug}`);
+        const response = await axios.get(
+          `https://otruyenapi.com/v1/api/truyen-tranh/${slug}`
+        );
         setData(response);
         setLoading(false);
-        // Lưu lịch sử khi vào trang chi tiết truyện
         saveHistory({
           slug: slug,
           name: response.data.data.data.item.name || "Unknown",
@@ -91,7 +138,7 @@ const DetailPage = () => {
     });
     return () => {
       unsubscribe();
-      saveHistory.cancel(); // Hủy debounce khi component unmount
+      saveHistory.cancel();
     };
   }, [slug, user]);
 
@@ -111,7 +158,6 @@ const DetailPage = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Fetched comments:", commentsData); // Debug
         setComments(commentsData);
       },
       (error) => {
@@ -153,11 +199,53 @@ const DetailPage = () => {
     }
   };
 
+  // Xử lý thêm/xóa yêu thích
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm vào yêu thích!");
+      return;
+    }
+
+    const favoriteData = {
+      slug: slug,
+      name: item.name || "Unknown",
+      timestamp: serverTimestamp(),
+    };
+
+    try {
+      if (isFavorite) {
+        // Xóa khỏi yêu thích
+        const q = query(
+          collection(db, `users/${user.uid}/favorites`),
+          where("slug", "==", slug)
+        );
+        const snapshot = await getDocs(q);
+        snapshot.forEach((doc) => deleteDoc(doc.ref));
+        setIsFavorite(false);
+        alert("Đã xóa khỏi yêu thích!");
+      } else {
+        // Thêm vào yêu thích
+        await addDoc(
+          collection(db, `users/${user.uid}/favorites`),
+          favoriteData
+        );
+        setIsFavorite(true);
+        alert("Đã thêm vào yêu thích!");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("Có lỗi xảy ra. Vui lòng thử lại!");
+    }
+  };
+
   // Tính trung bình đánh giá
   const calculateAverageRating = () => {
     if (comments.length === 0) return 0;
-    const totalRating = comments.reduce((sum, comment) => sum + (comment.rating || 0), 0);
-    return Math.round((totalRating / comments.length) * 10) / 10; // Làm tròn đến 1 chữ số thập phân
+    const totalRating = comments.reduce(
+      (sum, comment) => sum + (comment.rating || 0),
+      0
+    );
+    return Math.round((totalRating / comments.length) * 10) / 10;
   };
 
   if (loading) return <p>Loading...</p>;
@@ -178,7 +266,6 @@ const DetailPage = () => {
       const response = await axios.get(`${chapter_api}`);
       setDataChapter(response.data);
       setLoading(false);
-      // Lưu lịch sử khi xem chương (nếu muốn)
       saveHistory({
         slug: slug,
         name: item.name || "Unknown",
@@ -202,27 +289,44 @@ const DetailPage = () => {
           <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
             <Menu />
           </Navbar.Brand>
+
           <Nav className="ms-auto align-items-center">
             {user ? (
               <>
                 <Nav.Item className="d-flex align-items-center me-2">
-                  <Image
-                    src={user.photoURL || defaultAvatar} // Ảnh mặc định
-                    roundedCircle
-                    width="30"
-                    height="30"
-                    className="me-2"
-                    alt="User avatar"
-                  />
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      as={Image}
+                      src={user.photoURL || defaultAvatar}
+                      roundedCircle
+                      width="30"
+                      height="30"
+                      className="me-2"
+                      alt="User avatar"
+                    />
+                    <Dropdown.Menu>
+                    <Dropdown.Item as={Link} to="/history">
+                        Lịch sử
+                      </Dropdown.Item>
+                      <Dropdown.Item as={Link} to="/favorites">
+                        Yêu thích
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                   <span>{user.displayName || user.email || "Người dùng"}</span>
                 </Nav.Item>
-                <Button variant="outline-danger" onClick={handleLogout}>
-                  Đăng xuất
-                </Button>
               </>
             ) : (
               <>
-                <Button variant="outline-primary" className="me-2" as={Link} to="/login">
+                <Button
+                  variant="outline-primary"
+                  className="me-2"
+                  as={Link}
+                  to="/login"
+                >
                   Đăng nhập
                 </Button>
                 <Button variant="primary" as={Link} to="/register">
@@ -235,11 +339,16 @@ const DetailPage = () => {
       </Navbar>
 
       <Container className="my-4">
-        <Button as={Link} to="/" style={{ marginBottom: "20px" }}>Back to Home</Button>
+        <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
+          Back to Home
+        </Button>
 
         <Row className="mb-4">
           <Col>
-            <Card className="shadow-sm border-0" style={{ backgroundColor: "#f8f9fa" }}>
+            <Card
+              className="shadow-sm border-0"
+              style={{ backgroundColor: "#f8f9fa" }}
+            >
               <Card.Body>
                 <Card.Title className="text-primary fw-bold">
                   {getdata.data.data.seoOnPage.titleHead}
@@ -254,7 +363,10 @@ const DetailPage = () => {
 
         <Row>
           <Col md={6}>
-            <Card className="shadow-lg border-0" style={{ backgroundColor: "#fdfdfd" }}>
+            <Card
+              className="shadow-lg border-0"
+              style={{ backgroundColor: "#fdfdfd" }}
+            >
               <Card.Img
                 variant="top"
                 src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
@@ -284,7 +396,9 @@ const DetailPage = () => {
                         bg="info"
                         key={index}
                         className="me-2 mb-2 text-light"
-                        style={{ fontSize: "90%" }}
+                        style={{ fontSize: "90%" , textDecoration: "none" }}
+                        as={Link}
+                        to={`/comics/${item.slug}`} 
                       >
                         {category.name}
                       </Badge>
@@ -304,28 +418,48 @@ const DetailPage = () => {
                 <Card.Text className="text-end text-muted">
                   {"Cập nhật: " + (item.updatedAt || "Không có")}
                 </Card.Text>
+
+                {/* Nút yêu thích */}
+                <Button
+                  variant={isFavorite ? "danger" : "outline-danger"}
+                  onClick={handleToggleFavorite}
+                  style={{ marginTop: "10px", padding: "5px 10px", borderRadius: "50%" }}
+                >
+                  {isFavorite ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
+                </Button>
               </Card.Body>
             </Card>
           </Col>
 
           <Col md={6}>
-            <Card className="shadow-sm border-0" style={{ backgroundColor: "#ffffff" }}>
+            <Card
+              className="shadow-sm border-0"
+              style={{ backgroundColor: "#ffffff" }}
+            >
               <Card.Body>
                 <Card.Title className="text-center text-primary fw-bold">
                   Danh Sách Chương
                 </Card.Title>
-                <ListGroup className='scrollabel-list' style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <ListGroup
+                  className="scrollable-list"
+                  style={{ maxHeight: "400px", overflowY: "auto" }}
+                >
                   {item.chapters && item.chapters.length > 0 ? (
                     item.chapters.map((chapter, index) => (
                       <div key={index}>
                         <h5>{chapter.server_name}</h5>
                         <ListGroup.Item>
-                          {chapter.server_data && chapter.server_data.length > 0 ? (
+                          {chapter.server_data &&
+                          chapter.server_data.length > 0 ? (
                             chapter.server_data.map((listchapter, subindex) => (
                               <div
-                                className='chapter_click'
+                                className="chapter_click"
                                 key={subindex}
-                                onClick={() => handleReachChapter(listchapter.chapter_api_data)}
+                                onClick={() =>
+                                  handleReachChapter(
+                                    listchapter.chapter_api_data
+                                  )
+                                }
                               >
                                 Chapter : {listchapter.chapter_name}
                               </div>
@@ -345,7 +479,10 @@ const DetailPage = () => {
 
                 {/* Thêm phần bình luận và đánh giá ngay dưới danh sách chương */}
                 <div className="mt-4">
-                  <h5>Đánh giá trung bình: {calculateAverageRating()} / 5 ({comments.length} đánh giá)</h5>
+                  <h5>
+                    Đánh giá trung bình: {calculateAverageRating()} / 5 (
+                    {comments.length} đánh giá)
+                  </h5>
                   <Form onSubmit={handleSubmitComment}>
                     <Form.Group className="mb-3">
                       <Form.Label>Đánh giá của bạn:</Form.Label>
@@ -368,8 +505,12 @@ const DetailPage = () => {
                         onChange={(e) => setCommentText(e.target.value)}
                       />
                     </Form.Group>
-                    {commentError && <p style={{ color: "red" }}>{commentError}</p>}
-                    {commentSuccess && <p style={{ color: "green" }}>{commentSuccess}</p>}
+                    {commentError && (
+                      <p style={{ color: "red" }}>{commentError}</p>
+                    )}
+                    {commentSuccess && (
+                      <p style={{ color: "green" }}>{commentSuccess}</p>
+                    )}
                     <Button variant="primary" type="submit">
                       Gửi
                     </Button>
@@ -380,7 +521,8 @@ const DetailPage = () => {
                     <ListGroup>
                       {comments.map((comment) => (
                         <ListGroup.Item key={comment.id}>
-                          <strong>{comment.userName}</strong> - {comment.rating} sao
+                          <strong>{comment.userName}</strong> - {comment.rating}{" "}
+                          sao
                           <p>{comment.comment}</p>
                           <small>
                             {comment.timestamp?.toDate
@@ -402,22 +544,24 @@ const DetailPage = () => {
           <Modal show={isModalOpen} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>
-                Chapter: {getDataChapter.data.item.chapter_name} - {getDataChapter.data.item.comic_name}
+                Chapter: {getDataChapter.data.item.chapter_name} -{" "}
+                {getDataChapter.data.item.comic_name}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {getDataChapter.data.item.chapter_image && getDataChapter.data.item.chapter_image.length > 0 ? (
-                getDataChapter.data.item.chapter_image.map((chapterImage, index) => (
-                  <Card.Img
-                    style={{ margin: 0 }}
-                    variant="top"
-                    key={index}
-                    src={`${getDataChapter.data.domain_cdn}/${getDataChapter.data.item.chapter_path}/${chapterImage.image_file}`}
-                  />
-                ))
-              ) : (
-                "No Content ...."
-              )}
+              {getDataChapter.data.item.chapter_image &&
+              getDataChapter.data.item.chapter_image.length > 0
+                ? getDataChapter.data.item.chapter_image.map(
+                    (chapterImage, index) => (
+                      <Card.Img
+                        style={{ margin: 0 }}
+                        variant="top"
+                        key={index}
+                        src={`${getDataChapter.data.domain_cdn}/${getDataChapter.data.item.chapter_path}/${chapterImage.image_file}`}
+                      />
+                    )
+                  )
+                : "No Content ...."}
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
