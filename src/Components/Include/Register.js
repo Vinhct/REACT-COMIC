@@ -21,7 +21,10 @@ const Register = () => {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+    <Container
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "100vh" }}
+    >
       <Card style={{ width: "400px" }} className="shadow-sm">
         <Card.Body>
           <h2 className="text-center mb-4">Đăng ký</h2>
@@ -54,8 +57,7 @@ const Register = () => {
             </Button>
           </Form>
           <div className="text-center mt-3">
-            Đã có tài khoản?{" "}
-            <Link to="/login">Đăng nhập ngay</Link>
+            Đã có tài khoản? <Link to="/login">Đăng nhập ngay</Link>
           </div>
         </Card.Body>
       </Card>

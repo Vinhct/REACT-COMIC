@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Card, ListGroup, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../Components/Include/Firebase';
-import { db } from '../Components/Include/Firebase';
-import { collection, onSnapshot, query, where, doc, deleteDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
+import { Container, Card, ListGroup, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../Components/Include/Firebase";
+import { db } from "../Components/Include/Firebase";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -24,7 +31,10 @@ const FavoritesPage = () => {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const favoritesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const favoritesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setFavorites(favoritesData);
         setLoading(false);
       },
@@ -56,21 +66,30 @@ const FavoritesPage = () => {
   if (error) return <p>{error}</p>;
 
   return (
-
     <Container className="my-4">
-         
-
-      <Button variant="secondary" onClick={handleBack} style={{ marginBottom: "20px" }}>
+      <Button
+        variant="secondary"
+        onClick={handleBack}
+        style={{ marginBottom: "20px" }}
+      >
         Quay lại
       </Button>
 
-      <Card className="shadow-sm border-0" style={{ backgroundColor: "#f8f9fa" }}>
+      <Card
+        className="shadow-sm border-0"
+        style={{ backgroundColor: "#f8f9fa" }}
+      >
         <Card.Body>
-          <Card.Title className="text-primary fw-bold text-center">Danh Sách Yêu Thích</Card.Title>
+          <Card.Title className="text-primary fw-bold text-center">
+            Danh Sách Yêu Thích
+          </Card.Title>
           {favorites.length > 0 ? (
             <ListGroup>
               {favorites.map((favorite) => (
-                <ListGroup.Item key={favorite.id} className="d-flex justify-content-between align-items-center">
+                <ListGroup.Item
+                  key={favorite.id}
+                  className="d-flex justify-content-between align-items-center"
+                >
                   <div>
                     <strong>{favorite.name}</strong>
                     <p>Slug: {favorite.slug}</p>
@@ -86,7 +105,9 @@ const FavoritesPage = () => {
               ))}
             </ListGroup>
           ) : (
-            <p className="text-muted text-center">Bạn chưa thêm truyện nào vào yêu thích.</p>
+            <p className="text-muted text-center">
+              Bạn chưa thêm truyện nào vào yêu thích.
+            </p>
           )}
         </Card.Body>
       </Card>

@@ -20,6 +20,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Menu } from "./Include/Menu";
 import { auth } from "./Include/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import "./Include/responsive.css";
 
 const Search = () => {
   const [searchParams] = useSearchParams();
@@ -31,15 +32,23 @@ const Search = () => {
   const [user, setUser] = useState(null);
   const itemsPerPage = 24;
 
-  const defaultAvatar = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+  const defaultAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching search results for query:", query, "page:", currentPage);
+        console.log(
+          "Fetching search results for query:",
+          query,
+          "page:",
+          currentPage
+        );
         setLoading(true);
         const response = await axios.get(
-          `https://otruyenapi.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}&page=${currentPage}`,
+          `https://otruyenapi.com/v1/api/tim-kiem?keyword=${encodeURIComponent(
+            query
+          )}&page=${currentPage}`,
           {
             headers: {
               Accept: "application/json",
@@ -93,65 +102,16 @@ const Search = () => {
       <Helmet>
         <title>{`Kết quả tìm kiếm: ${query || "Không có từ khóa"}`}</title>
       </Helmet>
-
-      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-            <Menu />
-          </Navbar.Brand>
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/history">
-                        {" "}
-                        Lịch sử{" "}
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
-      </Navbar>
+      <Menu />
+    
 
       <Container>
         <Row className="mb-4">
           <Col>
-            <Card className="shadow border-0" style={{ backgroundColor: "#f8f9fa" }}>
+            <Card
+              className="shadow border-0"
+              style={{ backgroundColor: "#f8f9fa" }}
+            >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">
                   Kết quả tìm kiếm: {query || "Không có từ khóa"}
@@ -192,9 +152,19 @@ const Search = () => {
                     <Card.Text>
                       {item.category && item.category.length > 0 ? (
                         item.category.map((category, index) => (
-                          <Badge bg="info" key={index} className="me-2 mb-1">
-                            {category.name}
-                          </Badge>
+                          <Link
+                            to={`/genre/${category.slug}`} // Liên kết đến trang thể loại
+                            key={index}
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Badge
+                              bg="info"
+                              className="me-2 mb-1"
+                              style={{ cursor: "pointer" }}
+                            >
+                              {category.name}
+                            </Badge>
+                          </Link>
                         ))
                       ) : (
                         <span className="text-muted">others</span>
@@ -247,7 +217,9 @@ const Search = () => {
               return null;
             })}
             <Pagination.Next
-              onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+              onClick={() =>
+                currentPage < totalPages && paginate(currentPage + 1)
+              }
               disabled={currentPage === totalPages}
             />
           </Pagination>

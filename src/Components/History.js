@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { Menu } from "../Components/Include/Menu";
+import "./Include/responsive.css";
 
 const History = () => {
   const [user, setUser] = useState(null);
@@ -93,59 +94,14 @@ const History = () => {
   return (
     <>
       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
+        
           {/* Logo */}
 
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
+         
             <Menu />
-          </Navbar.Brand>
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/history">
-                        {" "}
-                        Lịch sử{" "}
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
+          
+          
+        
       </Navbar>
 
       <Container>

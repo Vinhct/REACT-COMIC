@@ -1,4 +1,3 @@
-// src/Components/Home.js
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -8,30 +7,20 @@ import {
   Col,
   Container,
   Row,
-  Navbar,
-  Nav,
   Pagination,
-  Image,
 } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { Menu } from "./Include/Menu";
-import { auth } from "./Include/Firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { Dropdown } from "react-bootstrap";
+import "./Include/responsive.css";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [user, setUser] = useState(null);
   const itemsPerPage = 24;
-
-  // Ảnh mặc định
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,21 +36,7 @@ const Home = () => {
       }
     };
     fetchData();
-
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
   }, [currentPage]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -79,65 +54,8 @@ const Home = () => {
       <Helmet>
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
+      <Menu /> {/* Sử dụng Menu trực tiếp, bao gồm logic đăng nhập/đăng xuất */}
 
-      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
-          {/* Logo */}
-
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-            <Menu />
-          </Navbar.Brand>
-
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/history">
-                        {" "}
-                        Lịch sử{" "}
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
-      </Navbar>
-
-      {/* Phần còn lại của code giữ nguyên */}
       <Container>
         <Row className="mb-4">
           <Col>
@@ -183,10 +101,19 @@ const Home = () => {
                     <Card.Text>
                       {item.category && item.category.length > 0 ? (
                         item.category.map((category, index) => (
-                          <Badge bg="info" key={index} className="me-2 mb-1"  as={Link}
-                            style={{ textDecoration: "none" }}>
-                            {category.name}
-                          </Badge>
+                          <Link
+                            to={`/genre/${category.slug}`} // Liên kết đến trang thể loại
+                            key={index}
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Badge
+                              bg="info"
+                              className="me-2 mb-1"
+                              style={{ cursor: "pointer" }}
+                            >
+                              {category.name}
+                            </Badge>
+                          </Link>
                         ))
                       ) : (
                         <span className="text-muted">others</span>

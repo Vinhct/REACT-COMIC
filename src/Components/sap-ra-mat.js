@@ -20,6 +20,7 @@ import { Menu } from "./Include/Menu";
 import { auth } from "./Include/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { Dropdown } from "react-bootstrap";
+import "./Include/responsive.css";
 
 const SRM = () => {
   const [getdata, setData] = useState([]);
@@ -79,63 +80,8 @@ const SRM = () => {
       <Helmet>
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
-
-      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
-          {/* Logo */}
-
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-            <Menu />
-          </Navbar.Brand>
-
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/history">
-                        {" "}
-                        Lịch sử{" "}
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
-      </Navbar>
+      <Menu />
+      
 
       {/* Phần còn lại của code giữ nguyên */}
       <Container>
@@ -147,10 +93,10 @@ const SRM = () => {
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">
-                  Truyện sắp ra mắt 
+                  Truyện sắp ra mắt
                 </Card.Title>
                 <Card.Text className="text-muted">
-                  Kho truyện sắp ra mắt siêu hay và hấp dẫn 
+                  Kho truyện sắp ra mắt siêu hay và hấp dẫn
                 </Card.Text>
               </CardBody>
             </Card>
@@ -183,10 +129,19 @@ const SRM = () => {
                     <Card.Text>
                       {item.category && item.category.length > 0 ? (
                         item.category.map((category, index) => (
-                          <Badge bg="info" key={index} className="me-2 mb-1"  as={Link}
-                          to={`/comics/${item.slug}`}  style={{ textDecoration: "none" }}>
-                            {category.name}
-                          </Badge>
+                          <Link
+                            to={`/genre/${category.slug}`} // Liên kết đến trang thể loại
+                            key={index}
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Badge
+                              bg="info"
+                              className="me-2 mb-1"
+                              style={{ cursor: "pointer" }}
+                            >
+                              {category.name}
+                            </Badge>
+                          </Link>
                         ))
                       ) : (
                         <span className="text-muted">others</span>

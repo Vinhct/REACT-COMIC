@@ -15,11 +15,12 @@ import {
   Form,
 } from "react-bootstrap";
 import { Helmet } from "react-helmet";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Menu } from "./Include/Menu";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Components/Include/Firebase";
-import { db } from "../Components/Include/Firebase"; // Thêm Firestore
+import { db } from "../Components/Include/Firebase";
+import { BsClipboard } from "react-icons/bs";
 import {
   collection,
   addDoc,
@@ -32,32 +33,50 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
-} from "firebase/firestore"; // Thêm Firestore functions
+} from "firebase/firestore";
 import debounce from "lodash/debounce";
-import { Rating } from "react-simple-star-rating"; // Cần cài đặt: npm install react-simple-star-rating
+import { Rating } from "react-simple-star-rating";
+import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
 import { Dropdown } from "react-bootstrap";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  FacebookMessengerIcon,
+  FacebookMessengerShareButton,
+} from "react-share";
+import { toast } from "react-toastify";
+import RelatedComics from "./Include/RelatedComics";
+import "./Include/responsive.css";
 
 const DetailPage = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [getdata, setData] = useState([]);
   const [getDataChapter, setDataChapter] = useState([]);
+  const [relatedComics, setRelatedComics] = useState([]); // Trạng thái mới để lưu truyện liên quan
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, SetIsNodalOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [comments, setComments] = useState([]); // Danh sách bình luận
-  const [rating, setRating] = useState(0); // Đánh giá từ 1-5
-  const [commentText, setCommentText] = useState(""); // Nội dung bình luận
-  const [commentError, setCommentError] = useState(null); // Thông báo lỗi bình luận
-  const [commentSuccess, setCommentSuccess] = useState(null); // Thông báo thành công
-  const [favorites, setFavorites] = useState([]); // Danh sách yêu thích
-  const [isFavorite, setIsFavorite] = useState(false); // Trạng thái yêu thích
+  const [comments, setComments] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [commentText, setCommentText] = useState("");
+  const [commentError, setCommentError] = useState(null);
+  const [commentSuccess, setCommentSuccess] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
   const item = getdata?.data?.data?.item;
   const defaultAvatar =
     "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
-  // Hàm lưu lịch sử với kiểm tra trùng lặp và giới hạn 5
+  const shareUrl = `${window.location.origin}/truyen/${slug}`;
+  const shareTitle = item?.name || "Truyện hay!";
+  const shareDescription =
+    getdata?.data?.data?.seoOnPage?.descriptionHead || "Xem truyện này ngay!";
+
   const saveHistory = debounce(async (historyItem) => {
     if (!user) return;
 
@@ -86,7 +105,6 @@ const DetailPage = () => {
     localStorage.setItem("history", JSON.stringify(updatedLocal.slice(0, 5)));
   }, 1000);
 
-  // Lấy thông tin người dùng và danh sách yêu thích
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -97,7 +115,7 @@ const DetailPage = () => {
         );
         const q = query(favoritesRef, where("slug", "==", slug));
         getDocs(q).then((snapshot) => {
-          setIsFavorite(!snapshot.empty); // Kiểm tra xem truyện đã yêu thích chưa
+          setIsFavorite(!snapshot.empty);
         });
 
         const unsubscribeFavorites = onSnapshot(favoritesRef, (snapshot) => {
@@ -113,7 +131,6 @@ const DetailPage = () => {
     return () => unsubscribeAuth();
   }, [slug]);
 
-  // Lấy dữ liệu truyện
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -127,6 +144,19 @@ const DetailPage = () => {
           name: response.data.data.data.item.name || "Unknown",
           timestamp: serverTimestamp(),
         });
+
+        // Lấy thể loại đầu tiên của truyện để gọi API truyện liên quan
+        const categorySlug = response.data.data.data.item.category?.[0]?.slug;
+        if (categorySlug) {
+          try {
+            const relatedResponse = await axios.get(
+              `https://otruyenapi.com/v1/api/the-loai/${categorySlug}?page=1`
+            );
+            setRelatedComics(relatedResponse.data.data.items);
+          } catch (relatedError) {
+            console.error("Error fetching related comics:", relatedError);
+          }
+        }
       } catch (error) {
         setLoading(false);
       }
@@ -142,7 +172,6 @@ const DetailPage = () => {
     };
   }, [slug, user]);
 
-  // Lấy danh sách bình luận từ Firestore
   useEffect(() => {
     if (!slug) return;
 
@@ -169,7 +198,6 @@ const DetailPage = () => {
     return () => unsubscribe();
   }, [slug]);
 
-  // Xử lý gửi bình luận và đánh giá
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -199,7 +227,6 @@ const DetailPage = () => {
     }
   };
 
-  // Xử lý thêm/xóa yêu thích
   const handleToggleFavorite = async () => {
     if (!user) {
       alert("Vui lòng đăng nhập để thêm vào yêu thích!");
@@ -214,7 +241,6 @@ const DetailPage = () => {
 
     try {
       if (isFavorite) {
-        // Xóa khỏi yêu thích
         const q = query(
           collection(db, `users/${user.uid}/favorites`),
           where("slug", "==", slug)
@@ -224,7 +250,6 @@ const DetailPage = () => {
         setIsFavorite(false);
         alert("Đã xóa khỏi yêu thích!");
       } else {
-        // Thêm vào yêu thích
         await addDoc(
           collection(db, `users/${user.uid}/favorites`),
           favoriteData
@@ -238,7 +263,6 @@ const DetailPage = () => {
     }
   };
 
-  // Tính trung bình đánh giá
   const calculateAverageRating = () => {
     if (comments.length === 0) return 0;
     const totalRating = comments.reduce(
@@ -278,65 +302,21 @@ const DetailPage = () => {
     SetIsNodalOpen(true);
   };
 
+  const handleShareMessenger = () => {
+    const messengerUrl = `https://www.messenger.com/t/100007XXXXXX/?link=${encodeURIComponent(
+      shareUrl
+    )}`;
+    window.open(messengerUrl, "_blank");
+    setShowShareOptions(false);
+  };
+
   return (
     <>
       <Helmet>
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
 
-      <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-            <Menu />
-          </Navbar.Brand>
-
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                    <Dropdown.Item as={Link} to="/history">
-                        Lịch sử
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
-        </Container>
-      </Navbar>
+      <Menu/>
 
       <Container className="my-4">
         <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
@@ -392,22 +372,24 @@ const DetailPage = () => {
                 <Card.Text>
                   {item.category && item.category.length > 0 ? (
                     item.category.map((category, index) => (
-                      <Badge
-                        bg="info"
+                      <Link
+                        to={`/genre/${category.slug}`} // Liên kết đến trang thể loại
                         key={index}
-                        className="me-2 mb-2 text-light"
-                        style={{ fontSize: "90%" , textDecoration: "none" }}
-                        as={Link}
-                        to={`/comics/${item.slug}`} 
+                        style={{ textDecoration: "none" }}
                       >
-                        {category.name}
-                      </Badge>
+                        <Badge
+                          bg="info"
+                          className="me-2 mb-1"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {category.name}
+                        </Badge>
+                      </Link>
                     ))
                   ) : (
-                    <span className="text-muted">Khác</span>
+                    <span className="text-muted">others</span>
                   )}
                 </Card.Text>
-
                 <Card.Text>
                   <span className="fw-bold">Trạng Thái: </span>
                   <Badge bg="danger" className="text-uppercase">
@@ -419,14 +401,114 @@ const DetailPage = () => {
                   {"Cập nhật: " + (item.updatedAt || "Không có")}
                 </Card.Text>
 
-                {/* Nút yêu thích */}
-                <Button
-                  variant={isFavorite ? "danger" : "outline-danger"}
-                  onClick={handleToggleFavorite}
-                  style={{ marginTop: "10px", padding: "5px 10px", borderRadius: "50%" }}
+                <div
+                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
                 >
-                  {isFavorite ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
-                </Button>
+                  <Button
+                    variant={isFavorite ? "danger" : "outline-danger"}
+                    onClick={handleToggleFavorite}
+                    style={{ padding: "5px 10px", borderRadius: "50%" }}
+                  >
+                    {isFavorite ? (
+                      <FaHeart size={20} />
+                    ) : (
+                      <FaRegHeart size={20} />
+                    )}
+                  </Button>
+                  <div style={{ position: "relative" }}>
+                    <Button
+                      variant="outline-primary"
+                      onClick={() => setShowShareOptions(!showShareOptions)}
+                      style={{ padding: "5px 10px", borderRadius: "50%" }}
+                    >
+                      <FaShareAlt size={20} />
+                    </Button>
+                    {showShareOptions && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "100%",
+                          left: 0,
+                          background: "#fff",
+                          border: "1px solid #ccc",
+                          padding: "10px",
+                          zIndex: 1000,
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "5px",
+                        }}
+                      >
+                        <FacebookShareButton
+                          url={shareUrl}
+                          quote={shareDescription}
+                          hashtag="#TruyenHay"
+                        >
+                          <FacebookIcon size={24} round /> Facebook
+                        </FacebookShareButton>
+                        <TwitterShareButton
+                          url={shareUrl}
+                          title={shareTitle}
+                          hashtags={["TruyenHay"]}
+                        >
+                          <TwitterIcon size={24} round /> Twitter
+                        </TwitterShareButton>
+                        <FacebookMessengerShareButton>
+                          <FacebookMessengerIcon
+                            size={24}
+                            variant="outline-success"
+                            onClick={handleShareMessenger}
+                            style={{ width: "100%" }}
+                            round
+                          />
+                          Messenger
+                        </FacebookMessengerShareButton>
+                        <Button
+                          variant="outline-secondary"
+                          onClick={() => {
+                            navigator.clipboard
+                              .writeText(shareUrl)
+                              .then(() => {
+                                toast.success("Đã sao chép liên kết", {
+                                  autoClose: 1000,
+                                });
+                              })
+                              .catch((err) => {
+                                console.error("Sao chép thất bại:", err);
+                                toast.error("Thử lại không thành công");
+                              });
+                          }}
+                          style={{
+                            width: "100%",
+                            padding: "1rem",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            border: "none",
+                            borderRadius: "8px",
+                          }}
+                          aria-label="Sao chép liên kết"
+                        >
+                          <BsClipboard
+                            size={24}
+                            style={{ marginBottom: "4px" }}
+                            title="Sao chép liên kết"
+                          />
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              color: "#2c3e50",
+                              userSelect: "none",
+                              fontWeight: 500,
+                            }}
+                          >
+                            Copy
+                          </span>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </Card.Body>
             </Card>
           </Col>
@@ -477,7 +559,6 @@ const DetailPage = () => {
                   )}
                 </ListGroup>
 
-                {/* Thêm phần bình luận và đánh giá ngay dưới danh sách chương */}
                 <div className="mt-4">
                   <h5>
                     Đánh giá trung bình: {calculateAverageRating()} / 5 (
@@ -540,16 +621,20 @@ const DetailPage = () => {
             </Card>
           </Col>
         </Row>
+
+        {/* Sử dụng component RelatedComics */}
+        <RelatedComics slug={slug} categories={item?.category} />
+
         {isModalOpen && (
           <Modal show={isModalOpen} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>
-                Chapter: {getDataChapter.data.item.chapter_name} -{" "}
-                {getDataChapter.data.item.comic_name}
+                Chapter: {getDataChapter.data?.item?.chapter_name} -{" "}
+                {getDataChapter.data?.item?.comic_name}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {getDataChapter.data.item.chapter_image &&
+              {getDataChapter.data?.item?.chapter_image &&
               getDataChapter.data.item.chapter_image.length > 0
                 ? getDataChapter.data.item.chapter_image.map(
                     (chapterImage, index) => (

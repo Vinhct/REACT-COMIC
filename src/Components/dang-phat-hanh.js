@@ -20,6 +20,7 @@ import { Menu } from "./Include/Menu";
 import { auth } from "./Include/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { Dropdown } from "react-bootstrap";
+import "./Include/responsive.css";
 
 const DPH = () => {
   const [getdata, setData] = useState([]);
@@ -84,56 +85,11 @@ const DPH = () => {
         <Container>
           {/* Logo */}
 
-          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
+          
             <Menu />
-          </Navbar.Brand>
+          
 
-          <Nav className="ms-auto align-items-center">
-            {user ? (
-              <>
-                <Nav.Item className="d-flex align-items-center me-2">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      as={Image}
-                      src={user.photoURL || defaultAvatar}
-                      roundedCircle
-                      width="30"
-                      height="30"
-                      className="me-2"
-                      alt="User avatar"
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/history">
-                        {" "}
-                        Lịch sử{" "}
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/favorites">
-                        Yêu thích
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>{user.displayName || user.email || "Người dùng"}</span>
-                </Nav.Item>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline-primary"
-                  className="me-2"
-                  as={Link}
-                  to="/login"
-                >
-                  Đăng nhập
-                </Button>
-                <Button variant="primary" as={Link} to="/register">
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </Nav>
+          
         </Container>
       </Navbar>
 
@@ -183,10 +139,19 @@ const DPH = () => {
                     <Card.Text>
                       {item.category && item.category.length > 0 ? (
                         item.category.map((category, index) => (
-                          <Badge bg="info" key={index} className="me-2 mb-1"  style={{textDecoration: "none" }}
-                            as={Link} to={`/comics/${item.slug}`} >
-                            {category.name}
-                          </Badge>
+                          <Link
+                            to={`/genre/${category.slug}`} // Liên kết đến trang thể loại
+                            key={index}
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Badge
+                              bg="info"
+                              className="me-2 mb-1"
+                              style={{ cursor: "pointer" }}
+                            >
+                              {category.name}
+                            </Badge>
+                          </Link>
                         ))
                       ) : (
                         <span className="text-muted">others</span>
