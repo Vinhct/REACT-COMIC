@@ -83,14 +83,14 @@ export const Genre = () => {
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
 
-      <Menu/>
+      <Menu />
 
       <Container>
         <Row className="mb-4">
           <Col>
             <Card
               className="shadow border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <Card.Body>
                 <Card.Title className="text-primary fw-bold display-6">

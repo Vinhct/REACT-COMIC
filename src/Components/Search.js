@@ -103,14 +103,13 @@ const Search = () => {
         <title>{`Kết quả tìm kiếm: ${query || "Không có từ khóa"}`}</title>
       </Helmet>
       <Menu />
-    
 
       <Container>
         <Row className="mb-4">
           <Col>
             <Card
               className="shadow border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">

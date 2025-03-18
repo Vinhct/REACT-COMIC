@@ -83,23 +83,16 @@ const DPH = () => {
 
       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
         <Container>
-          {/* Logo */}
-
-          
-            <Menu />
-          
-
-          
+          <Menu />
         </Container>
       </Navbar>
 
-      {/* Phần còn lại của code giữ nguyên */}
       <Container>
         <Row className="mb-4">
           <Col>
             <Card
               className="shadow border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">

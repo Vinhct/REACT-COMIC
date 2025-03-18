@@ -316,7 +316,7 @@ const DetailPage = () => {
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
 
-      <Menu/>
+      <Menu />
 
       <Container className="my-4">
         <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
@@ -327,7 +327,7 @@ const DetailPage = () => {
           <Col>
             <Card
               className="shadow-sm border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <Card.Body>
                 <Card.Title className="text-primary fw-bold">

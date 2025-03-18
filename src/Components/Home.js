@@ -55,13 +55,12 @@ const Home = () => {
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
       <Menu /> {/* Sử dụng Menu trực tiếp, bao gồm logic đăng nhập/đăng xuất */}
-
       <Container>
         <Row className="mb-4">
           <Col>
             <Card
               className="shadow border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">

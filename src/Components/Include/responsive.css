@@ -28,9 +28,11 @@
       font-size: 1rem;
       padding: 0.5rem 1rem;
       border-bottom: 1px solid #eee;
+      font-weight: 700;
     }
     .dropdown-toggle {
       padding: 0.5rem 1rem;
+      font-weight: 700; /* Chữ đậm cho dropdown */
     }
     .user-info {
       display: none;
@@ -55,7 +57,9 @@
       padding: 0.5rem 1rem;
       white-space: normal;
       word-break: break-word;
+      font-weight: 500;
     }
+
     .search-form {
       width: 100%;
       margin: 0.5rem 0;

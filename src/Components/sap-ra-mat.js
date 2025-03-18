@@ -81,7 +81,6 @@ const SRM = () => {
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
       <Menu />
-      
 
       {/* Phần còn lại của code giữ nguyên */}
       <Container>
@@ -89,7 +88,7 @@ const SRM = () => {
           <Col>
             <Card
               className="shadow border-0"
-              style={{ backgroundColor: "#f8f9fa" }}
+              style={{ backgroundColor: "#f8f9fa", marginTop: "15px" }}
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-6">

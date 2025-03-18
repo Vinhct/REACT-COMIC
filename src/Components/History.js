@@ -94,18 +94,13 @@ const History = () => {
   return (
     <>
       <Navbar bg="light" expand="lg" className="shadow-sm mb-4">
-        
-          {/* Logo */}
+        {/* Logo */}
 
-         
-            <Menu />
-          
-          
-        
+        <Menu />
       </Navbar>
 
       <Container>
-        <Card.Title className="text-primary fw-bold display-6">
+        <Card.Title className="text-primary fw-bold display-6" style={{margin: "20px 20px"}}>
           Lịch sử đọc truyện
         </Card.Title>
         {loading ? (
