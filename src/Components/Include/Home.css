@@ -1,0 +1,149 @@
+/* Styles cho Home.js */
+
+/* Container chính */
+.home-container {
+    padding: 2rem 0;
+  }
+  
+  /* Card chứa tiêu đề và mô tả */
+  .header-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-bottom: 3px solid #007bff !important;
+    margin-top: 15px;
+  }
+  
+  /* Tiêu đề */
+  .header-card .card-title {
+    color: #007bff;
+    font-weight: bold;
+    font-size: 2.5rem;
+  }
+  
+  /* Mô tả */
+  .header-card .card-text {
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+  
+  /* Danh sách truyện */
+  .comic-list-row {
+    gap: 1.5rem;
+  }
+  
+  /* Card truyện */
+  .comic-card {
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+    height: 100%;
+  }
+  
+  /* Hiệu ứng hover cho Card truyện */
+  .comic-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Ảnh bìa truyện */
+  .comic-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+  }
+  
+  /* Tiêu đề truyện */
+  .comic-card .card-title {
+    color: #212529;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  /* Thời gian cập nhật */
+  .comic-card .card-text-muted {
+    color: #6c757d !important;
+    font-size: 0.85rem;
+  }
+  
+  /* Danh mục */
+  .comic-card .badge {
+    cursor: pointer;
+    margin-right: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Nút "Chi Tiết" */
+  .comic-card .btn-detail {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+  
+  /* Spinner khi loading */
+  .loading-spinner {
+    text-align: center;
+    margin: 3rem 0;
+  }
+  
+  /* Phân trang */
+  .pagination-wrapper {
+    margin-top: 3rem;
+  }
+  
+  .pagination-wrapper .pagination {
+    justify-content: center;
+    margin-bottom: 0;
+  }
+  
+  .pagination-wrapper .page-info {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #6c757d;
+  }
+  
+  /* Nút Back to Top */
+  .back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Responsive cho màn hình nhỏ (dưới 576px) */
+  @media (max-width: 576px) {
+    .header-card .card-title {
+      font-size: 1.8rem;
+    }
+  
+    .header-card .card-text {
+      font-size: 1rem;
+    }
+  
+    .back-to-top {
+      bottom: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  /* Responsive cho màn hình trung bình (577px - 768px) */
+  @media (min-width: 577px) and (max-width: 768px) {
+    .header-card .card-title {
+      font-size: 2rem;
+    }
+  
+    .back-to-top {
+      bottom: 20px;
+      right: 20px;
+      width: 45px;
+      height: 45px;
+    }
+  }
