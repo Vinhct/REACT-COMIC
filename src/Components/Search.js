@@ -18,8 +18,8 @@ import {
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet";
 import { Link, useSearchParams } from "react-router-dom";
-import { Menu } from "./Include/Menu";
-import { auth } from "./Include/Firebase";
+import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
+import { auth } from "./Include/Authentication/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import "./Include/responsive.css";
 import { BsArrowUp } from "react-icons/bs";

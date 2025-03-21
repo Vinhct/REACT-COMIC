@@ -18,9 +18,9 @@ import {
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
-import { Menu } from "./Include/Menu";
+import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../Components/Include/Firebase";
+import { auth } from "../Components/Include/Authentication/Firebase";
 import "./Include/responsive.css";
 import { BsArrowUp } from "react-icons/bs"; // Icon cho nút Back to Top
 

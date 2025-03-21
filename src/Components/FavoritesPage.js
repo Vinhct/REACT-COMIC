@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, ListGroup, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../Components/Include/Firebase";
-import { db } from "../Components/Include/Firebase";
+import { auth, db } from "../Components/Include/Authentication/Firebase";
+
 import {
   collection,
   onSnapshot,

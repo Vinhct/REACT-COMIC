@@ -278,3 +278,111 @@ body {
 .navbar-nav .nav-item:last-child {
   margin-right: 0;
 }
+
+/* Container chính bật scroll snapping */
+.snap-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* Mỗi section (mục) */
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-bottom: 20px;
+}
+
+/* Đảm bảo nội dung bên trong không bị cắt */
+.snap-section > * {
+  flex-shrink: 0;
+}
+
+/* Section chứa Recommended Comics */
+.snap-section.recommended-section {
+  min-height: auto;
+  padding-bottom: 0;
+}
+
+/* Section chứa Footer */
+.snap-section.footer-section {
+  min-height: auto;
+  padding-bottom: 0;
+}
+
+/* Footer */
+.footer {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 40px 0;
+}
+
+.footer-logo {
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(to right, #ff416c, rgb(255, 128, 43));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footer-link {
+  color: #b0b0b0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #ff416c;
+}
+
+/* Tùy chỉnh scrollbar */
+.snap-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.snap-container::-webkit-scrollbar-thumb {
+  background: #ff416c;
+  border-radius: 4px;
+}
+
+.snap-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Responsive cho Footer */
+@media (max-width: 768px) {
+  .footer-logo {
+    font-size: 20px;
+  }
+
+  .footer-heading {
+    font-size: 16px;
+  }
+
+  .footer-link {
+    font-size: 14px;
+  }
+}
+
+/* Cập nhật class section-title để áp dụng hiệu ứng gradient */
+.section-title {
+  background: linear-gradient(to right, #ffb341, rgb(255, 138, 43));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 20px;
+  font-weight: bold; /* fw-bold */
+  text-transform: uppercase; /* text-uppercase */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding-top: 20px;
+  margin-bottom: 30px;
+}

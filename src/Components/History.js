@@ -11,8 +11,8 @@ import {
   Dropdown,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { auth } from "../Components/Include/Firebase";
-import { db } from "../Components/Include/Firebase";
+import { auth,db } from "../Components/Include/Authentication/Firebase";
+
 import {
   collection,
   query,
@@ -21,7 +21,7 @@ import {
   limit,
 } from "firebase/firestore";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { Menu } from "../Components/Include/Menu";
+import { Menu } from "../Components/Include/Dau-trang_Chan-trang/Menu";
 import "./Include/responsive.css";
 
 const History = () => {

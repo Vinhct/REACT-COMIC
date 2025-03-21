@@ -13,7 +13,8 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { BsSearch, BsPersonCircle } from "react-icons/bs"; // Thêm biểu tượng người dùng
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./Firebase";
+import { auth } from "../Authentication/Firebase";
+import logo from "../Logo/logo3.jpg";
 
 export const Menu = () => {
   const navigate = useNavigate();
@@ -92,8 +93,12 @@ export const Menu = () => {
     <Navbar expand="lg" className="bg-body-tertiary shadow-sm mb-4">
       <Container>
         {/* Logo */}
-        <Navbar.Brand as={Link} to="/" className="me-4 fw-bold">
-          Home
+        <Navbar.Brand as={Link} to="/" className="me-4">
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ height: "60px", width: "auto" }} // Điều chỉnh kích thước logo
+          />
         </Navbar.Brand>
 
         {/* Toggle Button */}
@@ -102,18 +107,66 @@ export const Menu = () => {
         {/* Navbar Content */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/dang-phat-hanh" className="mx-2">
+            <Nav.Link
+              as={Link}
+              to="/dang-phat-hanh"
+              className="mx-2"
+              style={{
+                background:
+                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: "20px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
               Đang phát hành
             </Nav.Link>
-            <Nav.Link as={Link} to="/hoan-thanh" className="mx-2">
+            <Nav.Link
+              as={Link}
+              to="/hoan-thanh"
+              className="mx-2"
+              style={{
+                background:
+                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: "20px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
               Hoàn thành
             </Nav.Link>
-            <Nav.Link as={Link} to="/sap-ra-mat" className="mx-2">
+            <Nav.Link
+              as={Link}
+              to="/sap-ra-mat"
+              className="mx-2"
+              style={{
+                background:
+                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: "20px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
               Sắp ra mắt
             </Nav.Link>
 
             <NavDropdown
-              title="Thể loại"
+              title={
+                <span
+                  style={{
+                    background: "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    fontSize: "20px",
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  Thể loại
+                </span>
+              }
               id="basic-nav-dropdown"
               className="mx-2"
             >
@@ -124,6 +177,13 @@ export const Menu = () => {
                     as={Link}
                     to={`/genre/${item.slug}`}
                     className="dropdown-item-custom"
+                    style={{
+                      background: "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      fontSize: "18px",
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                    }}
                   >
                     {item.name}
                   </NavDropdown.Item>
@@ -172,7 +232,10 @@ export const Menu = () => {
             {user ? (
               <Nav.Item className="d-flex align-items-center">
                 <Dropdown>
-                  <Dropdown.Toggle as="div" className="d-flex align-items-center">
+                  <Dropdown.Toggle
+                    as="div"
+                    className="d-flex align-items-center"
+                  >
                     {user.photoURL ? (
                       <Image
                         src={user.photoURL || defaultAvatar}
@@ -183,7 +246,9 @@ export const Menu = () => {
                         alt="User avatar"
                         onError={(e) => {
                           e.target.src = defaultAvatar; // Fallback nếu ảnh không tải được
-                          console.log("Image failed to load, using default avatar");
+                          console.log(
+                            "Image failed to load, using default avatar"
+                          );
                         }}
                       />
                     ) : (

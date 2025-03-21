@@ -7,8 +7,8 @@ import { Genre } from './Components/Genre';
 import  DPH  from './Components/dang-phat-hanh'
 import HT from './Components/hoan-thanh';
 import SRM from './Components/sap-ra-mat';
-import  Login  from './Components/Include/Login';    // Import từ Include
-import Register  from './Components/Include/Register'; // Import từ Include
+import  Login  from './Components/Include/Authentication/Login';    // Import từ Include
+import Register  from './Components/Include/Authentication/Register'; // Import từ Include
 import History from './Components/History';
 import Search from './Components/Search';
 import FavoritesPage from './Components/FavoritesPage';

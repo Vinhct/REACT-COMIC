@@ -17,12 +17,13 @@ import {
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import { Menu } from "./Include/Menu";
-import { auth } from "./Include/Firebase";
+import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
+import { auth } from "./Include/Authentication/Firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { Dropdown } from "react-bootstrap";
 import "./Include/responsive.css";
 import { BsArrowUp } from "react-icons/bs"; // Icon cho nút Back to Top
+import Footer from "./Include/Dau-trang_Chan-trang/Footer";
 
 const SRM = () => {
   const [getdata, setData] = useState([]);
@@ -257,6 +258,10 @@ const SRM = () => {
             )}
           </>
         )}
+        
+          <section className="snap-section footer-section">
+          <Footer />
+        </section>
 
         {/* Nút Back to Top */}
         {showBackToTop && (

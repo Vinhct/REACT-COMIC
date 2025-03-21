@@ -16,10 +16,9 @@ import {
 } from "react-bootstrap";
 import { Helmet } from "react-helmet";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Menu } from "./Include/Menu";
+import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../Components/Include/Firebase";
-import { db } from "../Components/Include/Firebase";
+import { auth, db } from "../Components/Include/Authentication/Firebase";
 import { BsClipboard } from "react-icons/bs";
 import {
   collection,

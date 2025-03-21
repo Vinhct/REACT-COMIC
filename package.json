@@ -21,7 +21,9 @@
     "react-scripts": "5.0.1",
     "react-share": "^5.2.2",
     "react-simple-star-rating": "^5.1.7",
-    "react-toastify": "^11.0.5"
+    "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
+    "slick-carousel": "^1.8.1"
   },
   "scripts": {
     "start": "react-scripts start",
