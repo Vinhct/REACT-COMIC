@@ -48,6 +48,8 @@ import {
 import { toast } from "react-toastify";
 import RelatedComics from "./Include/RelatedComics";
 import "./Include/responsive.css";
+import "./DetailPage.css";
+import { IoChevronUpCircle, IoReturnUpBack, IoChevronDown } from "react-icons/io5";
 
 const DetailPage = () => {
   const { slug } = useParams();
@@ -197,6 +199,22 @@ const DetailPage = () => {
     return () => unsubscribe();
   }, [slug]);
 
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector('.chapter-list');
+      const dropdownBtn = document.querySelector('.chapter-dropdown-btn');
+      if (dropdown && dropdownBtn && !dropdownBtn.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -286,7 +304,9 @@ const DetailPage = () => {
   const handleClose = () => SetIsNodalOpen(false);
   const handleReachChapter = async (chapter_api) => {
     try {
+      setLoading(true); // Thêm loading state
       const response = await axios.get(`${chapter_api}`);
+      console.log("Chapter data:", response.data); // Log dữ liệu
       setDataChapter(response.data);
       setLoading(false);
       saveHistory({
@@ -296,6 +316,7 @@ const DetailPage = () => {
         timestamp: serverTimestamp(),
       });
     } catch (error) {
+      console.error("Error loading chapter:", error); // Log lỗi
       setLoading(false);
     }
     SetIsNodalOpen(true);
@@ -402,11 +423,12 @@ const DetailPage = () => {
 
                 <div
                   style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                  className="action-buttons"
                 >
                   <Button
                     variant={isFavorite ? "danger" : "outline-danger"}
                     onClick={handleToggleFavorite}
-                    style={{ padding: "5px 10px", borderRadius: "50%" }}
+                    className="action-button"
                   >
                     {isFavorite ? (
                       <FaHeart size={20} />
@@ -418,7 +440,7 @@ const DetailPage = () => {
                     <Button
                       variant="outline-primary"
                       onClick={() => setShowShareOptions(!showShareOptions)}
-                      style={{ padding: "5px 10px", borderRadius: "50%" }}
+                      className="action-button"
                     >
                       <FaShareAlt size={20} />
                     </Button>
@@ -528,7 +550,7 @@ const DetailPage = () => {
                   {item.chapters && item.chapters.length > 0 ? (
                     item.chapters.map((chapter, index) => (
                       <div key={index}>
-                        <h5>{chapter.server_name}</h5>
+                        <h5 className="server-name">{chapter.server_name}</h5>
                         <ListGroup.Item>
                           {chapter.server_data &&
                           chapter.server_data.length > 0 ? (
@@ -558,7 +580,7 @@ const DetailPage = () => {
                   )}
                 </ListGroup>
 
-                <div className="mt-4">
+                <div className="mt-4 rating-section">
                   <h5>
                     Đánh giá trung bình: {calculateAverageRating()} / 5 (
                     {comments.length} đánh giá)
@@ -597,24 +619,26 @@ const DetailPage = () => {
                   </Form>
 
                   <h5 className="mt-4">Danh sách bình luận:</h5>
-                  {comments.length > 0 ? (
-                    <ListGroup>
-                      {comments.map((comment) => (
-                        <ListGroup.Item key={comment.id}>
-                          <strong>{comment.userName}</strong> - {comment.rating}{" "}
-                          sao
-                          <p>{comment.comment}</p>
-                          <small>
-                            {comment.timestamp?.toDate
-                              ? comment.timestamp.toDate().toLocaleString()
-                              : new Date(comment.timestamp).toLocaleString()}
-                          </small>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                  ) : (
-                    <p>Chưa có bình luận nào.</p>
-                  )}
+                  <div className="comments-list">
+                    {comments.length > 0 ? (
+                      <ListGroup>
+                        {comments.map((comment) => (
+                          <ListGroup.Item key={comment.id}>
+                            <strong>{comment.userName}</strong> - {comment.rating}{" "}
+                            sao
+                            <p>{comment.comment}</p>
+                            <small>
+                              {comment.timestamp?.toDate
+                                ? comment.timestamp.toDate().toLocaleString()
+                                : new Date(comment.timestamp).toLocaleString()}
+                            </small>
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
+                    ) : (
+                      <p>Chưa có bình luận nào.</p>
+                    )}
+                  </div>
                 </div>
               </Card.Body>
             </Card>
@@ -624,33 +648,121 @@ const DetailPage = () => {
         {/* Sử dụng component RelatedComics */}
         <RelatedComics slug={slug} categories={item?.category} />
 
+        {/* Modal đọc truyện */}
         {isModalOpen && (
-          <Modal show={isModalOpen} onHide={handleClose}>
+          <Modal
+            show={isModalOpen}
+            onHide={handleClose}
+            dialogClassName="chapter-modal"
+            contentClassName="chapter-modal-content"
+            size="xl"
+            fullscreen
+          >
             <Modal.Header closeButton>
               <Modal.Title>
-                Chapter: {getDataChapter.data?.item?.chapter_name} -{" "}
-                {getDataChapter.data?.item?.comic_name}
+                <div className="chapter-modal-title">
+                  <span className="comic-name">{item.name}</span>
+                  <div className="chapter-selector">
+                    <span className="chapter-name">
+                      Chap {getDataChapter?.data?.item?.chapter_name || "Đang tải..."}
+                    </span>
+                  </div>
+                </div>
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {getDataChapter.data?.item?.chapter_image &&
-              getDataChapter.data.item.chapter_image.length > 0
-                ? getDataChapter.data.item.chapter_image.map(
-                    (chapterImage, index) => (
-                      <Card.Img
-                        style={{ margin: 0 }}
-                        variant="top"
-                        key={index}
-                        src={`${getDataChapter.data.domain_cdn}/${getDataChapter.data.item.chapter_path}/${chapterImage.image_file}`}
-                      />
-                    )
-                  )
-                : "No Content ...."}
+              <div className="chapter-image-container">
+                <div className="floating-buttons">
+                  <button 
+                    className="scroll-to-top"
+                    onClick={() => {
+                      const modalBody = document.querySelector('.modal-body');
+                      if (modalBody) {
+                        modalBody.scrollTo({
+                          top: 0,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    title="Lên đầu trang"
+                  >
+                    <IoChevronUpCircle size={24} />
+                  </button>
+                  <button 
+                    className="return-to-detail"
+                    onClick={handleClose}
+                    title="Trở về"
+                  >
+                    <IoReturnUpBack size={24} />
+                  </button>
+                </div>
+                {loading ? (
+                  <div className="loading-spinner">
+                    <div className="spinner-border text-light" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                ) : getDataChapter?.data?.item?.chapter_image ? (
+                  getDataChapter.data.item.chapter_image.map((image, index) => (
+                    <img
+                      key={index}
+                      src={`${getDataChapter.data.domain_cdn}/${getDataChapter.data.item.chapter_path}/${image.image_file}`}
+                      alt={`Trang ${index + 1}`}
+                      className="chapter-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        console.error(`Error loading image ${index + 1}`);
+                        e.target.src = '/placeholder.png'; // Thay thế bằng ảnh placeholder khi lỗi
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div className="no-content">
+                    <p>Không có nội dung cho chapter này</p>
+                  </div>
+                )}
+              </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                Close
-              </Button>
+              <div className="chapter-navigation">
+                <Button
+                  variant="outline-light"
+                  onClick={() => {
+                    // Xử lý chuyển chapter trước
+                    const currentIndex = item.chapters[0].server_data.findIndex(
+                      (chapter) => chapter.chapter_name === getDataChapter?.data?.item?.chapter_name
+                    );
+                    if (currentIndex > 0) {
+                      handleReachChapter(
+                        item.chapters[0].server_data[currentIndex - 1].chapter_api_data
+                      );
+                    }
+                  }}
+                  disabled={!getDataChapter?.data?.item?.chapter_name}
+                >
+                  Chapter Trước
+                </Button>
+                <Button variant="outline-light" onClick={handleClose}>
+                  Đóng
+                </Button>
+                <Button
+                  variant="outline-light"
+                  onClick={() => {
+                    // Xử lý chuyển chapter sau
+                    const currentIndex = item.chapters[0].server_data.findIndex(
+                      (chapter) => chapter.chapter_name === getDataChapter?.data?.item?.chapter_name
+                    );
+                    if (currentIndex < item.chapters[0].server_data.length - 1) {
+                      handleReachChapter(
+                        item.chapters[0].server_data[currentIndex + 1].chapter_api_data
+                      );
+                    }
+                  }}
+                  disabled={!getDataChapter?.data?.item?.chapter_name}
+                >
+                  Chapter Sau
+                </Button>
+              </div>
             </Modal.Footer>
           </Modal>
         )}
