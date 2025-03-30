@@ -2,6 +2,22 @@ import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 
 const ChapterList = ({ item, handleReachChapter }) => {
+  // Kiểm tra item tồn tại
+  if (!item) {
+    return (
+      <Card className="shadow-sm border-0" style={{ backgroundColor: "#ffffff" }}>
+        <Card.Body>
+          <Card.Title className="text-center text-primary fw-bold">
+            Danh Sách Chương
+          </Card.Title>
+          <div className="text-center">
+            <p>Không thể tải danh sách chương. Vui lòng thử lại sau.</p>
+          </div>
+        </Card.Body>
+      </Card>
+    );
+  }
+
   return (
     <Card
       className="shadow-sm border-0"

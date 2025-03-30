@@ -52,6 +52,9 @@ const ChapterViewer = ({
     }
   }, [isModalOpen, getDataChapter]);
 
+  // Không hiển thị modal nếu không có dữ liệu
+  if (!isModalOpen) return null;
+
   return (
     <Modal
       show={isModalOpen}
@@ -64,7 +67,7 @@ const ChapterViewer = ({
       <Modal.Header closeButton>
         <Modal.Title>
           <div className="chapter-modal-title">
-            <span className="comic-name">{item?.name}</span>
+            <span className="comic-name">{item?.name || 'Không có tên'}</span>
             <div className="chapter-selector">
               <span className="chapter-name">
                 Chap {getDataChapter?.data?.item?.chapter_name || "Đang tải..."}
@@ -143,7 +146,7 @@ const ChapterViewer = ({
                 );
               }
             }}
-            disabled={!getDataChapter?.data?.item?.chapter_name}
+            disabled={!getDataChapter?.data?.item?.chapter_name || !item?.chapters?.[0]?.server_data}
           >
             Chapter Trước
           </Button>
@@ -165,7 +168,7 @@ const ChapterViewer = ({
                 );
               }
             }}
-            disabled={!getDataChapter?.data?.item?.chapter_name}
+            disabled={!getDataChapter?.data?.item?.chapter_name || !item?.chapters?.[0]?.server_data}
           >
             Chapter Sau
           </Button>

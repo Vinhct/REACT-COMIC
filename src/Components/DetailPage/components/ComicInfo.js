@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Badge, Button, Link } from 'react-bootstrap';
+import { Card, Badge, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
 import { BsClipboard } from "react-icons/bs";
 import { 
@@ -23,6 +24,17 @@ const ComicInfo = ({
   shareDescription,
   handleShareMessenger
 }) => {
+  // Kiểm tra item tồn tại
+  if (!item) {
+    return (
+      <Card className="shadow-lg border-0" style={{ backgroundColor: "#fdfdfd" }}>
+        <Card.Body>
+          <p>Không thể tải thông tin truyện. Vui lòng thử lại sau.</p>
+        </Card.Body>
+      </Card>
+    );
+  }
+
   return (
     <Card
       className="shadow-lg border-0"

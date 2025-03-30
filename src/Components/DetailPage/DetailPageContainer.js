@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
-import { Button, Col, Container, Row, Card } from "react-bootstrap";
+import { Button, Col, Container, Row, Card, Alert } from "react-bootstrap";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../Include/Authentication/Firebase";
 import { Menu } from "../Include/Dau-trang_Chan-trang/Menu";
@@ -26,6 +26,7 @@ import {
 const DetailPageContainer = () => {
   const { slug } = useParams();
   const [user, setUser] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Sử dụng các custom hooks
   const saveHistory = useHistory(db, user);
@@ -35,8 +36,9 @@ const DetailPageContainer = () => {
     loading, 
     error, 
     item, 
-    seoData 
-  } = useComicData(slug, saveHistory);
+    seoData,
+    refetch 
+  } = useComicData(slug, saveHistory, retryCount);
   
   const { 
     chapterData, 
@@ -84,21 +86,93 @@ const DetailPageContainer = () => {
     window.open(messengerUrl, "_blank");
   };
 
-  // Xử lý trạng thái loading và lỗi
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error}</p>;
+  // Hàm thử lại khi gặp lỗi
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+  };
+
+  // Xử lý trạng thái loading
+  if (loading) {
+    return (
+      <>
+        <Menu />
+        <Container className="detail-container">
+          <div className="text-center my-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Đang tải thông tin truyện...</p>
+          </div>
+        </Container>
+      </>
+    );
+  }
+
+  // Xử lý trạng thái lỗi
+  if (error) {
+    return (
+      <>
+        <Menu />
+        <Container className="detail-container">
+          <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
+            Về trang chủ
+          </Button>
+          <Alert variant="danger">
+            <Alert.Heading>Có lỗi xảy ra!</Alert.Heading>
+            <p>{error}</p>
+            <hr />
+            <div className="d-flex justify-content-between">
+              <p className="mb-0">
+                Vui lòng thử lại sau hoặc quay lại trang chủ.
+              </p>
+              <Button variant="outline-danger" onClick={handleRetry}>
+                Thử lại
+              </Button>
+            </div>
+          </Alert>
+        </Container>
+      </>
+    );
+  }
+
+  // Kiểm tra xem có dữ liệu không
+  if (!item) {
+    return (
+      <>
+        <Menu />
+        <Container className="detail-container">
+          <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
+            Về trang chủ
+          </Button>
+          <Alert variant="warning">
+            <Alert.Heading>Không tìm thấy truyện!</Alert.Heading>
+            <p>Không thể tìm thấy thông tin truyện với slug "{slug}".</p>
+            <hr />
+            <div className="d-flex justify-content-between">
+              <p className="mb-0">
+                Vui lòng kiểm tra lại đường dẫn hoặc quay lại trang chủ.
+              </p>
+              <Button variant="outline-warning" onClick={handleRetry}>
+                Thử lại
+              </Button>
+            </div>
+          </Alert>
+        </Container>
+      </>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>{seoData?.titleHead}</title>
+        <title>{seoData?.titleHead || item.name}</title>
       </Helmet>
 
       <Menu />
 
       <Container className="detail-container">
         <Button as={Link} to="/" style={{ marginBottom: "20px" }}>
-          Back to Home
+          Về trang chủ
         </Button>
 
         <Row className="mb-4">
@@ -109,10 +183,10 @@ const DetailPageContainer = () => {
             >
               <Card.Body>
                 <Card.Title className="text-primary fw-bold">
-                  {seoData?.titleHead}
+                  {seoData?.titleHead || item.name}
                 </Card.Title>
                 <Card.Text className="text-secondary">
-                  {seoData?.descriptionHead}
+                  {seoData?.descriptionHead || (item.content && typeof item.content === 'string' ? item.content.substring(0, 200) : "Không có mô tả")}
                 </Card.Text>
               </Card.Body>
             </Card>
