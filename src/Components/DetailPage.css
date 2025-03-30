@@ -352,6 +352,17 @@
   border-radius: 8px 8px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   z-index: 1060;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.chapter-navigation.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.chapter-navigation.hide {
+  transform: translateX(-50%) translateY(100%);
+  opacity: 0;
 }
 
 .chapter-navigation button {
@@ -397,8 +408,19 @@
 
   .chapter-navigation {
     width: 100%;
+    left: 0;
+    right: 0;
+    transform: translateX(0);
     border-radius: 0;
     padding: 0.5rem;
+  }
+
+  .chapter-navigation.show {
+    transform: translateY(0);
+  }
+
+  .chapter-navigation.hide {
+    transform: translateY(100%);
   }
 
   .chapter-navigation button {

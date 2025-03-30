@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Badge,
   Button,
@@ -69,6 +69,8 @@ const DetailPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [showFooter, setShowFooter] = useState(true);
+  const lastScrollTopRef = useRef(0);
   const item = getdata?.data?.data?.item;
   const defaultAvatar =
     "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
@@ -129,8 +131,42 @@ const DetailPage = () => {
         return () => unsubscribeFavorites();
       }
     });
-    return () => unsubscribeAuth();
-  }, [slug]);
+    
+    // Xử lý sự kiện cuộn cho modal
+    const handleScroll = () => {
+      if (!isModalOpen) return;
+      
+      const modalBody = document.querySelector('.modal-body');
+      if (!modalBody) return;
+      
+      const st = modalBody.scrollTop;
+      
+      // Xác định hướng cuộn
+      if (st > lastScrollTopRef.current && st > 100) {
+        // Cuộn xuống - ẩn footer
+        setShowFooter(false);
+      } else if (st < lastScrollTopRef.current || st < 100) {
+        // Cuộn lên hoặc ở gần đầu trang - hiện footer
+        setShowFooter(true);
+      }
+      
+      // Cập nhật vị trí cuộn cuối cùng
+      lastScrollTopRef.current = st;
+    };
+
+    const modalBody = document.querySelector('.modal-body');
+    if (isModalOpen && modalBody) {
+      modalBody.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      unsubscribeAuth();
+      const modalBody = document.querySelector('.modal-body');
+      if (modalBody) {
+        modalBody.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [slug, isModalOpen]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -315,6 +351,9 @@ const DetailPage = () => {
         chapter: response.data.data.item.chapter_name || "Unknown",
         timestamp: serverTimestamp(),
       });
+      // Reset scroll state khi mở chapter mới
+      setShowFooter(true);
+      lastScrollTopRef.current = 0;
     } catch (error) {
       console.error("Error loading chapter:", error); // Log lỗi
       setLoading(false);
@@ -724,7 +763,7 @@ const DetailPage = () => {
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <div className="chapter-navigation">
+              <div className={`chapter-navigation ${showFooter ? 'show' : 'hide'}`}>
                 <Button
                   variant="outline-light"
                   onClick={() => {
