@@ -129,8 +129,8 @@ const ChapterViewer = ({
           )}
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <div className={`chapter-navigation ${showFooter ? 'show' : 'hide'}`}>
+      <Modal.Footer className={showFooter ? 'show' : 'hide'}>
+        <div className="chapter-navigation">
           <Button
             variant="outline-light"
             onClick={() => {
