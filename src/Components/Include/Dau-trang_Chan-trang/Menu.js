@@ -15,6 +15,7 @@ import { BsSearch, BsPersonCircle } from "react-icons/bs"; // Thêm biểu tư�
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Authentication/Firebase";
 import logo from "../Logo/logo3.jpg";
+import "./Menu.css";
 
 export const Menu = () => {
   const navigate = useNavigate();
@@ -90,14 +91,14 @@ export const Menu = () => {
   console.log("Rendering Menu component with user:", user);
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow-sm mb-4">
+    <Navbar expand="lg" className="navbar shadow-lg mb-4" sticky="top">
       <Container>
         {/* Logo */}
-        <Navbar.Brand as={Link} to="/" className="me-4">
+        <Navbar.Brand as={Link} to="/" className="navbar-brand">
           <img
             src={logo}
             alt="Logo"
-            style={{ height: "60px", width: "auto" }} // Điều chỉnh kích thước logo
+            style={{ height: "50px", width: "auto" }}
           />
         </Navbar.Brand>
 
@@ -106,18 +107,14 @@ export const Menu = () => {
 
         {/* Navbar Content */}
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="me-auto ms-auto">
             <Nav.Link
               as={Link}
               to="/dang-phat-hanh"
-              className="mx-2"
+              className="nav-link gradient-text"
               style={{
-                background:
-                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontSize: "20px",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                fontSize: "18px",
+                textShadow: "0px 0px 1px rgba(255,255,255,0.2)",
               }}
             >
               Đang phát hành
@@ -125,14 +122,10 @@ export const Menu = () => {
             <Nav.Link
               as={Link}
               to="/hoan-thanh"
-              className="mx-2"
+              className="nav-link gradient-text"
               style={{
-                background:
-                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontSize: "20px",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                fontSize: "18px",
+                textShadow: "0px 0px 1px rgba(255,255,255,0.2)",
               }}
             >
               Hoàn thành
@@ -140,14 +133,10 @@ export const Menu = () => {
             <Nav.Link
               as={Link}
               to="/sap-ra-mat"
-              className="mx-2"
+              className="nav-link gradient-text"
               style={{
-                background:
-                  "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontSize: "20px",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                fontSize: "18px",
+                textShadow: "0px 0px 1px rgba(255,255,255,0.2)",
               }}
             >
               Sắp ra mắt
@@ -156,19 +145,17 @@ export const Menu = () => {
             <NavDropdown
               title={
                 <span
+                  className="gradient-text"
                   style={{
-                    background: "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    fontSize: "20px",
-                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    textShadow: "0px 0px 1px rgba(255,255,255,0.2)",
                   }}
                 >
                   Thể loại
                 </span>
               }
               id="basic-nav-dropdown"
-              className="mx-2"
             >
               {items && items.length > 0 ? (
                 items.map((item, index) => (
@@ -176,13 +163,11 @@ export const Menu = () => {
                     key={index}
                     as={Link}
                     to={`/genre/${item.slug}`}
-                    className="dropdown-item-custom"
+                    className="dropdown-item-custom gradient-text"
                     style={{
-                      background: "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      fontSize: "18px",
-                      textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      padding: "8px 16px",
                     }}
                   >
                     {item.name}
@@ -194,10 +179,12 @@ export const Menu = () => {
                 </NavDropdown.Item>
               )}
             </NavDropdown>
+          </Nav>
 
+          <div className="d-flex align-items-center">
             {/* Search Bar */}
             <Form
-              className="d-flex align-items-center position-relative me-3 search-form"
+              className="d-flex align-items-center position-relative search-form me-3"
               autoComplete="off"
               onSubmit={handleSearch}
             >
@@ -219,11 +206,10 @@ export const Menu = () => {
                   e.preventDefault();
                 }}
                 className="pe-4 rounded-pill search-input"
-                style={{ height: "40px" }}
               />
               <BsSearch
                 className="position-absolute top-50 end-0 translate-middle-y me-2 search-icon"
-                style={{ cursor: "pointer", color: "#aaa" }}
+                style={{ cursor: "pointer" }}
                 onClick={handleSearch}
               />
             </Form>
@@ -235,6 +221,7 @@ export const Menu = () => {
                   <Dropdown.Toggle
                     as="div"
                     className="d-flex align-items-center"
+                    style={{ cursor: "pointer" }}
                   >
                     {user.photoURL ? (
                       <Image
@@ -242,7 +229,7 @@ export const Menu = () => {
                         roundedCircle
                         width="30"
                         height="30"
-                        className="me-2"
+                        className="user-avatar me-2"
                         alt="User avatar"
                         onError={(e) => {
                           e.target.src = defaultAvatar; // Fallback nếu ảnh không tải được
@@ -255,47 +242,45 @@ export const Menu = () => {
                       <BsPersonCircle
                         size={30}
                         className="me-2"
-                        style={{ color: "#aaa" }}
+                        style={{ color: "#6366f1" }}
                       />
                     )}
+                    <span className="gradient-text">
+                      {user.displayName || user.email || "Người dùng"}
+                    </span>
                   </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item as={Link} to="/history">
+                  <Dropdown.Menu className="dropdown-menu">
+                    <Dropdown.Item as={Link} to="/history" className="dropdown-item-custom">
                       Lịch sử
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/favorites">
+                    <Dropdown.Item as={Link} to="/favorites" className="dropdown-item-custom">
                       Yêu thích
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={handleLogout}>
+                    <Dropdown.Item onClick={handleLogout} className="dropdown-item-custom gradient-text">
                       Đăng xuất
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-                <span className="user-info">
-                  {user.displayName || user.email || "Người dùng"}
-                </span>
               </Nav.Item>
             ) : (
-              <>
+              <Nav.Item className="d-flex align-items-center">
                 <Button
                   variant="outline-primary"
-                  className="me-2 login-btn"
-                  as={Link}
-                  to="/login"
+                  className="login-btn"
+                  onClick={() => navigate("/login")}
                 >
                   Đăng nhập
                 </Button>
                 <Button
                   variant="primary"
-                  className="register-btn"
-                  as={Link}
-                  to="/register"
+                  className="register-btn ms-2"
+                  onClick={() => navigate("/register")}
                 >
                   Đăng ký
                 </Button>
-              </>
+              </Nav.Item>
             )}
-          </Nav>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>

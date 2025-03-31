@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet";
 import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
 import { BsArrowUp } from "react-icons/bs";
 import "./Include/responsive.css";
+import "./Include/Home.css";
 import RecommendedComics from "./Include/RecommendedComics";
 import ComicList from "./Include/ComicList";
 import CompletedComics from "./Include/CompletedComics";
@@ -83,7 +84,6 @@ const Home = () => {
         {/* Phần Truyện Đề Cử */}
         <section className="snap-section recommended-section">
           <Container className="py-4">
-            
             {!loading && <RecommendedComics comics={randomComics} />}
           </Container>
         </section>
@@ -127,18 +127,6 @@ const Home = () => {
           variant="primary"
           className="back-to-top"
           onClick={scrollToTop}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            borderRadius: "50%",
-            width: "50px",
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
         >
           <BsArrowUp size={24} />
         </Button>

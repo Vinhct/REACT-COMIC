@@ -26,6 +26,21 @@ body {
   margin-bottom: 0;
 }
 
+/* Định dạng dropdown menu */
+.dropdown-menu {
+  background-color: #2e1065 !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.3) !important;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255,255,255,0.1) !important;
+}
+
+.search-input::placeholder {
+  color: rgba(255,255,255,0.5) !important;
+}
+
 /* Màn hình nhỏ (dưới 576px) */
 @media (max-width: 576px) {
   .navbar-brand {
@@ -60,7 +75,9 @@ body {
     max-height: 300px;
     overflow-y: auto;
     border: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
+    background-color: #2e1065 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
   }
   .dropdown-item-custom {
     font-size: 0.9rem;
@@ -94,11 +111,12 @@ body {
     border-radius: 20px;
   }
   .login-btn {
-    border: 1px solid #007bff;
+    border: 1px solid rgba(255,255,255,0.5);
   }
   .register-btn {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
     border: none;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
   }
   /* Điều chỉnh padding-top cho màn hình nhỏ */
   body {
@@ -130,6 +148,9 @@ body {
   }
   .dropdown-menu {
     font-size: 1rem;
+    background-color: #2e1065 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) !important;
   }
   .dropdown-item-custom {
     font-size: 1rem;
@@ -180,7 +201,8 @@ body {
     transition: color 0.3s ease;
   }
   .navbar-nav .nav-link:hover {
-    color: #007bff;
+    color: #818cf8 !important;
+    opacity: 0.9;
   }
   .dropdown-toggle {
     padding: 0.5rem 1.5rem;
@@ -189,7 +211,9 @@ body {
   .dropdown-menu {
     font-size: 1rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.3) !important;
+    background-color: #2e1065 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
   }
   .dropdown-item-custom {
     font-size: 1rem;
@@ -210,8 +234,8 @@ body {
     transition: border-color 0.3s ease;
   }
   .search-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
   }
   .search-icon {
     font-size: 1.1rem;
@@ -231,17 +255,20 @@ body {
     white-space: nowrap;
   }
   .login-btn {
-    border: 1px solid #007bff;
+    border: 1px solid rgba(255,255,255,0.5);
   }
   .login-btn:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.7);
   }
   .register-btn {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
     border: none;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
   }
   .register-btn:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
   }
   .user-info {
     font-size: 1rem;
@@ -376,7 +403,7 @@ body {
 
 /* Cập nhật class section-title để áp dụng hiệu ứng gradient */
 .section-title {
-  background: linear-gradient(to right, #ffb341, rgb(255, 138, 43));
+  background: linear-gradient(to right, #6366f1, #818cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 20px;

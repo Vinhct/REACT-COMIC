@@ -1,52 +1,27 @@
-// src/Components/RecommendedComics.js
-import React, { useEffect, useState } from "react";
-import { Card, Col, Row } from "react-bootstrap";
+// src/Components/Include/RecommendedComics.js
+import React from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "../Include/responsive.css";
+import { Card, Badge, Button } from "react-bootstrap";
+import { FaFire } from "react-icons/fa";
 
 const RecommendedComics = ({ comics }) => {
-  // Hàm chọn ngẫu nhiên 10 truyện từ danh sách
-  const getRandomComics = (comicsList, count) => {
-    if (!comicsList || comicsList.length === 0) return [];
-
-    // Tạo một bản sao của danh sách để không làm thay đổi danh sách gốc
-    const shuffled = [...comicsList];
-    const len = shuffled.length;
-
-    // Thuật toán Fisher-Yates để xáo trộn danh sách
-    for (let i = len - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap
-    }
-
-    // Trả về 10 truyện đầu tiên từ danh sách đã xáo trộn (hoặc ít hơn nếu danh sách không đủ 10 truyện)
-    return shuffled.slice(0, Math.min(count, len));
-  };
-
-  // Chọn ngẫu nhiên 10 truyện
-  const randomComics = getRandomComics(comics, 10);
-
-  // Cấu hình responsive cho slider
-  const sliderSettings = {
+  const settings = {
     dots: true,
     infinite: true,
-    speed: 1000,
-    slidesToShow: 5,
+    speed: 500,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    arrows: true,
-    pauseOnHover: true,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1200,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          arrows: false,
         },
       },
       {
@@ -54,7 +29,6 @@ const RecommendedComics = ({ comics }) => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-          arrows: false,
         },
       },
       {
@@ -62,72 +36,81 @@ const RecommendedComics = ({ comics }) => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          arrows: false,
         },
       },
     ],
   };
 
-  return (
-    <Row className="mb-5">
-      <Col>
-        <h2
-          className="fw-bold mb-4 text-uppercase"
-          style={{
-            background: "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            fontSize: "20px",
-            textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            paddingTop: "20px",
-            marginBottom: "30px",
-          }}
-        >
-          🔥 Truyện Đề Cử
-        </h2>
+  if (!comics || comics.length === 0) {
+    return null;
+  }
 
-        {randomComics && randomComics.length > 0 ? (
-          <Slider {...sliderSettings}>
-            {randomComics.map((item, index) => (
-              <div key={index} className="px-3">
-                <Card className="shadow-sm border-0 card-hover">
-                  <Card.Img
-                    variant="top"
-                    src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
-                    alt={item.name}
-                    className="rounded-top"
-                    style={{ height: "200px", objectFit: "cover" }}
-                    loading="lazy"
-                  />
-                  <Card.Body className="d-flex flex-column">
-                    <Card.Title
-                      className="fw-bold text-truncate"
-                      as={Link}
-                      to={`/comics/${item.slug}`}
-                      style={{
-                        textDecoration: "none",
-                        background:
-                          "linear-gradient(to right, #ff416c, rgb(255, 128, 43))",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        fontSize: "15px",
-                        textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-                      }}
-                    >
-                      {item.name || "No name"}
-                    </Card.Title>
-                  </Card.Body>
-                </Card>
-              </div>
-            ))}
-          </Slider>
-        ) : (
-          <div className="text-center text-muted">
-            Không có truyện đề cử để hiển thị.
+  return (
+    <div className="recommended-comics mb-5">
+      <h2 className="section-title mb-4">
+        <FaFire className="me-2" style={{ color: "#ff416c" }} />
+        Truyện Đề Cử
+      </h2>
+      <Slider {...settings}>
+        {comics.map((comic, index) => (
+          <div key={index} className="px-2">
+            <Card className="comic-card shadow-sm border-0 h-100">
+              <Card.Img
+                variant="top"
+                src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
+                alt={comic.name}
+                className="card-img-top rounded-top"
+                style={{ height: "200px", objectFit: "cover" }}
+                loading="lazy"
+              />
+              <Card.Body className="d-flex flex-column">
+                <Card.Title
+                  className="card-title text-dark fw-bold text-truncate"
+                  as={Link}
+                  to={`/comics/${comic.slug}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  {comic.name || "No name"}
+                </Card.Title>
+                <Card.Text className="card-text-muted small">
+                  {comic.updatedAt || "Không có"}
+                </Card.Text>
+                <Card.Text>
+                  {comic.category && comic.category.length > 0 ? (
+                    comic.category.slice(0, 2).map((category, idx) => (
+                      <Link
+                        to={`/genre/${category.slug}`}
+                        key={idx}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <Badge
+                          className="badge me-2 mb-1"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {category.name}
+                        </Badge>
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-muted">others</span>
+                  )}
+                </Card.Text>
+                <div className="mt-auto">
+                  <Button
+                    size="sm"
+                    className="btn-detail w-100"
+                    as={Link}
+                    to={`/comics/${comic.slug}`}
+                  >
+                    Chi Tiết
+                  </Button>
+                </div>
+              </Card.Body>
+            </Card>
           </div>
-        )}
-      </Col>
-    </Row>
+        ))}
+      </Slider>
+    </div>
   );
 };
 

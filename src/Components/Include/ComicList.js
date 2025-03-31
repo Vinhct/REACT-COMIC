@@ -8,8 +8,10 @@ import {
   Row,
   Spinner,
   Button,
+  Container,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import "./Home.css";
 
 const ComicList = ({
   items,
@@ -21,7 +23,7 @@ const ComicList = ({
   const displayedItems = limit ? items?.slice(0, limit) : items;
 
   return (
-    <>
+    <Container className="px-1">
       {sectionTitle && (
         <h2 className="section-title">
           🔥 {sectionTitle}
@@ -29,51 +31,49 @@ const ComicList = ({
       )}
 
       {loading ? (
-        <div className="text-center my-5">
+        <div className="loading-spinner">
           <Spinner animation="border" variant="primary" />
           <p className="mt-2">Đang tải dữ liệu...</p>
         </div>
       ) : (
         <>
-          <Row className="g-4">
+          <div className="row mx-n1">
             {displayedItems && displayedItems.length > 0 ? (
               displayedItems.map((item, index) => (
-                <Col lg={3} md={4} sm={6} xs={12} key={index}>
+                <div className="col-lg-3 col-md-4 col-6 px-1 mb-2" key={index}>
                   <Card
-                    className="shadow-sm border-0 h-100 card-hover"
-                    style={{ transition: "all 0.3s ease" }}
+                    className="comic-card shadow-sm border-0 h-100"
                   >
                     <Card.Img
                       variant="top"
                       src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
                       alt={item.name}
-                      className="rounded-top"
+                      className="card-img-top rounded-top"
                       style={{ height: "200px", objectFit: "cover" }}
                       loading="lazy"
                     />
                     <Card.Body className="d-flex flex-column">
                       <Card.Title
-                        className="text-dark fw-bold text-truncate"
+                        className="card-title text-dark fw-bold text-truncate"
                         as={Link}
                         to={`/comics/${item.slug}`}
                         style={{ textDecoration: "none" }}
                       >
                         {item.name || "No name"}
                       </Card.Title>
-                      <Card.Text className="text-muted small">
+                      <Card.Text className="card-text-muted small">
                         {item.updatedAt || "Không có"}
                       </Card.Text>
                       <Card.Text>
                         {item.category && item.category.length > 0 ? (
-                          item.category.map((category, index) => (
+                          item.category.slice(0, 2).map((category, index) => (
                             <Link
                               to={`/genre/${category.slug}`}
                               key={index}
                               style={{ textDecoration: "none" }}
                             >
                               <Badge
-                                bg="primary"
-                                className="me-2 mb-1"
+                                className="badge me-2 mb-1"
                                 style={{ cursor: "pointer" }}
                               >
                                 {category.name}
@@ -86,9 +86,8 @@ const ComicList = ({
                       </Card.Text>
                       <div className="mt-auto">
                         <Button
-                          variant="primary"
                           size="sm"
-                          className="w-100"
+                          className="btn-detail w-100"
                           as={Link}
                           to={`/comics/${item.slug}`}
                         >
@@ -97,24 +96,23 @@ const ComicList = ({
                       </div>
                     </Card.Body>
                   </Card>
-                </Col>
+                </div>
               ))
             ) : (
-              <Col>
+              <div className="col-12">
                 <CardBody className="text-center text-muted">
                   Không có truyện nào để hiển thị.
                 </CardBody>
-              </Col>
+              </div>
             )}
-          </Row>
+          </div>
 
           {viewMoreLink && items && items.length > 0 && (
             <div className="text-center mt-4">
               <Button
-                variant="outline-primary"
                 as={Link}
                 to={viewMoreLink}
-                className="px-4 py-2"
+                className="view-more-btn"
               >
                 Xem Thêm
               </Button>
@@ -122,7 +120,7 @@ const ComicList = ({
           )}
         </>
       )}
-    </>
+    </Container>
   );
 };
 

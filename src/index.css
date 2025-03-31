@@ -15,6 +15,34 @@ code {
 .dropdown-menu.show{
   height: 230px;
   overflow: auto;
+  background-color: #142850 !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.3) !important;
+  border-radius: 8px;
+}
+
+.dropdown-menu.show::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-menu.show::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  border-radius: 3px;
+}
+
+.dropdown-menu.show::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+}
+
+.dropdown-item {
+  color: #fff !important;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255,255,255,0.1) !important;
+  color: #4facfe !important;
 }
 
 .chapter_click {
