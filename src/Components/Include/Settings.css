@@ -1,0 +1,169 @@
+/* Settings Button */
+.settings-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #6366f1, #ec4899) !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3) !important;
+  transition: all 0.3s ease !important;
+  padding: 0;
+}
+
+.settings-button:hover {
+  transform: translateY(-3px) rotate(30deg) !important;
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Settings Panel */
+.settings-panel {
+  border-left: 1px solid rgba(0, 0, 0, 0.1) !important;
+  width: 320px !important;
+  max-width: 90vw !important;
+}
+
+.settings-title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Settings Options */
+.settings-option {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: rgba(240, 240, 240, 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.settings-option-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.settings-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: #6366f1;
+}
+
+.settings-option h5 {
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Toggle Switch */
+.settings-switch {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-check-input:checked {
+  background-color: #6366f1 !important;
+  border-color: #6366f1 !important;
+}
+
+/* Font Size Slider */
+.font-size-slider {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.font-size-slider svg {
+  margin: 0 1rem;
+  color: #6366f1;
+}
+
+.form-range::-webkit-slider-thumb {
+  background: #6366f1 !important;
+}
+
+.form-range::-moz-range-thumb {
+  background: #6366f1 !important;
+}
+
+.font-size-preview {
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .navbar,
+.dark-mode .settings-panel {
+  background: rgba(30, 30, 30, 0.9) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .offcanvas-header .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+.dark-mode .comic-card {
+  background-color: #1e1e1e !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark-mode .comic-card .card-title {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .comic-card .card-text-muted {
+  color: #aaa !important;
+}
+
+.dark-mode .settings-option {
+  background-color: rgba(50, 50, 50, 0.3);
+}
+
+.dark-mode .settings-option h5 {
+  color: #e0e0e0;
+}
+
+/* Font Size Variable */
+:root {
+  --font-size-multiplier: 1;
+}
+
+/* Apply font size to various elements */
+body {
+  font-size: calc(1rem * var(--font-size-multiplier)) !important;
+}
+
+.card-title {
+  font-size: calc(1.25rem * var(--font-size-multiplier)) !important;
+}
+
+.card-text, .card-text-muted {
+  font-size: calc(0.9rem * var(--font-size-multiplier)) !important;
+}
+
+.nav-link, .dropdown-item {
+  font-size: calc(1rem * var(--font-size-multiplier)) !important;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .settings-button {
+    bottom: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+  }
+} 

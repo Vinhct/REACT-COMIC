@@ -12,6 +12,8 @@ import ComicList from "./Include/ComicList";
 import CompletedComics from "./Include/CompletedComics";
 import UpcomingComics from "./Include/UpcomingComics";
 import Footer from "./Include/Dau-trang_Chan-trang/Footer";
+import Settings from "./Include/Settings";
+import WelcomeBanner from "./Include/WelcomeBanner";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -78,6 +80,7 @@ const Home = () => {
         <title>{getdata.data?.seoOnPage?.titleHead}</title>
       </Helmet>
       <Menu />
+      <WelcomeBanner />
 
       {/* Container chính với scroll snapping */}
       <div className="snap-container">
@@ -131,6 +134,9 @@ const Home = () => {
           <BsArrowUp size={24} />
         </Button>
       )}
+
+      {/* Nút Cài đặt */}
+      <Settings />
     </>
   );
 };

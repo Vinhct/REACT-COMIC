@@ -1,0 +1,307 @@
+/* Carousel3D.css */
+.banner-3d {
+  width: 100%;
+  height: 65vh !important; /* Tăng chiều cao từ 59% lên 65% */
+  max-height: 700px; /* Tăng chiều cao tối đa từ 600px lên 700px */
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  padding-top: 0; /* Bỏ padding top */
+  margin-bottom: 0; /* Bỏ margin dưới */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Đặt nội dung ở phía trên */
+}
+
+/* Áp dụng chiều cao 59% cho các thẻ card */
+.banner-3d .slider-3d .item-3d .card.h-100 {
+  height: 100% !important;
+}
+
+.banner-3d .slider-3d {
+  position: relative;
+  width: 240px; /* Tăng chiều rộng từ 220px lên 240px */
+  height: 380px; /* Tăng chiều cao từ 350px lên 380px */
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  transform: perspective(1200px);
+  animation: autoRun 30s linear infinite;
+  flex-grow: 1; /* Phần slider chiếm phần còn lại của không gian */
+}
+
+@keyframes autoRun {
+  from {
+    transform: perspective(1200px) rotateX(-10deg) rotateY(0deg);
+  }
+  to {
+    transform: perspective(1200px) rotateX(-10deg) rotateY(360deg);
+  }
+}
+
+.banner-3d .slider-3d .item-3d {
+  position: absolute;
+  inset: 0 0 0 0;
+  transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(500px);
+  transition: all 0.5s;
+}
+
+.banner-3d .slider-3d .item-3d:hover {
+  transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(530px) scale(1.05);
+}
+
+.banner-3d .slider-3d .item-3d .card {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.banner-3d .slider-3d .item-3d .card:hover {
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+}
+
+/* Tiêu đề trên đầu card (hiển thị khi nhìn từ xa) */
+.comic-title-top {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 20;
+  padding: 5px;
+  transform-style: preserve-3d;
+  transform: translateZ(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+}
+
+.comic-title-top span {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 255, 255, 0.7);
+  background: linear-gradient(to right, #6366f1, #ec4899);
+  padding: 5px 10px;
+  border-radius: 15px;
+  max-width: 95%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.book-icon {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+  background: linear-gradient(to right, #6366f1, #ec4899);
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Container cho ảnh và title overlay */
+.comic-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Title overlay luôn hiển thị trên ảnh */
+.comic-title-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 70%);
+  padding: 15px 8px 10px;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+  transform-style: preserve-3d;
+  z-index: 10;
+  /* Đảm bảo title không bị biến mất khi quay */
+  transform: translateZ(1px);
+}
+
+/* Thêm hiệu ứng glow cho title */
+.overlay-title {
+  color: white;
+  font-size: 1.1rem;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 255, 255, 0.5);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+  /* Đảm bảo title luôn đối mặt với người xem */
+  transform-style: preserve-3d;
+}
+
+.item-3d .card-img-top {
+  height: 270px; /* Tăng chiều cao ảnh từ 250px lên 270px */
+  object-fit: cover;
+}
+
+.item-3d .card-body {
+  padding: 1rem;
+  background-color: white;
+}
+
+.item-3d .card-title {
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.item-3d .badge {
+  font-size: 0.8rem;
+  margin-right: 0.25rem;
+  padding: 0.4em 0.6em;
+}
+
+.carousel-title {
+
+  margin-bottom: 30px; /* Tăng margin dưới */
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #6366f1, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  z-index: 10; /* Tăng z-index để đảm bảo hiển thị trên cùng */
+}
+
+.carousel-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -8px;
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(to right, #6366f1, #ec4899);
+  border-radius: 3px;
+}
+
+@media (max-width: 992px) {
+  .banner-3d {
+    height: 65vh !important; /* Giữ chiều cao không đổi */
+  }
+  
+  .banner-3d .slider-3d {
+    width: 220px; /* Tăng chiều rộng từ 200px lên 220px */
+    height: 350px; /* Tăng chiều cao từ 320px lên 350px */
+  }
+  
+  .banner-3d .slider-3d .item-3d {
+    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(450px);
+  }
+  
+  .overlay-title {
+    font-size: 1rem;
+  }
+  
+  .comic-title-top span {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-3d {
+    height: 65vh !important; /* Giữ chiều cao không đổi */
+  }
+  
+  .banner-3d .slider-3d {
+    width: 200px; /* Tăng chiều rộng từ 180px lên 200px */
+    height: 320px; /* Tăng chiều cao từ 300px lên 320px */
+  }
+  
+  .banner-3d .slider-3d .item-3d {
+    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(400px);
+  }
+  
+  .item-3d .card-img-top {
+    height: 240px; /* Tăng chiều cao ảnh từ 220px lên 240px */
+  }
+  
+  .overlay-title {
+    font-size: 0.95rem;
+  }
+  
+  .comic-title-top span {
+    font-size: 0.8rem;
+  }
+  
+  .book-icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .banner-3d {
+    height: 65vh !important; /* Giữ chiều cao không đổi */
+    min-height: 450px; /* Tăng chiều cao tối thiểu từ 400px lên 450px */
+  }
+  
+  .banner-3d .slider-3d {
+    width: 180px; /* Tăng chiều rộng từ 160px lên 180px */
+    height: 280px; /* Tăng chiều cao từ 260px lên 280px */
+  }
+  
+  .banner-3d .slider-3d .item-3d {
+    transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(350px);
+  }
+  
+  .item-3d .card-img-top {
+    height: 200px; /* Tăng chiều cao ảnh từ 180px lên 200px */
+  }
+  
+  .overlay-title {
+    font-size: 0.9rem;
+    padding: 6px 5px;
+  }
+  
+  .comic-title-overlay {
+    padding: 12px 5px 8px;
+  }
+  
+  .comic-title-top {
+    top: -25px;
+  }
+  
+  .comic-title-top span {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+  
+  .book-icon {
+    font-size: 0.9rem;
+    padding: 4px;
+    margin-bottom: 3px;
+  }
+}
+
+/* Thêm style để ngăn scroll */
+body.no-scroll {
+  overflow: hidden;
+} 
+
+.py-4.container-fluid {
+    margin-top: -50px;
+}
