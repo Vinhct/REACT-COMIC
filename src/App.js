@@ -16,7 +16,8 @@ import Search from './Components/Search';
 import SupabaseFavoritesPage from './Components/SupabaseFavoritesPage';
 import EmailValidationChecker from './Components/EmailValidationChecker';
 import { SupabaseAuthProvider } from './Components/Include/Authentication/SupabaseAuthContext';
-//import ChatbotProvider from './Components/chatbotProvider';
+// Import ChatbotProvider - sửa đường dẫn để import trực tiếp từ file
+import ChatbotProvider from './Components/Include/Chatbot/ChatbotProvider';
 import MobileGenreList from './Components/Mobile/MobileGenreList';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
@@ -89,7 +90,10 @@ function App() {
             } 
           />
         </Routes>
-        {/* <ChatbotProvider /> */}
+        {/* Thêm ChatbotProvider ở đây để hiển thị trên tất cả các trang */}
+        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999 }}>
+          <ChatbotProvider />
+        </div>
       </Router>
     </SupabaseAuthProvider>
   );

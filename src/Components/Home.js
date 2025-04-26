@@ -14,7 +14,7 @@ import UpcomingComics from "./Include/UpcomingComics";
 import Footer from "./Include/Dau-trang_Chan-trang/Footer";
 import Settings from "./Include/Settings";
 import WelcomeBanner from "./Include/3D-Effects/WelcomeBanner";
-import { ChatbotProvider } from "./Include/Chatbot";
+import ChatbotProvider from "./Include/Chatbot/ChatbotProvider";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -78,7 +78,7 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>{getdata.data?.seoOnPage?.titleHead}</title>
+        <title>{getdata.data?.seoOnPage?.titleHead || "O-Truyện - Đọc truyện tranh online"}</title>
       </Helmet>
       <Menu />
       <WelcomeBanner />
@@ -139,8 +139,10 @@ const Home = () => {
       {/* Nút Cài đặt */}
       <Settings />
       
-      {/* Chatbot AI */}
-      <ChatbotProvider />
+      {/* Chatbot AI - Thêm div bao bọc với z-index cao */}
+      <div style={{ position: 'relative', zIndex: 9999 }}>
+        <ChatbotProvider />
+      </div>
     </>
   );
 };
