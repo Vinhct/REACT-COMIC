@@ -107,7 +107,7 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
 
   // Lưu API key vào localStorage khi thay đổi
   useEffect(() => {
-    if (geminiApiKey && geminiApiKey !== "YOUR_GEMINI_API_KEY") {
+    if (geminiApiKey && geminiApiKey.trim() !== '') {
       localStorage.setItem('geminiApiKey', geminiApiKey);
     }
   }, [geminiApiKey]);
@@ -350,18 +350,7 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
         }
       }
       
-      // Kiểm tra xem có API key hợp lệ không
-      if (!geminiApiKey || geminiApiKey === "YOUR_GEMINI_API_KEY") {
-        setMessages(prev => [...prev, {
-          id: prev.length + 1,
-          text: "Bạn cần cài đặt API key cho Google Gemini trước khi sử dụng chatbot. Hãy gõ 'cài đặt API key' để thiết lập.",
-          sender: 'bot',
-          timestamp: new Date()
-        }]);
-        setIsTyping(false);
-        return;
-      }
-      
+      // Đã bỏ kiểm tra API key, sử dụng API key mặc định nếu người dùng chưa cài đặt
       // Sử dụng API key từ state để gọi Gemini API
       const aiResponse = await callGeminiAPI(userMessage, genreList, geminiApiKey);
       
