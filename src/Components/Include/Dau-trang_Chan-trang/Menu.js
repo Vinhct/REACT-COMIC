@@ -12,8 +12,7 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { BsSearch, BsPersonCircle } from "react-icons/bs"; // Thêm biểu tượng người dùng
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../Authentication/Firebase";
+import { useSupabaseAuth } from "../Authentication/SupabaseAuthContext";
 import logo from "../Logo/logo3.jpg";
 import "./Menu.css";
 
@@ -25,6 +24,9 @@ export const Menu = () => {
   const items = getdata?.data?.items;
   const defaultAvatar =
     "https://via.placeholder.com/30/cccccc/ffffff?text=User"; // Thay đổi ảnh mặc định để kiểm tra
+
+  // Lấy thông tin người dùng từ Supabase context
+  const { user: supabaseUser, loading: authLoading, signOut } = useSupabaseAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,21 +47,21 @@ export const Menu = () => {
     });
   }, []);
 
+  // Cập nhật user state khi supabaseUser thay đổi
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        console.log("User logged in:", {
-          displayName: currentUser.displayName,
-          email: currentUser.email,
-          photoURL: currentUser.photoURL,
+    if (!authLoading) {
+      setUser(supabaseUser);
+      if (supabaseUser) {
+        console.log("Supabase user logged in:", {
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          user_metadata: supabaseUser.user_metadata
         });
       } else {
-        console.log("No user logged in");
+        console.log("No Supabase user logged in");
       }
-    });
-    return () => unsubscribe();
-  }, []);
+    }
+  }, [supabaseUser, authLoading]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -68,7 +70,7 @@ export const Menu = () => {
       console.log("Empty query, no navigation");
       return;
     }
-    const searchUrl = `/search?query=${encodeURIComponent(searchQuery)}`;
+    const searchUrl = `/tim-kiem?query=${encodeURIComponent(searchQuery)}`;
     console.log("Attempting to navigate to:", searchUrl);
     try {
       navigate(searchUrl);
@@ -81,8 +83,12 @@ export const Menu = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      setUser(null);
+      const { success, error } = await signOut();
+      if (success) {
+        console.log("Đăng xuất thành công");
+      } else {
+        console.error("Đăng xuất thất bại:", error);
+      }
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -223,9 +229,9 @@ export const Menu = () => {
                     className="d-flex align-items-center"
                     style={{ cursor: "pointer" }}
                   >
-                    {user.photoURL ? (
+                    {user.user_metadata?.avatar_url ? (
                       <Image
-                        src={user.photoURL || defaultAvatar}
+                        src={user.user_metadata.avatar_url || defaultAvatar}
                         roundedCircle
                         width="30"
                         height="30"
@@ -246,7 +252,7 @@ export const Menu = () => {
                       />
                     )}
                     <span className="gradient-text">
-                      {user.displayName || user.email || "Người dùng"}
+                      {user.user_metadata?.display_name || user.email || "Người dùng"}
                     </span>
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="dropdown-menu">

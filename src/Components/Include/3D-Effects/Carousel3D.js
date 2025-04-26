@@ -48,7 +48,7 @@ const Carousel3D = ({ comics }) => {
     <Container fluid className="px-0">
       {/* Tiêu đề nằm ngoài banner-3d */}
       <h2 className="carousel-title">
-        <FaFire className="me-2" style={{ color: "#ec4899" }} /> Truyện Đề Cử
+        <FaFire className="me-2" style={{ color: "#ec4899" }} /> TRUYỆN HOT
       </h2>
       
       <div className="banner-3d">
@@ -136,4 +136,4 @@ const Carousel3D = ({ comics }) => {
   );
 };
 
-export default Carousel3D;
+export default Carousel3D; 

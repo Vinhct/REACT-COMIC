@@ -171,7 +171,6 @@
 }
 
 .carousel-title {
-
   margin-bottom: 30px; /* Tăng margin dưới */
   font-size: 2rem;
   font-weight: 700;
@@ -301,7 +300,3 @@
 body.no-scroll {
   overflow: hidden;
 } 
-
-.py-4.container-fluid {
-    margin-top: -50px;
-}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Badge, Button } from 'react-bootstrap';
+import { Card, Badge, Button, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
 import { BsClipboard } from "react-icons/bs";
@@ -22,7 +22,8 @@ const ComicInfo = ({
   shareUrl,
   shareTitle,
   shareDescription,
-  handleShareMessenger
+  handleShareMessenger,
+  loading
 }) => {
   // Kiểm tra item tồn tại
   if (!item) {
@@ -36,10 +37,7 @@ const ComicInfo = ({
   }
 
   return (
-    <Card
-      className="shadow-lg border-0"
-      style={{ backgroundColor: "#fdfdfd" }}
-    >
+    <Card className="shadow-lg border-0">
       <Card.Img
         variant="top"
         src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
@@ -47,7 +45,7 @@ const ComicInfo = ({
         className="rounded"
       />
       <Card.Body>
-        <Card.Title className="text-dark fw-bold text-center">
+        <Card.Title className="text-center">
           {item.name || "No name"}
         </Card.Title>
         <Card.Subtitle className="mb-2 text-muted text-center">
@@ -58,7 +56,7 @@ const ComicInfo = ({
         </Card.Subtitle>
 
         <Card.Text
-          className="mt-3 text-dark"
+          className="mt-3"
           dangerouslySetInnerHTML={{ __html: item.content }}
         ></Card.Text>
 
@@ -73,7 +71,6 @@ const ComicInfo = ({
                 <Badge
                   bg="info"
                   className="me-2 mb-1"
-                  style={{ cursor: "pointer" }}
                 >
                   {category.name}
                 </Badge>
@@ -94,16 +91,22 @@ const ComicInfo = ({
           {"Cập nhật: " + (item.updatedAt || "Không có")}
         </Card.Text>
 
-        <div
-          style={{ display: "flex", gap: "10px", marginTop: "10px" }}
-          className="action-buttons"
-        >
+        <div className="action-buttons">
           <Button
             variant={isFavorite ? "danger" : "outline-danger"}
             onClick={handleToggleFavorite}
             className="action-button"
+            disabled={loading}
           >
-            {isFavorite ? (
+            {loading ? (
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+            ) : isFavorite ? (
               <FaHeart size={20} />
             ) : (
               <FaRegHeart size={20} />
@@ -125,36 +128,42 @@ const ComicInfo = ({
                   left: 0,
                   background: "#fff",
                   border: "1px solid #ccc",
-                  padding: "10px",
+                  borderRadius: "10px",
+                  padding: "15px",
                   zIndex: 1000,
                   display: "flex",
-                  flexDirection: "row",
-                  gap: "5px",
+                  flexDirection: "column",
+                  gap: "10px",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <FacebookShareButton
                   url={shareUrl}
                   quote={shareDescription}
                   hashtag="#TruyenHay"
+                  className="w-100 d-flex align-items-center gap-2 p-2"
+                  style={{ borderRadius: "8px" }}
                 >
-                  <FacebookIcon size={24} round /> Facebook
+                  <FacebookIcon size={30} round /> 
+                  <span>Facebook</span>
                 </FacebookShareButton>
                 <TwitterShareButton
                   url={shareUrl}
                   title={shareTitle}
                   hashtags={["TruyenHay"]}
+                  className="w-100 d-flex align-items-center gap-2 p-2"
+                  style={{ borderRadius: "8px" }}
                 >
-                  <TwitterIcon size={24} round /> Twitter
+                  <TwitterIcon size={30} round /> 
+                  <span>Twitter</span>
                 </TwitterShareButton>
-                <FacebookMessengerShareButton>
-                  <FacebookMessengerIcon
-                    size={24}
-                    variant="outline-success"
-                    onClick={handleShareMessenger}
-                    style={{ width: "100%" }}
-                    round
-                  />
-                  Messenger
+                <FacebookMessengerShareButton
+                  className="w-100 d-flex align-items-center gap-2 p-2"
+                  style={{ borderRadius: "8px" }}
+                  onClick={handleShareMessenger}
+                >
+                  <FacebookMessengerIcon size={30} round />
+                  <span>Messenger</span>
                 </FacebookMessengerShareButton>
                 <Button
                   variant="outline-secondary"
@@ -171,33 +180,11 @@ const ComicInfo = ({
                         toast.error("Thử lại không thành công");
                       });
                   }}
-                  style={{
-                    width: "100%",
-                    padding: "1rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  aria-label="Sao chép liên kết"
+                  className="w-100 d-flex align-items-center gap-2 p-2"
+                  style={{ borderRadius: "8px" }}
                 >
-                  <BsClipboard
-                    size={24}
-                    style={{ marginBottom: "4px" }}
-                    title="Sao chép liên kết"
-                  />
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      color: "#2c3e50",
-                      userSelect: "none",
-                      fontWeight: 500,
-                    }}
-                  >
-                    Copy
-                  </span>
+                  <BsClipboard size={30} />
+                  <span>Sao chép liên kết</span>
                 </Button>
               </div>
             )}

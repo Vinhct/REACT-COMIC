@@ -5,7 +5,9 @@ import './WelcomeBanner.css';
 const WelcomeBanner = () => {
   const [isPaused, setIsPaused] = useState(false);
   
-
+  const togglePause = () => {
+    setIsPaused(!isPaused);
+  };
 
   return (
     <div className={`welcome-banner ${isPaused ? 'paused' : ''}`}>

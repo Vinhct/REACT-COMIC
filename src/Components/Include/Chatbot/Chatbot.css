@@ -1,0 +1,441 @@
+/* Chatbot Container */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+/* Chatbot Button */
+.chatbot-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.chatbot-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Chatbot Window */
+.chatbot-window {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  background-color: #2e1065;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1051;
+}
+
+.chatbot-window.minimized {
+  height: 60px;
+}
+
+/* Chatbot Header */
+.chatbot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+  cursor: pointer;
+}
+
+.chatbot-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.chatbot-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.minimize-button, .close-button {
+  padding: 0;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.minimize-button:hover, .close-button:hover {
+  transform: scale(1.2);
+  color: white;
+}
+
+/* Chatbot Messages */
+.chatbot-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  max-height: 300px;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.bot-message {
+  justify-content: flex-start;
+}
+
+.message-content {
+  padding: 10px 15px;
+  max-width: 80%;
+  border-radius: 10px;
+  word-break: break-word;
+}
+
+.bot-message .message-content {
+  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  color: white;
+  border-radius: 18px 18px 18px 0;
+}
+
+.user-message .message-content {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 18px 18px 0 18px;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+  display: block;
+  text-align: right;
+}
+
+/* Typing Indicator */
+.typing {
+  padding: 6px 15px;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.typing .spinner-grow {
+  width: 8px;
+  height: 8px;
+  margin: 0 2px;
+  background-color: white;
+  animation-delay: calc(var(--bs-spinner-animation-speed) * 0.15 * var(--i));
+}
+
+.typing .spinner-grow:nth-child(2) {
+  --i: 2;
+}
+
+.typing .spinner-grow:nth-child(3) {
+  --i: 3;
+}
+
+/* Chatbot Input */
+.chatbot-input {
+  display: flex;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-input .form-control {
+  border: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white !important;
+  border-radius: 20px;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+}
+
+.chatbot-input .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.chatbot-input .form-control:focus {
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white !important;
+}
+
+/* Đảm bảo text input luôn có màu trắng */
+.chatbot-input input,
+.chatbot-input input:focus,
+.chatbot-input input:active {
+  color: white !important;
+  caret-color: white;
+}
+
+/* Đảm bảo text trong chatbot luôn có màu phù hợp */
+.bot-message p, 
+.user-message p {
+  margin-bottom: 5px;
+}
+
+.send-button {
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.send-button:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Quick Suggestions */
+.quick-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-suggestions .btn {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid rgba(99, 102, 241, 0.5);
+  color: #6366f1;
+  transition: all 0.3s ease;
+}
+
+.quick-suggestions .btn:hover {
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+  border-color: #6366f1;
+  transform: translateY(-2px);
+}
+
+/* Thêm styles cho danh sách thể loại */
+.genre-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.genre-badge {
+  background: linear-gradient(to right, #6366f1, #ec4899) !important;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.genre-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Styles cho badges cảm xúc */
+.emotion-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.emotion-badge {
+  background: linear-gradient(to right, #ec4899, #f59e0b) !important;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.emotion-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(236, 72, 153, 0.3);
+}
+
+/* Mỗi cảm xúc có một màu gradient khác nhau */
+.emotion-badge[data-emotion="vui"] {
+  background: linear-gradient(to right, #f59e0b, #fbbf24) !important;
+}
+
+.emotion-badge[data-emotion="buồn"] {
+  background: linear-gradient(to right, #3b82f6, #93c5fd) !important;
+}
+
+.emotion-badge[data-emotion="thất tình"] {
+  background: linear-gradient(to right, #ec4899, #f472b6) !important;
+}
+
+.emotion-badge[data-emotion="chán"] {
+  background: linear-gradient(to right, #6b7280, #9ca3af) !important;
+}
+
+.emotion-badge[data-emotion="cô đơn"] {
+  background: linear-gradient(to right, #6366f1, #a5b4fc) !important;
+}
+
+.emotion-badge[data-emotion="căng thẳng"] {
+  background: linear-gradient(to right, #ef4444, #f87171) !important;
+}
+
+.emotion-badge[data-emotion="tức giận"] {
+  background: linear-gradient(to right, #b91c1c, #ef4444) !important;
+}
+
+.emotion-badge[data-emotion="hạnh phúc"] {
+  background: linear-gradient(to right, #fbbf24, #fcd34d) !important;
+}
+
+.emotion-badge[data-emotion="tò mò"] {
+  background: linear-gradient(to right, #10b981, #34d399) !important;
+}
+
+.emotion-badge[data-emotion="sợ hãi"] {
+  background: linear-gradient(to right, #7c3aed, #a78bfa) !important;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .chatbot-button {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .chatbot-window {
+    width: 300px;
+    right: 10px;
+    bottom: 10px;
+  }
+  
+  .chatbot-messages {
+    max-height: 300px;
+  }
+  
+  .genre-badges-container,
+  .emotion-badges-container {
+    gap: 6px;
+  }
+  
+  .genre-badge,
+  .emotion-badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+} 
+
+input.form-control {
+  color: white;
+}
+
+/* API Key Configuration */
+.api-key-input-container {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.api-key-label {
+  color: white;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.api-key-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.api-key-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 5px;
+}
+
+.api-key-input:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: none !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.api-key-save-btn {
+  background: linear-gradient(135deg, #6366f1, #ec4899) !important;
+  border: none !important;
+}
+
+.api-key-cancel-btn {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+}
+
+@media (min-width: 576px) {
+  .api-key-input-wrapper {
+    flex-direction: row;
+  }
+  
+  .api-key-input {
+    flex: 1;
+  }
+}

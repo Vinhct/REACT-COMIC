@@ -1,0 +1,101 @@
+/* Comic card styles */
+.mobile-comic-card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  transition: transform 0.2s ease;
+}
+
+.mobile-comic-card:active {
+  transform: scale(0.98);
+}
+
+.comic-card-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 180px;
+}
+
+.comic-card-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Bookmark icon */
+.bookmark-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+
+.bookmark-icon:active {
+  transform: scale(0.95);
+}
+
+.comic-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comic-card-genres {
+  min-height: 24px;
+  margin-bottom: 5px;
+}
+
+.comic-card-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+}
+
+.comic-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+}
+
+.status-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-badge.ongoing {
+  background-color: #10b981;
+  color: white;
+}
+
+.status-badge.completed {
+  background-color: #6366f1;
+  color: white;
+}
+
+/* Comic grid */
+.comic-grid {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.comic-grid > [class*="col-"] {
+  padding-left: 5px;
+  padding-right: 5px;
+} 

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import { Button, Col, Container, Row, Card, Alert } from "react-bootstrap";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../Include/Authentication/Firebase";
+import { db } from "../Include/Authentication/Firebase";
 import { Menu } from "../Include/Dau-trang_Chan-trang/Menu";
 import RelatedComics from "../Include/RelatedComics";
 import "./detailPage.css";
+import { useSupabaseAuth } from "../Include/Authentication/SupabaseAuthContext";
 
 // Import các component con
 import ComicInfo from "./components/ComicInfo";
@@ -18,18 +18,18 @@ import ChapterViewer from "./components/ChapterViewer";
 import {
   useComicData,
   useChapterViewer,
-  useComments,
-  useFavorites,
-  useHistory
+  useSupabaseComments,
+  useSupabaseFavorites,
+  useSupabaseHistory
 } from "./hooks";
 
 const DetailPageContainer = () => {
   const { slug } = useParams();
-  const [user, setUser] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
+  const { user } = useSupabaseAuth();
   
   // Sử dụng các custom hooks
-  const saveHistory = useHistory(db, user);
+  const { saveHistory, loading: historyLoading } = useSupabaseHistory(user);
   const { 
     comicData, 
     relatedComics, 
@@ -57,22 +57,16 @@ const DetailPageContainer = () => {
     commentError,
     commentSuccess,
     handleSubmitComment,
-    calculateAverageRating
-  } = useComments(db, slug, user);
+    calculateAverageRating,
+    loading: commentLoading
+  } = useSupabaseComments(slug, user);
   
   const {
+    favorites,
     isFavorite,
+    loading: favoriteLoading,
     handleToggleFavorite
-  } = useFavorites(db, slug, user, item?.name);
-  
-  // Theo dõi trạng thái đăng nhập
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    
-    return () => unsubscribeAuth();
-  }, []);
+  } = useSupabaseFavorites(slug, user, item?.name, item?.thumb_url);
   
   // Chuẩn bị dữ liệu chia sẻ
   const shareUrl = `${window.location.origin}/truyen/${slug}`;
@@ -206,6 +200,7 @@ const DetailPageContainer = () => {
               shareTitle={shareTitle}
               shareDescription={shareDescription}
               handleShareMessenger={handleShareMessenger}
+              loading={favoriteLoading}
             />
           </Col>
 

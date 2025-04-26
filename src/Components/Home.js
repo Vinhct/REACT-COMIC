@@ -13,7 +13,8 @@ import CompletedComics from "./Include/CompletedComics";
 import UpcomingComics from "./Include/UpcomingComics";
 import Footer from "./Include/Dau-trang_Chan-trang/Footer";
 import Settings from "./Include/Settings";
-import WelcomeBanner from "./Include/WelcomeBanner";
+import WelcomeBanner from "./Include/3D-Effects/WelcomeBanner";
+import { ChatbotProvider } from "./Include/Chatbot";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -137,6 +138,9 @@ const Home = () => {
 
       {/* Nút Cài đặt */}
       <Settings />
+      
+      {/* Chatbot AI */}
+      <ChatbotProvider />
     </>
   );
 };

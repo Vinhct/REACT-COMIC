@@ -24,17 +24,36 @@ const useChapterViewer = (saveHistory, comicName, comicSlug) => {
       setChapterData(response.data);
       
       if (saveHistory) {
+        // Xác định chapterName dựa trên định dạng dữ liệu trả về
+        let chapterName = "Unknown";
+        
+        // Kiểm tra định dạng dữ liệu trả về
+        if (response.data?.data?.item?.chapter_name) {
+          // Định dạng desktop
+          chapterName = response.data.data.item.chapter_name;
+        } else if (response.data?.chapter_name) {
+          // Định dạng mobile
+          chapterName = response.data.chapter_name;
+        }
+        
         saveHistory({
           slug: comicSlug,
           name: comicName || "Unknown",
-          chapter: response.data.data.item.chapter_name || "Unknown",
+          chapter: chapterName,
           timestamp: serverTimestamp(),
+          chapter_api: chapter_api
         });
       }
       
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error loading chapter:", error);
+      // Hiển thị thông báo lỗi hoặc dữ liệu mẫu
+      setChapterData({
+        error: true,
+        message: "Không thể tải dữ liệu chương"
+      });
+      setIsModalOpen(true);
     } finally {
       setLoading(false);
     }

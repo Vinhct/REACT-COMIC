@@ -5,7 +5,7 @@ const ChapterList = ({ item, handleReachChapter }) => {
   // Kiểm tra item tồn tại
   if (!item) {
     return (
-      <Card className="shadow-sm border-0" style={{ backgroundColor: "#ffffff" }}>
+      <Card className="chapter-list mb-4">
         <Card.Body>
           <Card.Title className="text-center text-primary fw-bold">
             Danh Sách Chương
@@ -19,10 +19,7 @@ const ChapterList = ({ item, handleReachChapter }) => {
   }
 
   return (
-    <Card
-      className="shadow-sm border-0"
-      style={{ backgroundColor: "#ffffff" }}
-    >
+    <Card className="chapter-list mb-4">
       <Card.Body>
         <Card.Title className="text-center text-primary fw-bold">
           Danh Sách Chương

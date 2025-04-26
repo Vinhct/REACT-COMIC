@@ -1,0 +1,112 @@
+.search-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.search-header .section-title {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: #333;
+}
+
+.search-header .section-title .me-2 {
+  color: #ec4899;
+}
+
+.search-results {
+  margin-top: 2rem;
+}
+
+.search-filters {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.search-filters .form-label {
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.search-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.search-empty-state .icon {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.search-empty-state h3 {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.search-empty-state p {
+  color: #adb5bd;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Match the card styling from Home.css */
+.comic-card .badge {
+  background: linear-gradient(to right, #6366f1, #ec4899) !important;
+  border: none !important;
+}
+
+.comic-card .card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Loading Animation */
+.search-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.search-loading .spinner-border {
+  color: #6366f1;
+  margin-bottom: 1rem;
+}
+
+/* Pagination styles */
+.search-pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.page-item.active .page-link {
+  background: linear-gradient(to right, #6366f1, #ec4899) !important;
+  border-color: #6366f1 !important;
+}
+
+.page-link {
+  color: #6366f1;
+}
+
+.page-link:hover {
+  color: #ec4899;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .search-header .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .comic-card .card-img-top {
+    height: 180px;
+  }
+} 

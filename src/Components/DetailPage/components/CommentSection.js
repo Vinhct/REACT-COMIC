@@ -45,7 +45,7 @@ const CommentSection = ({
           <p style={{ color: "red" }}>{commentError}</p>
         )}
         {commentSuccess && (
-          <p style={{ color: "green" }}>{commentSuccess}</p>
+          <p style={{ color: "green" }}>Bình luận đã được gửi thành công!</p>
         )}
         <Button variant="primary" type="submit">
           Gửi
@@ -58,13 +58,11 @@ const CommentSection = ({
           <ListGroup>
             {comments.map((comment) => (
               <ListGroup.Item key={comment.id}>
-                <strong>{comment.userName}</strong> - {comment.rating}{" "}
+                <strong>{comment.user?.displayName || comment.user?.email || "Ẩn danh"}</strong> - {comment.rating}{" "}
                 sao
-                <p>{comment.comment}</p>
+                <p>{comment.text}</p>
                 <small>
-                  {comment.timestamp?.toDate
-                    ? comment.timestamp.toDate().toLocaleString()
-                    : new Date(comment.timestamp).toLocaleString()}
+                  {comment.timestamp ? new Date(comment.timestamp).toLocaleString() : ""}
                 </small>
               </ListGroup.Item>
             ))}

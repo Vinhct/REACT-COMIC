@@ -1,0 +1,127 @@
+/* MobileGenreList.css */
+
+.mobile-genre-list {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding-bottom: 60px; /* Để tránh menu dưới che mất nội dung */
+}
+
+.mobile-container {
+  padding: 15px 10px;
+  max-width: 100%;
+}
+
+/* Header */
+.genre-list-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: #333;
+  margin-right: 15px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover, 
+.back-button:active {
+  background-color: #e0e0e0;
+  transform: scale(0.95);
+}
+
+.genre-list-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #333;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Thể loại card */
+.genre-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 80px;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+}
+
+.genre-card .card-body {
+  padding: 15px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  height: 100%;
+}
+
+.genre-card:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Thể loại phổ biến */
+.popular-genres-container {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.popular-genres-container h4 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* API Error Message styles */
+.api-error-container {
+  background-color: #fff0f0;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.api-error-message {
+  text-align: center;
+}
+
+.api-error-message p {
+  color: #e53e3e;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.retry-button {
+  background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.retry-button:hover, 
+.retry-button:active {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+} 

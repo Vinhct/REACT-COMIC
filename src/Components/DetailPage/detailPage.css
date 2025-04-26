@@ -1,12 +1,183 @@
 /* DetailPage CSS */
 /* Removing incorrect import */
 
-.detail-container {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-} 
+:root {
+  --gradient-primary: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  --gradient-secondary: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+  --gradient-accent: linear-gradient(135deg, #f83600 0%, #f9d423 100%);
+  --gradient-dark: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 15px 35px rgba(0, 0, 0, 0.2);
+  --shadow-hard: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
 
-/* Styles for Chapter Modal */
+/* Container styling */
+.detail-container {
+  max-width: 1400px !important;
+  width: 95%;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+/* Header card styling */
+.shadow-sm.border-0 {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-soft) !important;
+  background: var(--gradient-primary) !important;
+  color: white;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.shadow-sm.border-0:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.shadow-sm.border-0 .card-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white !important;
+}
+
+.shadow-sm.border-0 .card-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Comic info card styling */
+.shadow-lg.border-0 {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  box-shadow: var(--shadow-soft) !important;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  margin-bottom: 2rem;
+}
+
+.shadow-lg.border-0:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.shadow-lg.border-0 .card-img-top {
+  transition: transform 0.5s ease;
+  object-fit: cover;
+  height: 400px;
+}
+
+.shadow-lg.border-0:hover .card-img-top {
+  transform: scale(1.03);
+}
+
+.shadow-lg.border-0 .card-body {
+  padding: 1.5rem;
+}
+
+.shadow-lg.border-0 .card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.shadow-lg.border-0 .card-subtitle {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Badge and Button styling */
+.badge {
+  background: var(--gradient-secondary);
+  border: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge:hover {
+  background: var(--gradient-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.action-button {
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.action-button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Chapter list styling */
+.chapter-list {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.chapter-list:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+.chapter-list .list-group-item {
+  transition: all 0.2s ease;
+  border-left: none;
+  border-right: none;
+  padding: 0.8rem 1.25rem;
+}
+
+.chapter-list .list-group-item:hover {
+  background-color: rgba(106, 17, 203, 0.05);
+  transform: translateX(5px);
+}
+
+.chapter-list .list-group-item a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.chapter-list .list-group-item a:hover {
+  color: #6a11cb;
+}
+
+/* Comment section styling */
+.comment-section {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Chapter modal styling */
 .chapter-modal .modal-dialog {
   max-width: 90%;
   margin: 1rem auto;
@@ -14,24 +185,24 @@
 }
 
 .chapter-modal-content {
-  background-color: rgba(18, 18, 18, 0.85);
+  background-color: rgba(18, 18, 18, 0.95);
   color: #fff;
-  border-radius: 8px;
+  border-radius: 15px;
   border: 1px solid rgba(51, 51, 51, 0.7);
   min-height: 90vh;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-hard);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
 .chapter-modal .modal-header {
-  background-color: rgba(30, 30, 30, 0.8);
+  background-color: rgba(30, 30, 30, 0.9);
   border-bottom: 1px solid rgba(51, 51, 51, 0.7);
-  padding: 10px 15px;
+  padding: 15px 20px;
 }
 
 .chapter-modal .modal-footer {
-  background-color: rgba(30, 30, 30, 0.8);
+  background-color: rgba(30, 30, 30, 0.9);
   border-top: 1px solid rgba(51, 51, 51, 0.7);
   position: fixed;
   bottom: 0;
@@ -41,9 +212,9 @@
   margin: 0 auto;
   left: 0;
   right: 0;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 8px 15px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 12px 20px;
   min-height: auto;
 }
 
@@ -59,7 +230,7 @@
   padding: 0;
   overflow-y: auto;
   height: calc(90vh - 110px);
-  padding-bottom: 50px;
+  padding-bottom: 70px;
 }
 
 .chapter-modal-title {
@@ -70,7 +241,7 @@
 
 .comic-name {
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #ffffff;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
   margin-bottom: 5px;
@@ -78,7 +249,7 @@
 }
 
 .chapter-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #e0e0e0;
   font-weight: 500;
   opacity: 1;
@@ -91,14 +262,16 @@
   align-items: center;
   position: relative;
   min-height: 100%;
-  padding: 10px;
-  padding-bottom: 60px;
+  padding: 15px;
+  padding-bottom: 70px;
 }
 
 .chapter-image {
   max-width: 100%;
   height: auto;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .chapter-navigation {
@@ -109,43 +282,62 @@
 }
 
 .chapter-navigation .btn {
-  padding: 4px 12px;
-  font-size: 0.875rem;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 50px;
+  background: var(--gradient-primary);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.chapter-navigation .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .floating-buttons {
   position: fixed;
-  right: 20px;
-  bottom: 60px;
+  right: 25px;
+  bottom: 80px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   z-index: 1040;
 }
 
 .floating-buttons button {
-  background-color: rgba(0, 0, 0, 0.6);
+  background: var(--gradient-primary);
   color: white;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .floating-buttons button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .loading-spinner {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 70vh;
+  gap: 1rem;
+}
+
+.loading-spinner .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #6a11cb;
 }
 
 .no-content {
@@ -155,4 +347,5 @@
   height: 70vh;
   color: #ccc;
   font-size: 1.2rem;
+  text-align: center;
 } 

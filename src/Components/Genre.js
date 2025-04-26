@@ -22,6 +22,7 @@ import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Components/Include/Authentication/Firebase";
 import "./Include/responsive.css";
+import "./Include/Genre.css"; // Import the new Genre CSS file
 import { BsArrowUp } from "react-icons/bs"; // Icon cho nút Back to Top
 
 export const Genre = () => {
@@ -85,7 +86,12 @@ export const Genre = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <div className="genre-loading">
+      <Spinner animation="border" variant="primary" />
+      <p>Đang tải dữ liệu...</p>
+    </div>
+  );
   if (error) return <p>Error : {error}</p>;
 
   //tinh toan trang
@@ -105,23 +111,16 @@ export const Genre = () => {
 
       <Menu />
 
-      <Container className="py-4">
+      <Container className="genre-container py-4">
         {/* Tiêu đề và mô tả */}
         <Row className="mb-5">
           <Col>
-            <Card
-              className="shadow border-0"
-              style={{
-                background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-                borderBottom: "3px solid #007bff",
-                marginTop: "15px",
-              }}
-            >
+            <Card className="genre-header-card shadow border-0">
               <CardBody>
-                <Card.Title className="text-primary fw-bold display-5">
+                <Card.Title>
                   {getdata.data?.seoOnPage?.titleHead}
                 </Card.Title>
-                <Card.Text className="text-muted lead">
+                <Card.Text>
                   {getdata.data?.seoOnPage?.descriptionHead}
                 </Card.Text>
               </CardBody>
@@ -131,9 +130,9 @@ export const Genre = () => {
 
         {/* Danh sách truyện */}
         {loading ? (
-          <div className="text-center my-5">
+          <div className="genre-loading">
             <Spinner animation="border" variant="primary" />
-            <p className="mt-2">Đang tải dữ liệu...</p>
+            <p>Đang tải dữ liệu...</p>
           </div>
         ) : (
           <>
@@ -141,42 +140,36 @@ export const Genre = () => {
               {items && items.length > 0 ? (
                 items.map((item, index) => (
                   <Col lg={3} md={4} sm={6} xs={12} key={index}>
-                    <Card
-                      className="shadow-sm border-0 h-100 card-hover"
-                      style={{ transition: "all 0.3s ease" }}
-                    >
+                    <Card className="genre-comic-card shadow-sm border-0 h-100">
                       <Card.Img
                         variant="top"
+                        className="card-img-top"
                         src={`https://img.otruyenapi.com/uploads/comics/${item.thumb_url}`}
                         alt={item.name}
-                        className="rounded-top"
-                        style={{ height: "200px", objectFit: "cover" }}
-                        loading="lazy" // Thêm lazy loading cho hình ảnh
+                        loading="lazy"
                       />
                       <Card.Body className="d-flex flex-column">
                         <Card.Title
-                          className="text-dark fw-bold text-truncate"
                           as={Link}
                           to={`/comics/${item.slug}`}
                           style={{ textDecoration: "none" }}
                         >
                           {item.name || "No name"}
                         </Card.Title>
-                        <Card.Text className="text-muted small">
+                        <Card.Text className="card-text small">
                           {item.updatedAt || "Không có"}
                         </Card.Text>
                         <Card.Text>
                           {item.category && item.category.length > 0 ? (
-                            item.category.map((category, index) => (
+                            item.category.slice(0, 2).map((category, index) => (
                               <Link
                                 to={`/genre/${category.slug}`}
                                 key={index}
                                 style={{ textDecoration: "none" }}
                               >
                                 <Badge
-                                  bg="primary" // Thay bg="info" thành bg="primary" để đồng bộ màu
-                                  className="me-2 mb-1"
-                                  style={{ cursor: "pointer" }}
+                                  bg="primary"
+                                  className="badge me-2 mb-1"
                                 >
                                   {category.name}
                                 </Badge>
@@ -190,7 +183,7 @@ export const Genre = () => {
                           <Button
                             variant="primary"
                             size="sm"
-                            className="w-100"
+                            className="btn-primary w-100"
                             as={Link}
                             to={`/comics/${item.slug}`}
                           >
@@ -203,17 +196,17 @@ export const Genre = () => {
                 ))
               ) : (
                 <Col>
-                  <CardBody className="text-center text-muted">
-                    Không có truyện nào để hiển thị.
-                  </CardBody>
+                  <div className="genre-empty-state">
+                    <p>Không có truyện nào để hiển thị.</p>
+                  </div>
                 </Col>
               )}
             </Row>
 
             {/* Phân trang */}
             {totalPages > 1 && (
-              <div className="pagination-wrapper mt-5">
-                <Pagination className="justify-content-center">
+              <div className="genre-pagination mt-5">
+                <Pagination>
                   <Pagination.First
                     onClick={() => paginate(1)}
                     disabled={currentPage === 1}
@@ -250,7 +243,7 @@ export const Genre = () => {
                     disabled={currentPage === totalPages}
                   />
                 </Pagination>
-                <div className="text-center mt-2 text-muted">
+                <div className="page-info">
                   Trang {currentPage} / {totalPages}
                 </div>
               </div>
@@ -262,20 +255,8 @@ export const Genre = () => {
         {showBackToTop && (
           <Button
             variant="primary"
-            className="back-to-top"
+            className="genre-back-to-top"
             onClick={scrollToTop}
-            style={{
-              position: "fixed",
-              bottom: "20px",
-              right: "20px",
-              borderRadius: "50%",
-              width: "50px",
-              height: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1000,
-            }}
           >
             <BsArrowUp size={24} />
           </Button>

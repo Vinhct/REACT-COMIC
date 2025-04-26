@@ -1,6 +1,6 @@
 // src/Components/Include/RecommendedComics.js
 import React from "react";
-import Carousel3D from "./Carousel3D";
+import Carousel3D from "./3D-Effects/Carousel3D";
 import { Container } from "react-bootstrap";
 
 const RecommendedComics = ({ comics }) => {
