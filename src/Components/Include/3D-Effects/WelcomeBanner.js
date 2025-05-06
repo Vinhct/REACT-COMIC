@@ -19,7 +19,19 @@ const WelcomeBanner = () => {
           </span>
           <span className="welcome-divider">★</span>
           <span className="welcome-section">
-            <FaHeart className="welcome-icon" /> Khám phá kho truyện đa dạng và phong phú
+            <FaHeart className="welcome-icon" /> <p className="mb-0" style={{ fontSize: "0.9rem", opacity: "0.8" }}>
+              © {new Date().getFullYear()} OTruyen. Mọi bản quyền truyện và API đều thuộc về {" "}
+              <a 
+                href="https://otruyen.cc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="footer-link"
+                style={{ textDecoration: "none", fontWeight: "500" }}
+              >
+                OTruyen.CC
+              </a>
+              .
+            </p>
           </span>
           <span className="welcome-divider">★</span>
           <span className="welcome-section">

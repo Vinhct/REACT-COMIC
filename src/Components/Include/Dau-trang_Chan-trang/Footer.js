@@ -40,8 +40,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li className="mb-2">
-                <Link to="/about" className="footer-link">
-                  Về chúng tôi
+                <Link to="https://docs.otruyenapi.com/" className="footer-link">
+                  API truyện 
                 </Link>
               </li>
             </ul>
@@ -89,6 +89,25 @@ const Footer = () => {
                 </div>
               </li>
             </ul>
+          </Col>
+        </Row>
+
+        {/* Phần bản quyền */}
+        <Row className="mt-4 pt-4 border-top">
+          <Col className="text-center">
+            <p className="mb-0" style={{ fontSize: "0.9rem", opacity: "0.8" }}>
+              © {new Date().getFullYear()} OTruyen. Mọi bản quyền truyện và API đều thuộc về {" "}
+              <a 
+                href="https://otruyen.cc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="footer-link"
+                style={{ textDecoration: "none", fontWeight: "500" }}
+              >
+                OTruyen.CC
+              </a>
+              .
+            </p>
           </Col>
         </Row>
       </Container>
