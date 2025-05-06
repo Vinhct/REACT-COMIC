@@ -41,7 +41,7 @@ const MobileChapterList = ({ item, handleReachChapter }) => {
     
     return allChapters;
   };
-  
+
   const allChapters = getAllChapters();
   
   // Lọc chapter theo từ khóa tìm kiếm

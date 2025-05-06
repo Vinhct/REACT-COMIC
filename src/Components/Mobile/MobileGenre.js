@@ -28,74 +28,88 @@ const MobileGenre = () => {
       setLoading(true);
       setError(null);
       
+      console.log("Fetching comics for genre:", slug, "page:", page);
+      
       // Lấy đúng API endpoint giống giao diện máy tính
       const apiUrl = `https://otruyenapi.com/v1/api/the-loai/${slug}?page=${page}`;
       
-      try {
-        const response = await axios.get(apiUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
-          },
-          timeout: 8000
-        });
+      const response = await axios.get(apiUrl);
+      
+      console.log("API Response:", response.data);
+      
+      if (response.data && response.data.status === "success") {
+        const { data } = response.data;
         
-        console.log("Dữ liệu thể loại:", response.data);
-        
-        if (response.data?.data?.items && response.data.data.items.length > 0) {
+        if (data && Array.isArray(data.items)) {
           // Format lại dữ liệu
-          const formattedComics = response.data.data.items.map(comic => {
-            return {
-              id: comic.id,
-              title: comic.name,
-              slug: comic.slug,
-              thumbnail: comic.thumb_url ? `https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}` : null,
-              status: comic.status,
-              updated_at: comic.updatedAt,
-              genres: comic.category ? comic.category.map(cat => cat.name) : []
-            };
-          });
+          const formattedComics = data.items.map(comic => ({
+            id: comic.id,
+            title: comic.name,
+            slug: comic.slug,
+            thumbnail: comic.thumb_url 
+              ? `https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}` 
+              : null,
+            status: comic.status || "Đang cập nhật",
+            updated_at: comic.updatedAt || new Date().toISOString(),
+            genres: comic.categories 
+              ? comic.categories.map(cat => cat.name) 
+              : comic.category 
+                ? comic.category.map(cat => cat.name)
+                : []
+          }));
           
-          setGenreComics(formattedComics);
+          console.log("Formatted comics:", formattedComics);
+          
+          if (page === 1) {
+            setGenreComics(formattedComics);
+          } else {
+            setGenreComics(prev => [...prev, ...formattedComics]);
+          }
           
           // Lưu thông tin thể loại
-          if (response.data?.data?.seoOnPage) {
+          if (data.seoOnPage) {
             setGenreInfo({
-              title: response.data.data.seoOnPage.titleHead || `Thể loại: ${slug}`,
-              description: response.data.data.seoOnPage.descriptionHead || "Danh sách truyện tranh"
+              title: data.seoOnPage.titleHead || `Thể loại: ${slug}`,
+              description: data.seoOnPage.descriptionHead || "Danh sách truyện tranh"
             });
           }
           
           // Lưu thông tin phân trang
-          if (response.data?.data?.params?.pagination) {
-            const pagination = response.data.data.params.pagination;
-            const total = pagination.totalItems || 0;
-            const itemsPerPage = pagination.itemsPerPage || 24;
-            setTotalPages(Math.ceil(total / itemsPerPage));
+          if (data.params && data.params.pagination) {
+            const { totalItems = 0, itemsPerPage = 24 } = data.params.pagination;
+            setTotalPages(Math.ceil(totalItems / itemsPerPage));
           }
           
           setError(null);
         } else {
-          throw new Error("API không trả về dữ liệu hợp lệ");
+          console.error("Invalid items array in response:", data);
+          throw new Error("Không tìm thấy danh sách truyện");
         }
-      } catch (error) {
-        console.error("Error fetching genre comics:", error.message);
-        setError("Không thể tải dữ liệu thể loại. Vui lòng thử lại sau.");
-      } finally {
-        setLoading(false);
+      } else {
+        console.error("API response not successful:", response.data);
+        throw new Error("API không trả về dữ liệu hợp lệ");
       }
     } catch (error) {
-      console.error("Critical error in fetchGenreComics:", error.message);
+      console.error("Error fetching genre comics:", error);
+      setError(error.response?.data?.message || error.message || "Không thể tải dữ liệu thể loại. Vui lòng thử lại sau.");
+    } finally {
       setLoading(false);
-      setError("Lỗi không xác định. Vui lòng thử lại sau.");
     }
   };
   
   // Tải lại dữ liệu khi thể loại hoặc trang thay đổi
   useEffect(() => {
-    fetchGenreComics(currentPage);
-  }, [slug, currentPage]);
+    console.log("Genre slug changed:", slug);
+    setCurrentPage(1); // Reset về trang 1 khi đổi thể loại
+    fetchGenreComics(1);
+  }, [slug]);
+
+  // Tải thêm dữ liệu khi chuyển trang
+  useEffect(() => {
+    if (currentPage > 1) {
+      fetchGenreComics(currentPage);
+    }
+  }, [currentPage]);
   
   // Chức năng tải trang tiếp theo
   const loadMoreComics = () => {

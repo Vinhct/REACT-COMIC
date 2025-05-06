@@ -5,7 +5,7 @@ import './GenreCard.css';
 // Component GenreCard hiển thị một thể loại truyện
 const GenreCard = ({ genre }) => {
   return (
-    <Link to={`/mobile/genres/${genre.id}`} className="genre-card-link">
+    <Link to={`/the-loai/${genre.slug}`} className="genre-card-link">
       <div className="genre-card">
         <div>
           <div className="genre-name">{genre.name}</div>

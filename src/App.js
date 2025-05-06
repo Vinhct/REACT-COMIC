@@ -19,6 +19,7 @@ import { SupabaseAuthProvider } from './Components/Include/Authentication/Supaba
 // Import ChatbotProvider - sửa đường dẫn để import trực tiếp từ file
 import ChatbotProvider from './Components/Include/Chatbot/ChatbotProvider';
 import MobileGenreList from './Components/Mobile/MobileGenreList';
+import MobileGenre from './Components/Mobile/MobileGenre';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
 import MobileHome from './Components/Mobile/MobileHome';
@@ -49,6 +50,7 @@ function App() {
           {/* Commenting out routes with missing components */}
           {/* <Route path='/ganre/:slug' element={<GanrePageMobile />}></Route> */}
           <Route path='/the-loai' element={<MobileGenreList />}></Route>
+          <Route path='/the-loai/:slug' element={<MobileGenre />}></Route>
           <Route path='/genres-mobile' element={<MobileGenreList />}></Route>
           
           {/* Desktop specific routes */}

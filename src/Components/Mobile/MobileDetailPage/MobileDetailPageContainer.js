@@ -234,47 +234,52 @@ const MobileDetailPageContainer = () => {
           </div>
         </div>
 
-        {/* Thông tin truyện */}
+        {/* Thông tin truyện và tabs */}
         <MobileComicInfo 
           item={item}
-          getImageUrl={getImageUrl}
+          isFavorite={isFavorite}
+          handleToggleFavorite={handleToggleFavorite}
+          showShareOptions={showShareOptions}
+          setShowShareOptions={setShowShareOptions}
+          shareUrl={shareUrl}
+          shareTitle={shareTitle}
+          shareDescription={shareDescription}
+          handleShareMessenger={handleShareMessenger}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-        />
-
-        {/* Danh sách chương */}
-        {activeTab === "chapters" && (
-          <MobileChapterList
-            chapters={getAllChapters()}
-            handleReachChapter={handleReachChapter}
-          />
-        )}
-
-        {/* Phần bình luận */}
-        {activeTab === "comments" && (
-          <MobileCommentSection
-            comments={comments}
-            rating={rating}
-            setRating={setRating}
-            commentText={commentText}
-            setCommentText={setCommentText}
-            handleSubmitComment={handleSubmitComment}
-            commentError={commentError}
-            commentSuccess={commentSuccess}
-            calculateAverageRating={calculateAverageRating}
-            user={user}
-          />
-        )}
+        >
+          {/* Tab content */}
+          {activeTab === "chapters" && (
+            <MobileChapterList
+              item={item}
+              handleReachChapter={handleReachChapter}
+            />
+          )}
+          {activeTab === "comments" && (
+            <MobileCommentSection
+              comments={comments}
+              rating={rating}
+              setRating={setRating}
+              commentText={commentText}
+              setCommentText={setCommentText}
+              handleSubmitComment={handleSubmitComment}
+              commentError={commentError}
+              commentSuccess={commentSuccess}
+              calculateAverageRating={calculateAverageRating}
+              user={user}
+            />
+          )}
+        </MobileComicInfo>
 
         {/* Modal đọc truyện */}
-          <MobileChapterViewer
-            isModalOpen={isModalOpen}
-            handleClose={handleClose}
-            item={item}
-            getDataChapter={chapterData}
-            loading={chapterLoading}
-            handleReachChapter={handleReachChapter}
-          />
+        <MobileChapterViewer
+          isModalOpen={isModalOpen}
+          handleClose={handleClose}
+          item={item}
+          getDataChapter={chapterData}
+          loading={chapterLoading}
+          handleReachChapter={handleReachChapter}
+        />
       </Container>
     </div>
   );
