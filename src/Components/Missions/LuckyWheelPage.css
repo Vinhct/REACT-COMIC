@@ -1,0 +1,94 @@
+.lucky-wheel-page {
+  padding: 20px 0;
+}
+
+.wheel-title {
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.wheel-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.wheel-container {
+  position: relative;
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.wheel-canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  background-color: #E74C3C;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: 10;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.spin-button {
+  padding: 10px 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+.reward-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reward-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reward-item:last-child {
+  border-bottom: none;
+}
+
+.reward-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.reward-probability {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 600;
+  background-color: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .wheel-container {
+    max-width: 300px;
+  }
+  
+  .spin-button {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+} 

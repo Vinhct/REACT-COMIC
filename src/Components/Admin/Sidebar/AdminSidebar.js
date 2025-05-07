@@ -10,7 +10,9 @@ import {
   FaComments,
   FaSignOutAlt,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaTasks,
+  FaDharmachakra
 } from 'react-icons/fa';
 import { useAdmin } from '../AdminContext';
 import './AdminSidebar.css';
@@ -39,6 +41,16 @@ const AdminSidebar = () => {
       path: '/admin/users',
       name: 'Quản lý Người dùng',
       icon: <FaUsers />
+    },
+    {
+      path: '/admin/missions',
+      name: 'Quản lý Nhiệm vụ',
+      icon: <FaTasks />
+    },
+    {
+      path: '/admin/lucky-wheel',
+      name: 'Quản lý Vòng quay',
+      icon: <FaDharmachakra />
     },
     {
       path: '/admin/favorites',

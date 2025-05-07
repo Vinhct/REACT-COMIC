@@ -1,0 +1,90 @@
+.missions-page {
+  padding: 20px 0;
+}
+
+.missions-title {
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.missions-info-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.missions-info-card:hover {
+  transform: translateY(-5px);
+}
+
+.mission-info-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #007bff;
+}
+
+.mission-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid #007bff;
+}
+
+.mission-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.mission-card.completed {
+  border-left-color: #28a745;
+}
+
+.mission-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.mission-description {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.mission-progress-container {
+  margin-top: 15px;
+}
+
+.mission-progress {
+  height: 10px;
+  border-radius: 5px;
+}
+
+.mission-reward {
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.reward-icon {
+  font-size: 18px;
+  color: #ffc107;
+  margin-bottom: 5px;
+}
+
+.reward-text small {
+  display: block;
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.reward-text p {
+  font-weight: 600;
+  color: #333;
+} 

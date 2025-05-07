@@ -15,6 +15,7 @@ import Footer from "./Include/Dau-trang_Chan-trang/Footer";
 import Settings from "./Include/Settings";
 import WelcomeBanner from "./Include/3D-Effects/WelcomeBanner";
 import ChatbotProvider from "./Include/Chatbot/ChatbotProvider";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -82,6 +83,19 @@ const Home = () => {
       </Helmet>
       <Menu />
       <WelcomeBanner />
+
+      {/* Banner giới thiệu hệ thống nhiệm vụ */}
+      <Container fluid className="py-2 bg-primary text-white text-center mb-4">
+        <div className="d-flex justify-content-center align-items-center flex-wrap">
+          <span className="me-3">
+            <i className="fas fa-gift me-2"></i>
+            <strong>TÍNH NĂNG MỚI:</strong> Làm nhiệm vụ, nhận lượt quay, trúng quà hay!
+          </span>
+          <Link to="/missions" className="btn btn-light btn-sm text-primary">
+            <i className="fas fa-tasks me-2"></i>Khám phá ngay
+          </Link>
+        </div>
+      </Container>
 
       {/* Container chính với scroll snapping */}
       <div className="snap-container">

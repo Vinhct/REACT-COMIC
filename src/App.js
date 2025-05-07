@@ -35,6 +35,12 @@ import ComicsManagement from './Components/Admin/Management/ComicsManagement';
 import FavoritesManagement from './Components/Admin/Management/FavoritesManagement';
 import HistoryManagement from './Components/Admin/Management/HistoryManagement';
 import CommentsManagement from './Components/Admin/Management/CommentsManagement';
+import MissionsManagement from './Components/Admin/Management/MissionsManagement';
+import LuckyWheelManagement from './Components/Admin/Management/LuckyWheelManagement';
+
+// Import components mới
+import MissionsPage from './Components/Missions/MissionsPage';
+import LuckyWheelPage from './Components/Missions/LuckyWheelPage';
 
 function App() {
   return (
@@ -87,10 +93,16 @@ function App() {
                   <Route path="favorites" element={<FavoritesManagement />} />
                   <Route path="history" element={<HistoryManagement />} />
                   <Route path="comments" element={<CommentsManagement />} />
+                  <Route path="missions" element={<MissionsManagement />} />
+                  <Route path="lucky-wheel" element={<LuckyWheelManagement />} />
                 </Routes>
               </AdminProvider>
             } 
           />
+
+          // Thêm routes mới trong phần Route
+          <Route path="/missions" element={<MissionsPage />} />
+          <Route path="/lucky-wheel" element={<LuckyWheelPage />} />
         </Routes>
         {/* Thêm ChatbotProvider ở đây để hiển thị trên tất cả các trang */}
         <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999 }}>

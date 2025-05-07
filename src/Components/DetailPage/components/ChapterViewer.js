@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { IoChevronUpCircle, IoReturnUpBack } from "react-icons/io5";
 
+// Import hook đọc thời gian
+import useReadingTimeTracker from '../../../utils/useReadingTimeTracker';
+
 const ChapterViewer = ({
   isModalOpen,
   handleClose,
@@ -12,6 +15,9 @@ const ChapterViewer = ({
 }) => {
   const [showFooter, setShowFooter] = useState(true);
   const lastScrollTopRef = useRef(0);
+
+  // Thêm bên trong component, sau các useState
+  const { readingTimeMinutes } = useReadingTimeTracker(item?.slug);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,6 +79,16 @@ const ChapterViewer = ({
                 Chap {getDataChapter?.data?.item?.chapter_name || "Đang tải..."}
               </span>
             </div>
+            {readingTimeMinutes > 0 && (
+              <div className="reading-time-info">
+                <small className="text-muted">
+                  Đã đọc: {readingTimeMinutes} phút
+                  {readingTimeMinutes >= 20 && (
+                    <span className="badge bg-success ms-2">Đã hoàn thành nhiệm vụ đọc 20 phút!</span>
+                  )}
+                </small>
+              </div>
+            )}
           </div>
         </Modal.Title>
       </Modal.Header>

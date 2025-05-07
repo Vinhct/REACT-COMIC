@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 // Lấy các giá trị này từ Project Settings > API trong dashboard Supabase
 const supabaseUrl = 'https://vhevalzxveezqrfyzqoz.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZXZhbHp4dmVlenFyZnl6cW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MTAwMDksImV4cCI6MjA2MTA4NjAwOX0.alc29iZPj8Cek-_gluZ3293F0kxyXK-GgynIZ-mBs00';
+// Service Role Key cho quyền admin - CHỈ SỬ DỤNG cho admin API
+const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZXZhbHp4dmVlenFyZnl6cW96Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTUxMDAwOSwiZXhwIjoyMDYxMDg2MDA5fQ.7gafF9YmlpQ4LXZlMsXbE5lHIuJJd-r9LMVRsSW-6mI';
 
 // Log supabase configuration to debug
 console.log('Initializing Supabase client with URL:', supabaseUrl);
@@ -15,6 +17,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     storage: localStorage // Đảm bảo sử dụng localStorage cho session
+  }
+});
+
+// Khởi tạo client Supabase với service role key cho admin API
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    persistSession: false, // Không lưu session cho admin client
+    autoRefreshToken: false
   }
 });
 

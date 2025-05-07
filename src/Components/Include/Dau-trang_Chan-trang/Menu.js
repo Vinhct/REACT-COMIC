@@ -256,6 +256,12 @@ export const Menu = () => {
                     </span>
                   </Dropdown.Toggle>
                   <Dropdown.Menu className="dropdown-menu">
+                    <Dropdown.Item as={Link} to="/missions" className="dropdown-item-custom">
+                      <i className="fas fa-tasks me-2"></i>Nhiệm vụ
+                    </Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/lucky-wheel" className="dropdown-item-custom">
+                      <i className="fas fa-dharmachakra me-2"></i>Vòng quay may mắn
+                    </Dropdown.Item>
                     <Dropdown.Item as={Link} to="/history" className="dropdown-item-custom">
                       Lịch sử
                     </Dropdown.Item>
