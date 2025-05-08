@@ -3,11 +3,12 @@ import axios from "axios";
 import { Container, Button, Spinner, Tabs, Tab, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight, BsInfoCircle } from "react-icons/bs";
 import MobileMenu from "./Common/MobileMenu";
 import ComicCard from "./components/ComicCard";
 import ErrorMessage from "./components/ErrorMessage";
 import "./styles/MobileHome.css";
+import { FaHeart } from 'react-icons/fa';
 
 // Component cho trang Mobile Home
 const MobileHome = () => {
@@ -280,30 +281,30 @@ const MobileHome = () => {
         const betterSampleData = [
           {
             id: "completed1",
-            title: "Fullmetal Alchemist",
-            slug: "fullmetal-alchemist",
-            thumbnail: "https://i.imgur.com/gG2rLBK.jpg",
+            title: "Naruto",
+            slug: "naruto",
+            thumbnail: "https://i.imgur.com/uT95Kqa.jpg",
             status: "Hoàn thành",
             updated_at: new Date().toISOString(),
-            genres: ["Action", "Adventure", "Fantasy"]
+            genres: ["Action", "Adventure", "Martial Arts"]
           },
           {
             id: "completed2",
             title: "Death Note",
             slug: "death-note",
-            thumbnail: "https://i.imgur.com/4jbCgMJ.jpg",
+            thumbnail: "https://i.imgur.com/MVsgypD.jpg",
             status: "Hoàn thành",
             updated_at: new Date().toISOString(),
-            genres: ["Mystery", "Psychological", "Supernatural"]
+            genres: ["Mystery", "Psychological", "Thriller"]
           },
           {
             id: "completed3",
-            title: "Dragon Ball",
-            slug: "dragon-ball",
-            thumbnail: "https://i.imgur.com/mDiGpFO.jpg",
+            title: "Fullmetal Alchemist",
+            slug: "fullmetal-alchemist",
+            thumbnail: "https://i.imgur.com/7F8cjTR.jpg",
             status: "Hoàn thành",
             updated_at: new Date().toISOString(),
-            genres: ["Action", "Adventure", "Comedy"]
+            genres: ["Action", "Adventure", "Fantasy"]
           },
           {
             id: "completed4",
@@ -447,6 +448,27 @@ const MobileHome = () => {
       </Helmet>
       
       <MobileMenu />
+      
+      {/* Marquee thông báo bản quyền - moved to directly below the menu */}
+      <div className="copyright-marquee-container">
+        <div className="copyright-marquee">
+          <span className="welcome-section">
+            <FaHeart className="welcome-icon" /> <p className="mb-0" style={{ fontSize: "0.9rem", opacity: "0.8" }}>
+              © {new Date().getFullYear()} OTruyen. Mọi bản quyền truyện và API đều thuộc về {" "}
+              <a 
+                href="https://otruyen.cc" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="footer-link"
+                style={{ textDecoration: "none", fontWeight: "500" }}
+              >
+                OTruyen.CC
+              </a>
+              .
+            </p>
+          </span>
+        </div>
+      </div>
       
       <Container className="mobile-container">
         {/* Banner slider phổ biến */}

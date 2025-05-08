@@ -1,0 +1,153 @@
+/* Mobile Missions & Lucky Wheel Styles */
+
+/* Common Styles */
+.mobile-missions-page,
+.mobile-lucky-wheel-page {
+  padding-bottom: 70px; /* Space for bottom navigation */
+}
+
+.mobile-container {
+  padding-top: 60px; /* Space for fixed top navbar */
+}
+
+/* Stats Cards */
+.stats-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  height: 100%;
+  transition: transform 0.2s;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+}
+
+.stats-icon {
+  font-size: 24px;
+  color: #6366f1;
+}
+
+.stats-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Mission Cards */
+.mission-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  transition: all 0.2s;
+}
+
+.mission-card.completed {
+  border-left: 4px solid #28a745;
+}
+
+.mission-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mission-description {
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+}
+
+.mission-progress {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.reward-icon {
+  color: #ffc107;
+  font-size: 1.2rem;
+}
+
+.claim-button {
+  min-width: 100px;
+}
+
+.claimed-badge {
+  padding: 6px 10px;
+}
+
+.spin-wheel-btn {
+  font-weight: 600;
+}
+
+/* Lucky Wheel Styles */
+.wheel-container {
+  position: relative;
+  margin: 20px auto;
+  max-width: 300px;
+}
+
+.wheel-canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.spin-button-container {
+  margin-top: 20px;
+}
+
+.spin-button {
+  border-radius: 50px;
+  padding: 10px 30px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.spin-button.spinning {
+  background-color: #495057;
+  border-color: #495057;
+}
+
+.tickets-card {
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  border: none;
+}
+
+.tickets-icon {
+  font-size: 24px;
+  color: #6366f1;
+  margin-right: 10px;
+}
+
+.result-alert {
+  border-left: 4px solid #ffc107;
+}
+
+/* History section */
+.history-container {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.history-item {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+  .stats-icon {
+    font-size: 20px;
+  }
+  
+  .stats-value {
+    font-size: 0.9rem;
+  }
+  
+  .mission-title {
+    font-size: 0.9rem;
+  }
+  
+  .wheel-container {
+    max-width: 250px;
+  }
+} 

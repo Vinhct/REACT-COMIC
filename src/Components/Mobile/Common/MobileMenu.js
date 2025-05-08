@@ -9,7 +9,7 @@ import {
   InputGroup
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { BsSearch, BsHouseDoor, BsBookmark, BsGrid, BsClockHistory, BsPerson } from "react-icons/bs";
+import { BsSearch, BsHouseDoor, BsBookmark, BsGrid, BsClockHistory, BsPerson, BsTrophy, BsTicketPerforated } from "react-icons/bs";
 import { useSupabaseAuth } from "../../Include/Authentication/SupabaseAuthContext";
 import axios from "axios";
 import "../styles/MobileMenu.css";
@@ -103,7 +103,7 @@ const MobileMenu = () => {
             <h1>VCT-Truyện</h1>
           </Link>
           <Form className="mobile-search-form" onSubmit={handleSearch}>
-            <InputGroup>
+            <InputGroup className="pt-3">
               <Form.Control
                 placeholder="Tìm truyện..."
                 value={searchQuery}
@@ -130,6 +130,9 @@ const MobileMenu = () => {
             <Nav.Link as={Link} to="/dang-phat-hanh" onClick={() => setShowMenu(false)}>Đang phát hành</Nav.Link>
             <Nav.Link as={Link} to="/hoan-thanh" onClick={() => setShowMenu(false)}>Hoàn thành</Nav.Link>
             <Nav.Link as={Link} to="/sap-ra-mat" onClick={() => setShowMenu(false)}>Sắp ra mắt</Nav.Link>
+            <Nav.Link as={Link} to="https://docs.otruyenapi.com/" onClick={() => setShowMenu(false)}>API</Nav.Link>
+
+            
             
             <h5 className="menu-category mt-4">Thể loại</h5>
             <div className="mobile-category-grid">
@@ -145,6 +148,14 @@ const MobileMenu = () => {
                 </Nav.Link>
               ))}
             </div>
+
+            <h5 className="menu-category mt-4">Đặc biệt</h5>
+            <Nav.Link as={Link} to="/mobile/missions" onClick={() => setShowMenu(false)}>
+              <BsTrophy className="me-2" /> Nhiệm vụ hàng ngày
+            </Nav.Link>
+            <Nav.Link as={Link} to="/mobile/lucky-wheel" onClick={() => setShowMenu(false)}>
+              <BsTicketPerforated className="me-2" /> Vòng quay may mắn
+            </Nav.Link>
 
             <h5 className="menu-category mt-4">Tài khoản</h5>
             {user ? (
@@ -165,12 +176,16 @@ const MobileMenu = () => {
                     <p className="user-name">{user.user_metadata?.display_name || user.email}</p>
                   </div>
                 </div>
+                <Nav.Link as={Link} to="/profile" onClick={() => setShowMenu(false)}>
+                  <BsPerson className="me-2" /> Hồ sơ cá nhân
+                </Nav.Link>
                 <Nav.Link as={Link} to="/favorites" onClick={() => setShowMenu(false)}>
                   <BsBookmark className="me-2" /> Truyện đã lưu
                 </Nav.Link>
                 <Nav.Link as={Link} to="/history" onClick={() => setShowMenu(false)}>
                   <BsClockHistory className="me-2" /> Lịch sử đọc
                 </Nav.Link>
+                
                 <Button 
                   variant="outline-danger" 
                   className="mt-3" 

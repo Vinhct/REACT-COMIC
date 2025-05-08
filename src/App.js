@@ -1,6 +1,6 @@
 //import logo from './logo.svg';
 import './App.css';
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import DeviceDetector from './Components/DeviceDetector';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Genre } from './Components/Genre';
@@ -20,6 +20,9 @@ import { SupabaseAuthProvider } from './Components/Include/Authentication/Supaba
 import ChatbotProvider from './Components/Include/Chatbot/ChatbotProvider';
 import MobileGenreList from './Components/Mobile/MobileGenreList';
 import MobileGenre from './Components/Mobile/MobileGenre';
+import MobileProfile from './Components/Mobile/MobileProfile';
+import MobileMissionsPage from './Components/Mobile/Missions/MobileMissionsPage';
+import MobileLuckyWheelPage from './Components/Mobile/Missions/MobileLuckyWheelPage';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
 import MobileHome from './Components/Mobile/MobileHome';
@@ -38,9 +41,9 @@ import CommentsManagement from './Components/Admin/Management/CommentsManagement
 import MissionsManagement from './Components/Admin/Management/MissionsManagement';
 import LuckyWheelManagement from './Components/Admin/Management/LuckyWheelManagement';
 
-// Import components mới
-import MissionsPage from './Components/Missions/MissionsPage';
-import LuckyWheelPage from './Components/Missions/LuckyWheelPage';
+// Lazy loaded components
+const MissionsPage = lazy(() => import('./Components/Missions/MissionsPage'));
+const LuckyWheelPage = lazy(() => import('./Components/Missions/LuckyWheelPage'));
 
 function App() {
   return (
@@ -58,6 +61,9 @@ function App() {
           <Route path='/the-loai' element={<MobileGenreList />}></Route>
           <Route path='/the-loai/:slug' element={<MobileGenre />}></Route>
           <Route path='/genres-mobile' element={<MobileGenreList />}></Route>
+          <Route path='/profile' element={<MobileProfile />}></Route>
+          <Route path='/mobile/missions' element={<MobileMissionsPage />}></Route>
+          <Route path='/mobile/lucky-wheel' element={<MobileLuckyWheelPage />}></Route>
           
           {/* Desktop specific routes */}
           <Route path='/genre/:slug' element={<Genre />}></Route>
@@ -100,7 +106,7 @@ function App() {
             } 
           />
 
-          // Thêm routes mới trong phần Route
+          {/* Thêm routes mới trong phần Route */}
           <Route path="/missions" element={<MissionsPage />} />
           <Route path="/lucky-wheel" element={<LuckyWheelPage />} />
         </Routes>
