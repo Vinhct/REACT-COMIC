@@ -6,10 +6,19 @@ import {
   Button,
   Offcanvas,
   Form,
-  InputGroup
+  InputGroup,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { BsSearch, BsHouseDoor, BsBookmark, BsGrid, BsClockHistory, BsPerson, BsTrophy, BsTicketPerforated } from "react-icons/bs";
+import {
+  BsSearch,
+  BsHouseDoor,
+  BsBookmark,
+  BsGrid,
+  BsClockHistory,
+  BsPerson,
+  BsTrophy,
+  BsTicketPerforated,
+} from "react-icons/bs";
 import { useSupabaseAuth } from "../../Include/Authentication/SupabaseAuthContext";
 import axios from "axios";
 import "../styles/MobileMenu.css";
@@ -20,10 +29,14 @@ const MobileMenu = () => {
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showMenu, setShowMenu] = useState(false);
-  
+
   // Lấy thông tin người dùng từ Supabase context
-  const { user: supabaseUser, loading: authLoading, signOut } = useSupabaseAuth();
-  
+  const {
+    user: supabaseUser,
+    loading: authLoading,
+    signOut,
+  } = useSupabaseAuth();
+
   // Cập nhật user state khi supabaseUser thay đổi
   useEffect(() => {
     if (!authLoading) {
@@ -35,7 +48,9 @@ const MobileMenu = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("https://otruyenapi.com/v1/api/the-loai");
+        const response = await axios.get(
+          "https://otruyenapi.com/v1/api/the-loai"
+        );
         setCategories(response.data?.data?.items || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -48,7 +63,9 @@ const MobileMenu = () => {
   const handleSearch = (event) => {
     event.preventDefault();
     if (!searchQuery.trim()) return;
-    navigate(`/tim-kiem?query=${encodeURIComponent(searchQuery)}`);
+    
+    // Chuyển hướng đến trang tìm kiếm mobile với query
+    navigate(`/mobile/search?query=${encodeURIComponent(searchQuery.trim())}`);
     setSearchQuery("");
     setShowMenu(false);
   };
@@ -68,6 +85,11 @@ const MobileMenu = () => {
     }
   };
 
+  // Chuyển hướng đến trang tìm kiếm khi nhấp vào thanh tìm kiếm
+  const goToSearchPage = () => {
+    navigate('/mobile/search');
+  };
+
   return (
     <>
       {/* Bottom Navigation */}
@@ -80,8 +102,8 @@ const MobileMenu = () => {
           <BsGrid />
           <span>Thể loại</span>
         </Link>
-        <Button 
-          onClick={() => setShowMenu(true)} 
+        <Button
+          onClick={() => setShowMenu(true)}
           className="mobile-nav-menu-btn"
         >
           <span className="mobile-menu-icon">☰</span>
@@ -109,6 +131,7 @@ const MobileMenu = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="mobile-search-input"
+                onClick={goToSearchPage}
               />
               <Button variant="outline-secondary" type="submit">
                 <BsSearch />
@@ -119,27 +142,34 @@ const MobileMenu = () => {
       </Navbar>
 
       {/* Off-canvas Menu */}
-      <Offcanvas show={showMenu} onHide={() => setShowMenu(false)} placement="start">
+      <Offcanvas
+        show={showMenu}
+        onHide={() => setShowMenu(false)}
+        placement="start"
+      >
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Menu</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Nav className="flex-column mobile-offcanvas-menu">
             <h5 className="menu-category">Truyện</h5>
-            <Nav.Link as={Link} to="/" onClick={() => setShowMenu(false)}>Trang chủ</Nav.Link>
-            <Nav.Link as={Link} to="/dang-phat-hanh" onClick={() => setShowMenu(false)}>Đang phát hành</Nav.Link>
-            <Nav.Link as={Link} to="/hoan-thanh" onClick={() => setShowMenu(false)}>Hoàn thành</Nav.Link>
-            <Nav.Link as={Link} to="/sap-ra-mat" onClick={() => setShowMenu(false)}>Sắp ra mắt</Nav.Link>
-            <Nav.Link as={Link} to="https://docs.otruyenapi.com/" onClick={() => setShowMenu(false)}>API</Nav.Link>
+            <Nav.Link as={Link} to="/" onClick={() => setShowMenu(false)}>
+              Trang chủ
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="https://docs.otruyenapi.com/"
+              onClick={() => setShowMenu(false)}
+            >
+              API
+            </Nav.Link>
 
-            
-            
             <h5 className="menu-category mt-4">Thể loại</h5>
             <div className="mobile-category-grid">
               {categories.map((category, index) => (
-                <Nav.Link 
-                  key={index} 
-                  as={Link} 
+                <Nav.Link
+                  key={index}
+                  as={Link}
                   to={`/the-loai/${category.slug}`}
                   onClick={() => setShowMenu(false)}
                   className="mobile-category-item"
@@ -150,10 +180,18 @@ const MobileMenu = () => {
             </div>
 
             <h5 className="menu-category mt-4">Đặc biệt</h5>
-            <Nav.Link as={Link} to="/mobile/missions" onClick={() => setShowMenu(false)}>
+            <Nav.Link
+              as={Link}
+              to="/mobile/missions"
+              onClick={() => setShowMenu(false)}
+            >
               <BsTrophy className="me-2" /> Nhiệm vụ hàng ngày
             </Nav.Link>
-            <Nav.Link as={Link} to="/mobile/lucky-wheel" onClick={() => setShowMenu(false)}>
+            <Nav.Link
+              as={Link}
+              to="/mobile/lucky-wheel"
+              onClick={() => setShowMenu(false)}
+            >
               <BsTicketPerforated className="me-2" /> Vòng quay may mắn
             </Nav.Link>
 
@@ -163,32 +201,46 @@ const MobileMenu = () => {
                 <div className="user-info-mobile">
                   <div className="user-avatar-container">
                     {user.user_metadata?.avatar_url ? (
-                      <img 
-                        src={user.user_metadata.avatar_url} 
+                      <img
+                        src={user.user_metadata.avatar_url}
                         alt="Avatar"
-                        className="user-avatar-mobile" 
+                        className="user-avatar-mobile"
                       />
                     ) : (
                       <BsPerson size={40} className="user-avatar-placeholder" />
                     )}
                   </div>
                   <div className="user-details-mobile">
-                    <p className="user-name">{user.user_metadata?.display_name || user.email}</p>
+                    <p className="user-name">
+                      {user.user_metadata?.display_name || user.email}
+                    </p>
                   </div>
                 </div>
-                <Nav.Link as={Link} to="/profile" onClick={() => setShowMenu(false)}>
+                <Nav.Link
+                  as={Link}
+                  to="/profile"
+                  onClick={() => setShowMenu(false)}
+                >
                   <BsPerson className="me-2" /> Hồ sơ cá nhân
                 </Nav.Link>
-                <Nav.Link as={Link} to="/favorites" onClick={() => setShowMenu(false)}>
+                <Nav.Link
+                  as={Link}
+                  to="/favorites"
+                  onClick={() => setShowMenu(false)}
+                >
                   <BsBookmark className="me-2" /> Truyện đã lưu
                 </Nav.Link>
-                <Nav.Link as={Link} to="/history" onClick={() => setShowMenu(false)}>
+                <Nav.Link
+                  as={Link}
+                  to="/history"
+                  onClick={() => setShowMenu(false)}
+                >
                   <BsClockHistory className="me-2" /> Lịch sử đọc
                 </Nav.Link>
-                
-                <Button 
-                  variant="outline-danger" 
-                  className="mt-3" 
+
+                <Button
+                  variant="outline-danger"
+                  className="mt-3"
                   onClick={handleLogout}
                 >
                   Đăng xuất
@@ -196,19 +248,19 @@ const MobileMenu = () => {
               </>
             ) : (
               <div className="auth-buttons-mobile">
-                <Button 
-                  as={Link} 
-                  to="/login" 
-                  variant="primary" 
+                <Button
+                  as={Link}
+                  to="/login"
+                  variant="primary"
                   className="w-100 mb-2"
                   onClick={() => setShowMenu(false)}
                 >
                   Đăng nhập
                 </Button>
-                <Button 
-                  as={Link} 
-                  to="/register" 
-                  variant="outline-primary" 
+                <Button
+                  as={Link}
+                  to="/register"
+                  variant="outline-primary"
                   className="w-100"
                   onClick={() => setShowMenu(false)}
                 >
@@ -223,4 +275,4 @@ const MobileMenu = () => {
   );
 };
 
-export default MobileMenu; 
+export default MobileMenu;

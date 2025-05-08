@@ -33,11 +33,37 @@
   font-size: 0.9rem !important;
   border: none !important;
   background-color: rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.2s ease !important;
+  position: relative;
 }
 
-.mobile-search-input:focus {
+.mobile-search-input:focus,
+.mobile-search-input:active {
   box-shadow: none !important;
   background-color: white !important;
+}
+
+/* Tạo effect khi click vào search input */
+.mobile-search-input:focus::placeholder,
+.mobile-search-input:active::placeholder {
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.2s ease;
+}
+
+/* Search button */
+.mobile-search-form .btn-outline-secondary {
+  border: none !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 0 20px 20px 0 !important;
+  color: #6366f1 !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-search-form .btn-outline-secondary:hover,
+.mobile-search-form .btn-outline-secondary:active {
+  background-color: white !important;
+  color: #4f46e5 !important;
 }
 
 /* Bottom Navigation */

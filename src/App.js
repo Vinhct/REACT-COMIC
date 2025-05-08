@@ -23,6 +23,7 @@ import MobileGenre from './Components/Mobile/MobileGenre';
 import MobileProfile from './Components/Mobile/MobileProfile';
 import MobileMissionsPage from './Components/Mobile/Missions/MobileMissionsPage';
 import MobileLuckyWheelPage from './Components/Mobile/Missions/MobileLuckyWheelPage';
+import MobileSearch from './Components/Mobile/MobileSearch';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
 import MobileHome from './Components/Mobile/MobileHome';
@@ -64,6 +65,7 @@ function App() {
           <Route path='/profile' element={<MobileProfile />}></Route>
           <Route path='/mobile/missions' element={<MobileMissionsPage />}></Route>
           <Route path='/mobile/lucky-wheel' element={<MobileLuckyWheelPage />}></Route>
+          <Route path='/mobile/search' element={<MobileSearch />}></Route>
           
           {/* Desktop specific routes */}
           <Route path='/genre/:slug' element={<Genre />}></Route>

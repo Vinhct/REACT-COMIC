@@ -119,7 +119,7 @@ const DPH = () => {
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-5">
-                  {getdata.data?.seoOnPage?.titleHead}
+                  Truyện Đang Phát Hành
                 </Card.Title>
                 <Card.Text className="text-muted lead">
                   {getdata.data?.seoOnPage?.descriptionHead}

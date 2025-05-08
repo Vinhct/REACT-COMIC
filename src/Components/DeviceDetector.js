@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Home from './Home';
 import MobileHome from './Mobile/MobileHome';
 import DetailPage from './DetailPage';
 import MobileDetailPageContainer from './Mobile/MobileDetailPage/MobileDetailPageContainer';
 import { Genre } from './Genre';
 import MobileGenre from './Mobile/MobileGenre';
+import Search from './Search';
+import MobileSearch from './Mobile/MobileSearch';
 
 // Component Detector phát hiện thiết bị và render component phù hợp
 const DeviceDetector = () => {
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Hàm kiểm tra thiết bị di động
@@ -47,21 +50,40 @@ const DeviceDetector = () => {
     };
   }, [isMobile]);
   
+  // Redirect search pages on initial load if needed
+  useEffect(() => {
+    // If on a search page and device is mobile, redirect to mobile search page
+    if ((location.pathname === '/search' || location.pathname === '/tim-kiem') && isMobile) {
+      const searchParams = new URLSearchParams(location.search);
+      const query = searchParams.get('query') || '';
+      navigate(`/mobile/search?query=${encodeURIComponent(query)}`, { replace: true });
+    }
+  }, [isMobile, location.pathname, location.search, navigate]);
+  
   // Kiểm tra nếu đang ở trang chi tiết truyện
   const isComicDetailPage = location.pathname.startsWith('/comics/');
   
   // Kiểm tra nếu đang ở trang thể loại
   const isGenrePage = location.pathname.startsWith('/genres/');
   
+  // Kiểm tra nếu đang ở trang tìm kiếm
+  const isSearchPage = location.pathname === '/search' || location.pathname === '/tim-kiem';
+  
   // Render component phù hợp với thiết bị và trang
   if (isComicDetailPage) {
-    // No need to extract slug here as it will be handled by the respective components
     return isMobile ? <MobileDetailPageContainer /> : <DetailPage />;
   }
   
   if (isGenrePage) {
-    // No need to extract slug here as it will be handled by the respective components
     return isMobile ? <MobileGenre slug={location.pathname.replace('/genres/', '')} /> : <Genre />;
+  }
+  
+  if (isSearchPage) {
+    // For search pages, redirect mobile users to the mobile search page
+    if (isMobile) {
+      return <MobileSearch />;
+    }
+    return <Search />;
   }
   
   // Render trang chủ phù hợp với thiết bị

@@ -119,7 +119,7 @@ const HT = () => {
             >
               <CardBody>
                 <Card.Title className="text-primary fw-bold display-5">
-                  {getdata.data?.seoOnPage?.titleHead}
+                  Truyện Hoàn Thành
                 </Card.Title>
                 <Card.Text className="text-muted lead">
                   {getdata.data?.seoOnPage?.descriptionHead}
