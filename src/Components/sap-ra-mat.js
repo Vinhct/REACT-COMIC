@@ -8,10 +8,7 @@ import {
   Col,
   Container,
   Row,
-  Navbar,
-  Nav,
   Pagination,
-  Image,
   Spinner,
 } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
@@ -19,8 +16,7 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
 import { auth } from "./Include/Authentication/Firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { Dropdown } from "react-bootstrap";
+import { onAuthStateChanged } from "firebase/auth";
 import "./Include/responsive.css";
 import { BsArrowUp } from "react-icons/bs"; // Icon cho nút Back to Top
 import Footer from "./Include/Dau-trang_Chan-trang/Footer";
@@ -30,13 +26,8 @@ const SRM = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [user, setUser] = useState(null);
   const itemsPerPage = 24;
   const [showBackToTop, setShowBackToTop] = useState(false); // Trạng thái hiển thị nút Back to Top
-
-  // Ảnh mặc định
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,39 +44,29 @@ const SRM = () => {
     };
     fetchData();
 
-    
-
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      // We still need to keep the auth state listener for the app to work properly
+      // but we don't need to use the user variable if it's not needed elsewhere
     });
     return () => unsubscribe();
   }, [currentPage]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-  };
-
   // Xử lý hiển thị nút Back to Top khi cuộn
-    useEffect(() => {
-      const handleScroll = () => {
-        if (window.scrollY > 300) {
-          setShowBackToTop(true);
-        } else {
-          setShowBackToTop(false);
-        }
-      };
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-  
-    const scrollToTop = () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -97,8 +78,6 @@ const SRM = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
-  
 
   return (
     <>

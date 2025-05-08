@@ -7,12 +7,7 @@ import {
   Col,
   Container,
   Row,
-  Navbar,
-  Nav,
   Pagination,
-  Form,
-  Image,
-  Dropdown,
   Spinner,
 } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
@@ -23,7 +18,7 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Components/Include/Authentication/Firebase";
 import "./Include/responsive.css";
 import "./Include/Genre.css"; // Import the new Genre CSS file
-import { BsArrowUp, BsBookmark, BsEye, BsGrid3X3, BsListUl, BsClock } from "react-icons/bs"; // Added more icons
+import { BsArrowUp, BsBookmark, BsGrid3X3, BsListUl, BsClock } from "react-icons/bs"; // Added more icons
 
 export const Genre = () => {
   const { slug } = useParams();
@@ -37,8 +32,6 @@ export const Genre = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [viewMode, setViewMode] = useState("grid"); // New state for grid/list view toggle
 
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,14 +55,7 @@ export const Genre = () => {
     return () => unsubscribe();
   }, [slug, currentPage]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-  };
+ 
 
   // Xử lý hiển thị nút Back to Top khi cuộn
   useEffect(() => {

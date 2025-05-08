@@ -1,6 +1,6 @@
 //import logo from './logo.svg';
 import './App.css';
-import React, { Suspense, lazy } from 'react';
+import React, {  lazy } from 'react';
 import DeviceDetector from './Components/DeviceDetector';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Genre } from './Components/Genre';
@@ -26,7 +26,6 @@ import MobileLuckyWheelPage from './Components/Mobile/Missions/MobileLuckyWheelP
 import MobileSearch from './Components/Mobile/MobileSearch';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
-import MobileHome from './Components/Mobile/MobileHome';
 //import FollowPage from './Components/FollowPage';
 import CommentsDebug from './Components/Debug/CommentsDebug';
 
