@@ -268,6 +268,9 @@ export const Menu = () => {
                     <Dropdown.Item as={Link} to="/favorites" className="dropdown-item-custom">
                       Yêu thích
                     </Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/buy-ad" className="dropdown-item-custom">
+                      <i className="fas fa-ad me-2"></i>Mua gói quảng cáo
+                    </Dropdown.Item>
                     <Dropdown.Item onClick={handleLogout} className="dropdown-item-custom gradient-text">
                       Đăng xuất
                     </Dropdown.Item>

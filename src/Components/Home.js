@@ -16,6 +16,10 @@ import Settings from "./Include/Settings";
 import WelcomeBanner from "./Include/3D-Effects/WelcomeBanner";
 import ChatbotProvider from "./Include/Chatbot/ChatbotProvider";
 import { Link } from "react-router-dom";
+import AdBanner from './banner';
+import ActiveAdBanners from './banner/ActiveAdBanners';
+import { useSupabaseAuth } from './Include/Authentication/SupabaseAuthContext';
+import { supabase } from '../supabaseClient';
 
 const Home = () => {
   const [getdata, setData] = useState([]);
@@ -24,6 +28,8 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const itemsPerPage = 24;
+  const { user, loading: authLoading } = useSupabaseAuth();
+  const [hasActiveAd, setHasActiveAd] = useState(false);
 
   const getRandomComics = (comicsList, count) => {
     if (!comicsList || comicsList.length === 0) return [];
@@ -65,6 +71,26 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const checkActiveAd = async () => {
+      if (!user) {
+        setHasActiveAd(false);
+        return;
+      }
+      const now = new Date().toISOString();
+      const { data } = await supabase
+        .from('ad_orders')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .lte('start_time', now)
+        .gte('end_time', now)
+        .maybeSingle();
+      setHasActiveAd(!!data);
+    };
+    checkActiveAd();
+  }, [user]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -82,6 +108,7 @@ const Home = () => {
         <title>{getdata.data?.seoOnPage?.titleHead || "O-Truyện - Đọc truyện tranh online"}</title>
       </Helmet>
       <Menu />
+      {(!user || !hasActiveAd) && <ActiveAdBanners position="top" />}
       <WelcomeBanner />
 
       {/* Banner giới thiệu hệ thống nhiệm vụ */}

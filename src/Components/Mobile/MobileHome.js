@@ -9,6 +9,7 @@ import ComicCard from "./components/ComicCard";
 import ErrorMessage from "./components/ErrorMessage";
 import "./styles/MobileHome.css";
 import { FaHeart } from 'react-icons/fa';
+import AdBanner from '../banner';
 
 // Component cho trang Mobile Home
 const MobileHome = () => {
@@ -448,6 +449,8 @@ const MobileHome = () => {
       </Helmet>
       
       <MobileMenu />
+      
+      <AdBanner image="/images/ad1.jpg" link="https://example.com" alt="Quảng cáo mẫu" />
       
       {/* Marquee thông báo bản quyền - moved to directly below the menu */}
       <div className="copyright-marquee-container">

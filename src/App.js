@@ -28,6 +28,7 @@ import MobileSearch from './Components/Mobile/MobileSearch';
 //import Category from './Components/Category';
 //import FollowPage from './Components/FollowPage';
 import CommentsDebug from './Components/Debug/CommentsDebug';
+import { BuyAdPage } from './Components/banner';
 
 // Admin components
 import { AdminProvider } from './Components/Admin/AdminContext';
@@ -40,6 +41,8 @@ import HistoryManagement from './Components/Admin/Management/HistoryManagement';
 import CommentsManagement from './Components/Admin/Management/CommentsManagement';
 import MissionsManagement from './Components/Admin/Management/MissionsManagement';
 import LuckyWheelManagement from './Components/Admin/Management/LuckyWheelManagement';
+import AdOrdersManagement from './Components/Admin/Management/AdOrdersManagement';
+import SystemBannersManagement from './Components/Admin/Management/SystemBannersManagement';
 
 // Lazy loaded components
 const MissionsPage = lazy(() => import('./Components/Missions/MissionsPage'));
@@ -102,6 +105,8 @@ function App() {
                   <Route path="comments" element={<CommentsManagement />} />
                   <Route path="missions" element={<MissionsManagement />} />
                   <Route path="lucky-wheel" element={<LuckyWheelManagement />} />
+                  <Route path="ad-orders" element={<AdOrdersManagement />} />
+                  <Route path="system-banners" element={<SystemBannersManagement />} />
                 </Routes>
               </AdminProvider>
             } 
@@ -110,6 +115,7 @@ function App() {
           {/* Thêm routes mới trong phần Route */}
           <Route path="/missions" element={<MissionsPage />} />
           <Route path="/lucky-wheel" element={<LuckyWheelPage />} />
+          <Route path="/buy-ad" element={<BuyAdPage />} />
         </Routes>
         {/* Thêm ChatbotProvider ở đây để hiển thị trên tất cả các trang */}
         <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999 }}>

@@ -12,7 +12,8 @@ import {
   FaBars,
   FaTimes,
   FaTasks,
-  FaDharmachakra
+  FaDharmachakra,
+  FaAd
 } from 'react-icons/fa';
 import { useAdmin } from '../AdminContext';
 import './AdminSidebar.css';
@@ -66,6 +67,16 @@ const AdminSidebar = () => {
       path: '/admin/comments',
       name: 'Quản lý Bình luận',
       icon: <FaComments />
+    },
+    {
+      path: '/admin/ad-orders',
+      name: 'Quản lý Quảng cáo',
+      icon: <FaAd />
+    },
+    {
+      path: '/admin/system-banners',
+      name: 'Quản lý Banner hệ thống',
+      icon: <FaAd />
     }
   ];
 
