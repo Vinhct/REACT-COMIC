@@ -18,6 +18,7 @@ import {
   BsPerson,
   BsTrophy,
   BsTicketPerforated,
+  BsBarChart
 } from "react-icons/bs";
 import { useSupabaseAuth } from "../../Include/Authentication/SupabaseAuthContext";
 import axios from "axios";
@@ -194,6 +195,13 @@ const MobileMenu = () => {
             >
               <BsTicketPerforated className="me-2" /> Vòng quay may mắn
             </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/mobile/bang-xep-hang"
+              onClick={() => setShowMenu(false)}
+            >
+              <BsBarChart className="me-2" /> Bảng Xếp Hạng
+            </Nav.Link>
 
             <h5 className="menu-category mt-4">Tài khoản</h5>
             {user ? (
@@ -236,6 +244,13 @@ const MobileMenu = () => {
                   onClick={() => setShowMenu(false)}
                 >
                   <BsClockHistory className="me-2" /> Lịch sử đọc
+                </Nav.Link>
+                <Nav.Link
+                  as={Link}
+                  to="/buy-ad"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <BsTicketPerforated className="me-2" /> Mua gói quảng cáo
                 </Nav.Link>
 
                 <Button

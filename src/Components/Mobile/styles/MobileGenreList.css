@@ -3,7 +3,8 @@
 .mobile-genre-list {
   background-color: #f8f9fa;
   min-height: 100vh;
-  padding-bottom: 60px; /* Để tránh menu dưới che mất nội dung */
+  padding-bottom: 60px; /* Đúng bằng chiều cao menu dưới cùng fixed */
+  /* padding-bottom: 56px; */
 }
 
 .mobile-container {
@@ -50,23 +51,30 @@
 
 /* Thể loại card */
 .genre-card {
-  border: none;
+  width: 100%;
+  min-height: 60px;
+  height: 70px;
+  margin-bottom: 10px;
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 80px;
-  transition: all 0.3s ease;
-  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #6366f1, #ec4899);
   color: white;
+  border: none;
+  transition: transform 0.2s;
 }
 
 .genre-card .card-body {
-  padding: 15px;
-  font-weight: 600;
+  padding: 10px 6px;
   font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
   text-align: center;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .genre-card:active {

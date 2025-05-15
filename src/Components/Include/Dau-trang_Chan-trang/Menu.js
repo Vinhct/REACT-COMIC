@@ -148,6 +148,18 @@ export const Menu = () => {
               Sắp ra mắt
             </Nav.Link>
 
+            <Nav.Link
+              as={Link}
+              to="/bang-xep-hang"
+              className="nav-link gradient-text"
+              style={{
+                fontSize: "18px",
+                textShadow: "0px 0px 1px rgba(255,255,255,0.2)",
+              }}
+            >
+              Bảng Xếp Hạng
+            </Nav.Link>
+
             <NavDropdown
               title={
                 <span

@@ -10,6 +10,8 @@ import ErrorMessage from "./components/ErrorMessage";
 import "./styles/MobileHome.css";
 import { FaHeart } from 'react-icons/fa';
 import AdBanner from '../banner';
+import { useSupabaseAuth } from '../Include/Authentication/SupabaseAuthContext';
+import { supabase } from '../../supabaseClient';
 
 // Component cho trang Mobile Home
 const MobileHome = () => {
@@ -27,6 +29,52 @@ const MobileHome = () => {
     trending: null,
     completed: null
   });
+  const [systemBanners, setSystemBanners] = useState([]);
+  const [adOrders, setAdOrders] = useState([]);
+  const { user } = useSupabaseAuth();
+  const [hasActiveAd, setHasActiveAd] = useState(false);
+  
+  useEffect(() => {
+    const fetchBanners = async () => {
+      const now = new Date().toISOString();
+      // Lấy banner hệ thống
+      const { data: sysData } = await supabase
+        .from('system_banners')
+        .select('*')
+        .eq('active', true)
+        .eq('position', 'top');
+      setSystemBanners(sysData || []);
+      // Lấy banner user
+      const { data: adData } = await supabase
+        .from('ad_orders')
+        .select('*, ad_packages(*)')
+        .eq('status', 'active')
+        .lte('start_time', now)
+        .gte('end_time', now);
+      setAdOrders(adData || []);
+    };
+    fetchBanners();
+  }, []);
+  
+  useEffect(() => {
+    const checkActiveAd = async () => {
+      if (!user) {
+        setHasActiveAd(false);
+        return;
+      }
+      const now = new Date().toISOString();
+      const { data } = await supabase
+        .from('ad_orders')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .lte('start_time', now)
+        .gte('end_time', now)
+        .maybeSingle();
+      setHasActiveAd(!!data);
+    };
+    checkActiveAd();
+  }, [user]);
   
   // Lấy dữ liệu truyện mới
   const fetchNewestComics = async () => {
@@ -450,7 +498,41 @@ const MobileHome = () => {
       
       <MobileMenu />
       
-      <AdBanner image="/images/ad1.jpg" link="https://example.com" alt="Quảng cáo mẫu" />
+      {/* Banner quảng cáo động giống desktop, chỉ hiển thị nếu user KHÔNG có gói quảng cáo active */}
+      {!hasActiveAd && (
+        systemBanners.length > 0 ? (
+          <div>
+            {systemBanners.map(banner => (
+              <AdBanner
+                key={banner.id}
+                image={banner.image_url}
+                link={banner.link}
+                alt={banner.alt || 'Banner hệ thống'}
+                style={{ marginBottom: 12 }}
+              />
+            ))}
+          </div>
+        ) : adOrders.filter(order => order.ad_packages?.position === 'top').length > 0 ? (
+          <div>
+            {adOrders.filter(order => order.ad_packages?.position === 'top').map(order => (
+              <AdBanner
+                key={order.id}
+                image={order.banner_url}
+                link={order.link}
+                alt={order.ad_packages?.name}
+                style={{ marginBottom: 12 }}
+              />
+            ))}
+          </div>
+        ) : (
+          <AdBanner
+            image="/images/ad1.jpg"
+            link="https://example.com"
+            alt="Quảng cáo mặc định"
+            style={{ marginBottom: 12 }}
+          />
+        )
+      )}
       
       {/* Marquee thông báo bản quyền - moved to directly below the menu */}
       <div className="copyright-marquee-container">

@@ -24,6 +24,8 @@ import MobileProfile from './Components/Mobile/MobileProfile';
 import MobileMissionsPage from './Components/Mobile/Missions/MobileMissionsPage';
 import MobileLuckyWheelPage from './Components/Mobile/Missions/MobileLuckyWheelPage';
 import MobileSearch from './Components/Mobile/MobileSearch';
+import RankingPage from './Components/RankingPage/RankingPage';
+import MobileRankingPage from './Components/Mobile/MobileRankingPage/MobileRankingPage';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
 //import FollowPage from './Components/FollowPage';
@@ -68,12 +70,14 @@ function App() {
           <Route path='/mobile/missions' element={<MobileMissionsPage />}></Route>
           <Route path='/mobile/lucky-wheel' element={<MobileLuckyWheelPage />}></Route>
           <Route path='/mobile/search' element={<MobileSearch />}></Route>
+          <Route path='/mobile/bang-xep-hang' element={<MobileRankingPage />}></Route>
           
           {/* Desktop specific routes */}
           <Route path='/genre/:slug' element={<Genre />}></Route>
           <Route path='/dang-phat-hanh' element={<DPH />}></Route>
           <Route path='/hoan-thanh' element={<HT />}></Route>
           <Route path='/sap-ra-mat' element={<SRM />}></Route>
+          <Route path='/bang-xep-hang' element={<RankingPage />}></Route>
           
           {/* Common routes - Sử dụng component Supabase mới */}
           <Route path='/login' element={<SupabaseLogin />}></Route>

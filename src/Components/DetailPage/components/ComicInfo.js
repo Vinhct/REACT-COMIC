@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Badge, Button, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaShareAlt } from "react-icons/fa";
@@ -12,6 +12,7 @@ import {
   FacebookMessengerShareButton 
 } from "react-share";
 import { toast } from "react-toastify";
+import { supabase } from '../../../supabaseClient';
 
 const ComicInfo = ({ 
   item, 
@@ -25,6 +26,27 @@ const ComicInfo = ({
   handleShareMessenger,
   loading
 }) => {
+  const [viewCount, setViewCount] = useState(0);
+
+  // Lấy view count từ bảng comic_stats
+  useEffect(() => {
+    const fetchViewCount = async () => {
+      if (item?.slug) {
+        const { data, error } = await supabase
+          .from('comic_stats')
+          .select('view_count')
+          .eq('comic_slug', item.slug)
+          .single();
+          
+        if (!error && data) {
+          setViewCount(data.view_count);
+        }
+      }
+    };
+    
+    fetchViewCount();
+  }, [item?.slug]);
+
   // Kiểm tra item tồn tại
   if (!item) {
     return (
@@ -85,6 +107,10 @@ const ComicInfo = ({
           <Badge bg="danger" className="text-uppercase">
             {item.status}
           </Badge>
+        </Card.Text>
+        <Card.Text>
+          <span className="fw-bold">Lượt đọc: </span>
+          <span>{viewCount || 0}</span>
         </Card.Text>
 
         <Card.Text className="text-end text-muted">

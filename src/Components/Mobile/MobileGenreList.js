@@ -102,10 +102,10 @@ const MobileGenreList = () => {
             <h4>Thể loại phổ biến</h4>
             <Row className="g-2">
               {popularGenres.map((genre, index) => (
-                <Col xs={6} key={index}>
+                <Col xs={6} className="px-1 mb-2" key={index}>
                   <Link to={`/the-loai/${genre.slug}`} className="text-decoration-none">
                     <Card 
-                      className="genre-card" 
+                      className="genre-card w-100" 
                       style={{ backgroundColor: genre.color }}
                     >
                       <Card.Body className="d-flex align-items-center justify-content-center">
@@ -125,9 +125,9 @@ const MobileGenreList = () => {
     return (
       <Row className="g-2">
         {genres.map((genre, index) => (
-          <Col xs={6} key={index}>
+          <Col xs={6} className="px-1 mb-2" key={index}>
             <Link to={`/the-loai/${genre.slug}`} className="text-decoration-none">
-              <Card className="genre-card">
+              <Card className="genre-card w-100">
                 <Card.Body className="d-flex align-items-center justify-content-center">
                   <BsGrid className="me-2" />
                   <span>{genre.name}</span>

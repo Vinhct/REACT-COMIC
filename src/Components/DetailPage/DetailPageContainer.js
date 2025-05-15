@@ -7,6 +7,7 @@ import { Menu } from "../Include/Dau-trang_Chan-trang/Menu";
 import RelatedComics from "../Include/RelatedComics";
 import "./detailPage.css";
 import { useSupabaseAuth } from "../Include/Authentication/SupabaseAuthContext";
+import { supabase } from '../../supabaseClient';
 
 // Import các component con
 import ComicInfo from "./components/ComicInfo";
@@ -84,6 +85,54 @@ const DetailPageContainer = () => {
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);
   };
+
+  // Tăng view_count khi vào trang chi tiết truyện
+  useEffect(() => {
+    const increaseView = async () => {
+      if (item?.slug) {
+        try {
+          // Bước 1: Kiểm tra xem đã có record chưa
+          const { data: existingStats } = await supabase
+            .from('comic_stats')
+            .select('view_count')
+            .eq('comic_slug', item.slug)
+            .single();
+
+          if (existingStats) {
+            // Nếu đã có record, tăng view_count lên 1
+            const { error: updateError } = await supabase
+              .from('comic_stats')
+              .update({ 
+                view_count: existingStats.view_count + 1,
+                updated_at: new Date().toISOString()
+              })
+              .eq('comic_slug', item.slug);
+
+            if (updateError) {
+              console.error('Error updating view count:', updateError);
+            }
+          } else {
+            // Nếu chưa có record, tạo mới với view_count = 1
+            const { error: insertError } = await supabase
+              .from('comic_stats')
+              .insert({
+                comic_slug: item.slug,
+                view_count: 1,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              });
+
+            if (insertError) {
+              console.error('Error inserting new view count:', insertError);
+            }
+          }
+        } catch (err) {
+          console.error('Error in increaseView:', err);
+        }
+      }
+    };
+    increaseView();
+  }, [item?.slug]); // Chỉ chạy lại khi slug thay đổi
 
   // Xử lý trạng thái loading
   if (loading) {
