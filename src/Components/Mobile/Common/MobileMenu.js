@@ -18,9 +18,11 @@ import {
   BsPerson,
   BsTrophy,
   BsTicketPerforated,
-  BsBarChart
+  BsBarChart,
+  BsBell
 } from "react-icons/bs";
 import { useSupabaseAuth } from "../../Include/Authentication/SupabaseAuthContext";
+import MobileNotification from "../components/MobileNotification";
 import axios from "axios";
 import "../styles/MobileMenu.css";
 
@@ -153,6 +155,34 @@ const MobileMenu = () => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Nav className="flex-column mobile-offcanvas-menu">
+            {user && (
+              <>
+                <div className="user-info-mobile">
+                  <div className="user-avatar-container">
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt="Avatar"
+                        className="user-avatar-mobile"
+                      />
+                    ) : (
+                      <BsPerson size={40} className="user-avatar-placeholder" />
+                    )}
+                  </div>
+                  <div className="user-details-mobile">
+                    <p className="user-name">
+                      {user.user_metadata?.display_name || user.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="notification-section mb-4">
+                  <h5 className="menu-category">Thông báo</h5>
+                  <MobileNotification inMenu={true} />
+                </div>
+              </>
+            )}
+
             <h5 className="menu-category">Truyện</h5>
             <Nav.Link as={Link} to="/" onClick={() => setShowMenu(false)}>
               Trang chủ
@@ -202,28 +232,10 @@ const MobileMenu = () => {
             >
               <BsBarChart className="me-2" /> Bảng Xếp Hạng
             </Nav.Link>
-
-            <h5 className="menu-category mt-4">Tài khoản</h5>
-            {user ? (
+            
+            {user && (
               <>
-                <div className="user-info-mobile">
-                  <div className="user-avatar-container">
-                    {user.user_metadata?.avatar_url ? (
-                      <img
-                        src={user.user_metadata.avatar_url}
-                        alt="Avatar"
-                        className="user-avatar-mobile"
-                      />
-                    ) : (
-                      <BsPerson size={40} className="user-avatar-placeholder" />
-                    )}
-                  </div>
-                  <div className="user-details-mobile">
-                    <p className="user-name">
-                      {user.user_metadata?.display_name || user.email}
-                    </p>
-                  </div>
-                </div>
+                <h5 className="menu-category mt-4">Tài khoản</h5>
                 <Nav.Link
                   as={Link}
                   to="/profile"
@@ -261,27 +273,6 @@ const MobileMenu = () => {
                   Đăng xuất
                 </Button>
               </>
-            ) : (
-              <div className="auth-buttons-mobile">
-                <Button
-                  as={Link}
-                  to="/login"
-                  variant="primary"
-                  className="w-100 mb-2"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Đăng nhập
-                </Button>
-                <Button
-                  as={Link}
-                  to="/register"
-                  variant="outline-primary"
-                  className="w-100"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Đăng ký
-                </Button>
-              </div>
             )}
           </Nav>
         </Offcanvas.Body>

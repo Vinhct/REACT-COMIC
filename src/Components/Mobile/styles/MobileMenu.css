@@ -208,4 +208,51 @@
 body.is-mobile {
   padding-top: 70px !important;
   padding-bottom: 70px !important;
+}
+
+/* Notification Section */
+.notification-section {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.notification-section .offcanvas {
+  position: static !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.notification-section .offcanvas-header,
+.notification-section .offcanvas-backdrop {
+  display: none !important;
+}
+
+.notification-section .offcanvas-body {
+  padding: 0 !important;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-section .list-group {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.notification-section .list-group-item {
+  border-left: none;
+  border-right: none;
+  padding: 10px;
+}
+
+.notification-section .list-group-item:first-child {
+  border-top: none;
+}
+
+.notification-section .list-group-item:last-child {
+  border-bottom: none;
 } 

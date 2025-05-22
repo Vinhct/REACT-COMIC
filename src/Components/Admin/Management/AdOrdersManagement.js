@@ -61,20 +61,20 @@ const AdOrdersManagement = () => {
     if (!selectedUser || !selectedPackage) return;
     setActionLoading(true);
     try {
-      const pkg = packages.find(p => p.id === selectedPackage);
-      const now = new Date();
-      const end = new Date(now.getTime() + (pkg.duration_days || 7) * 24 * 60 * 60 * 1000);
+    const pkg = packages.find(p => p.id === selectedPackage);
+    const now = new Date();
+    const end = new Date(now.getTime() + (pkg.duration_days || 7) * 24 * 60 * 60 * 1000);
 
       // 1. Tạo đơn hàng quảng cáo
       const { error: orderError } = await supabase.from('ad_orders').insert([
-        {
-          user_id: selectedUser.id,
-          package_id: pkg.id,
-          status: 'active',
-          start_time: now.toISOString(),
-          end_time: end.toISOString()
-        }
-      ]);
+      {
+        user_id: selectedUser.id,
+        package_id: pkg.id,
+        status: 'active',
+        start_time: now.toISOString(),
+        end_time: end.toISOString()
+      }
+    ]);
 
       if (orderError) throw orderError;
 
@@ -91,15 +91,15 @@ const AdOrdersManagement = () => {
       if (notifError) throw notifError;
 
       toast.success('Kích hoạt gói quảng cáo thành công!');
-      setShowModal(false);
-      setSelectedUser(null);
-      setSelectedPackage('');
-      await fetchAll();
+    setShowModal(false);
+    setSelectedUser(null);
+    setSelectedPackage('');
+    await fetchAll();
     } catch (error) {
       console.error('Lỗi:', error);
       toast.error('Lỗi kích hoạt: ' + error.message);
     } finally {
-      setActionLoading(false);
+    setActionLoading(false);
     }
   };
 
