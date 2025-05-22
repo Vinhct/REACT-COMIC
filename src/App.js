@@ -31,6 +31,8 @@ import MobileRankingPage from './Components/Mobile/MobileRankingPage/MobileRanki
 //import FollowPage from './Components/FollowPage';
 import CommentsDebug from './Components/Debug/CommentsDebug';
 import { BuyAdPage } from './Components/banner';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Admin components
 import { AdminProvider } from './Components/Admin/AdminContext';
@@ -126,6 +128,18 @@ function App() {
           <ChatbotProvider />
         </div>
       </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </SupabaseAuthProvider>
   );
 }

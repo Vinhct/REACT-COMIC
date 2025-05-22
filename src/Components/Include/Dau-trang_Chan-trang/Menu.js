@@ -15,6 +15,7 @@ import { BsSearch, BsPersonCircle } from "react-icons/bs"; // Thêm biểu tư�
 import { useSupabaseAuth } from "../Authentication/SupabaseAuthContext";
 import logo from "../Logo/logo3.jpg";
 import "./Menu.css";
+import NotificationBell from '../NotificationBell';
 
 export const Menu = () => {
   const navigate = useNavigate();
@@ -235,6 +236,7 @@ export const Menu = () => {
             {/* Login/Logout Buttons */}
             {user ? (
               <Nav.Item className="d-flex align-items-center">
+                <NotificationBell />
                 <Dropdown>
                   <Dropdown.Toggle
                     as="div"

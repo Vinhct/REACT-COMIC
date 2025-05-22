@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Spinner, Alert, Badge, Image, Modal, Form } from 'react-bootstrap';
 import { supabase } from '../../../supabaseClient';
 import AdminLayout from '../AdminLayout';
+import { toast } from 'react-toastify';
 
 const statusColor = {
   pending: 'warning',
@@ -59,24 +60,47 @@ const AdOrdersManagement = () => {
     e.preventDefault();
     if (!selectedUser || !selectedPackage) return;
     setActionLoading(true);
-    const pkg = packages.find(p => p.id === selectedPackage);
-    const now = new Date();
-    const end = new Date(now.getTime() + (pkg.duration_days || 7) * 24 * 60 * 60 * 1000);
-    const { error } = await supabase.from('ad_orders').insert([
-      {
-        user_id: selectedUser.id,
-        package_id: pkg.id,
-        status: 'active',
-        start_time: now.toISOString(),
-        end_time: end.toISOString()
-      }
-    ]);
-    if (error) alert('Lỗi kích hoạt: ' + error.message);
-    setShowModal(false);
-    setSelectedUser(null);
-    setSelectedPackage('');
-    await fetchAll();
-    setActionLoading(false);
+    try {
+      const pkg = packages.find(p => p.id === selectedPackage);
+      const now = new Date();
+      const end = new Date(now.getTime() + (pkg.duration_days || 7) * 24 * 60 * 60 * 1000);
+
+      // 1. Tạo đơn hàng quảng cáo
+      const { error: orderError } = await supabase.from('ad_orders').insert([
+        {
+          user_id: selectedUser.id,
+          package_id: pkg.id,
+          status: 'active',
+          start_time: now.toISOString(),
+          end_time: end.toISOString()
+        }
+      ]);
+
+      if (orderError) throw orderError;
+
+      // 2. Tạo thông báo cho user
+      const { error: notifError } = await supabase.from('notifications').insert([
+        {
+          user_id: selectedUser.id,
+          title: 'Gói quảng cáo đã được kích hoạt',
+          message: `Gói "${pkg.name}" của bạn đã được kích hoạt và sẽ hết hạn vào ${end.toLocaleString()}`,
+          type: 'success'
+        }
+      ]);
+
+      if (notifError) throw notifError;
+
+      toast.success('Kích hoạt gói quảng cáo thành công!');
+      setShowModal(false);
+      setSelectedUser(null);
+      setSelectedPackage('');
+      await fetchAll();
+    } catch (error) {
+      console.error('Lỗi:', error);
+      toast.error('Lỗi kích hoạt: ' + error.message);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   return (
@@ -138,7 +162,16 @@ const AdOrdersManagement = () => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModal(false)}>Hủy</Button>
-              <Button type="submit" variant="primary" disabled={actionLoading}>Kích hoạt</Button>
+              <Button type="submit" variant="primary" disabled={actionLoading}>
+                {actionLoading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Đang xử lý...
+                  </>
+                ) : (
+                  'Kích hoạt'
+                )}
+              </Button>
             </Modal.Footer>
           </Form>
         </Modal>
