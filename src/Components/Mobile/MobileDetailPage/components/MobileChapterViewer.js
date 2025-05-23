@@ -79,50 +79,28 @@ const MobileChapterViewer = ({
     }
   };
 
-  // Kiểm tra chương hiện tại và tìm chương trước/sau
-  const findCurrentChapterInfo = () => {
-    if (!item || !item.chapters || !getDataChapter) return null;
+  // Xử lý chuyển chương
+  const handleChapterNavigation = (direction) => {
+    if (!item?.chapters?.[0]?.server_data || !getDataChapter?.data?.item?.chapter_name) return;
     
-    let currentServer = null;
-    let currentChapter = null;
-    let prevChapter = null;
-    let nextChapter = null;
-    
-    // Lặp qua tất cả server và chapter để tìm chương hiện tại
-    for (const server of item.chapters) {
-      if (!server.server_data) continue;
-      
-      for (let i = 0; i < server.server_data.length; i++) {
-        const chapter = server.server_data[i];
-        if (chapter.chapter_api_data === getDataChapter.chapter_api_data) {
-          currentServer = server;
-          currentChapter = chapter;
-          
-          // Tìm chương trước và sau trong cùng server
-          if (i > 0) {
-            prevChapter = server.server_data[i - 1];
-          }
-          
-          if (i < server.server_data.length - 1) {
-            nextChapter = server.server_data[i + 1];
-          }
-          
-          break;
-        }
-      }
-      
-      if (currentChapter) break;
+    const currentIndex = item.chapters[0].server_data.findIndex(
+      (chapter) => chapter.chapter_name === getDataChapter.data.item.chapter_name
+    );
+
+    if (currentIndex === -1) return;
+
+    let targetChapter;
+    if (direction === 'prev' && currentIndex > 0) {
+      targetChapter = item.chapters[0].server_data[currentIndex - 1];
+    } else if (direction === 'next' && currentIndex < item.chapters[0].server_data.length - 1) {
+      targetChapter = item.chapters[0].server_data[currentIndex + 1];
     }
-    
-    return {
-      currentServer,
-      currentChapter,
-      prevChapter,
-      nextChapter
-    };
+
+    if (targetChapter) {
+      handleReachChapter(targetChapter.chapter_api_data);
+      scrollToTop();
+    }
   };
-  
-  const chapterInfo = findCurrentChapterInfo();
   
   // Hàm kiểm tra và hiển thị dữ liệu chapter theo định dạng phù hợp
   const renderChapterImages = () => {
@@ -153,6 +131,10 @@ const MobileChapterViewer = ({
               alt={`Trang ${index + 1}`}
               className="chapter-image"
               loading="lazy"
+              onError={(e) => {
+                console.error(`Error loading image ${index + 1}`);
+                e.target.src = '/placeholder.png'; // Thay thế bằng ảnh placeholder khi lỗi
+              }}
             />
           ))}
         </div>
@@ -178,7 +160,7 @@ const MobileChapterViewer = ({
           <BsArrowLeft size={24} />
         </Button>
         <Modal.Title className="m-auto text-center fs-6">
-         Chapter: {chapterInfo?.currentChapter?.chapter_name || getDataChapter?.data?.item?.chapter_name || "Đang tải..."}
+          {item?.name} - Chapter {getDataChapter?.data?.item?.chapter_name || "Đang tải..."}
         </Modal.Title>
         <Link to="/" className="text-white">
           <BsHouseDoor size={20} />
@@ -207,16 +189,24 @@ const MobileChapterViewer = ({
       <div className={`chapter-controls d-flex justify-content-between ${showControls ? 'show' : 'hide'}`}>
         <Button
           variant="dark"
-          disabled={!chapterInfo?.prevChapter}
-          onClick={() => chapterInfo?.prevChapter && handleReachChapter(chapterInfo.prevChapter.chapter_api_data)}
+          disabled={!item?.chapters?.[0]?.server_data || !getDataChapter?.data?.item?.chapter_name || 
+            item.chapters[0].server_data.findIndex(
+              (chapter) => chapter.chapter_name === getDataChapter.data.item.chapter_name
+            ) === 0}
+          onClick={() => handleChapterNavigation('prev')}
+          className="prev-chapter-btn"
         >
           Chương trước
         </Button>
         
         <Button
           variant="dark"
-          disabled={!chapterInfo?.nextChapter}
-          onClick={() => chapterInfo?.nextChapter && handleReachChapter(chapterInfo.nextChapter.chapter_api_data)}
+          disabled={!item?.chapters?.[0]?.server_data || !getDataChapter?.data?.item?.chapter_name || 
+            item.chapters[0].server_data.findIndex(
+              (chapter) => chapter.chapter_name === getDataChapter.data.item.chapter_name
+            ) === item.chapters[0].server_data.length - 1}
+          onClick={() => handleChapterNavigation('next')}
+          className="next-chapter-btn"
         >
           Chương sau
         </Button>

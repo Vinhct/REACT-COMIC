@@ -22,6 +22,7 @@ const MobileSearch = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
   
   // Advanced search filters
   const [genres, setGenres] = useState([]);
@@ -57,11 +58,11 @@ const MobileSearch = () => {
   // Search for comics when query or filters change
   useEffect(() => {
     if (initialQuery) {
-      performSearch(initialQuery, 1);
+      performSearch(initialQuery, 1, true);
     }
   }, [initialQuery]);
   
-  const performSearch = async (query, pageNum) => {
+  const performSearch = async (query, pageNum, isNewSearch = false) => {
     if (!query) return;
     
     try {
@@ -69,7 +70,7 @@ const MobileSearch = () => {
       setError(null);
       
       // Create API URL with filters
-      let apiUrl = `https://otruyenapi.com/v1/api/tim-kiem?q=${encodeURIComponent(query)}&page=${pageNum}`;
+      let apiUrl = `https://otruyenapi.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}&page=${pageNum}`;
       
       // Add filters if advanced search is used
       if (selectedGenres.length > 0) {
@@ -89,63 +90,46 @@ const MobileSearch = () => {
           'Accept': 'application/json',
           'Cache-Control': 'no-cache'
         },
-        timeout: 8000
+        timeout: 10000
       });
       
-      if (response.data?.data?.items) {
-        const results = response.data.data.items.map(comic => ({
+      if (response.data?.data) {
+        const { items = [], params = {} } = response.data.data;
+        const results = items.map(comic => ({
           id: comic.id,
           title: comic.name,
           slug: comic.slug,
-          thumbnail: comic.thumb_url,
+          thumbnail: `https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`,
           status: comic.status || "Đang cập nhật",
           updated_at: comic.updatedAt,
+          views: comic.total_views,
+          followers: comic.followers,
+          description: comic.description,
           genres: comic.category ? comic.category.map(cat => ({
             name: cat.name,
             slug: cat.slug
           })) : []
         }));
         
-        if (pageNum === 1) {
+        if (isNewSearch) {
           setSearchResults(results);
+          setTotalItems(params.pagination?.totalItems || 0);
         } else {
           setSearchResults(prev => [...prev, ...results]);
         }
         
-        setHasMore(results.length > 0);
+        setHasMore(results.length > 0 && results.length >= 20);
         setPage(pageNum);
       } else {
-        setSearchResults([]);
+        if (isNewSearch) {
+          setSearchResults([]);
+          setTotalItems(0);
+        }
         setHasMore(false);
       }
     } catch (error) {
       console.error("Search error:", error);
       setError("Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại sau.");
-      
-      // Fallback data if API fails
-      if (pageNum === 1) {
-        const fallbackData = [
-          {
-            id: "search1",
-            title: `Kết quả cho "${query}"`,
-            slug: "sample-result-1",
-            thumbnail: "https://i.imgur.com/QbPXnrV.jpg",
-            status: "Đang cập nhật",
-            updated_at: new Date().toISOString(),
-            genres: [{ name: "Action", slug: "action" }]
-          },
-          {
-            id: "search2",
-            title: `Truyện liên quan "${query}"`,
-            slug: "sample-result-2",
-            thumbnail: "https://i.imgur.com/uT95Kqa.jpg",
-            status: "Hoàn thành",
-            updated_at: new Date().toISOString(),
-            genres: [{ name: "Adventure", slug: "adventure" }]
-          }
-        ];
-        setSearchResults(fallbackData);
-      }
     } finally {
       setLoading(false);
     }
@@ -158,13 +142,13 @@ const MobileSearch = () => {
     
     // Update URL with search query and reset page
     navigate(`/mobile/search?query=${encodeURIComponent(searchQuery.trim())}`);
-    performSearch(searchQuery.trim(), 1);
+    performSearch(searchQuery.trim(), 1, true);
   };
   
   // Load more results
   const loadMoreResults = () => {
     if (loading || !hasMore) return;
-    performSearch(searchQuery, page + 1);
+    performSearch(searchQuery, page + 1, false);
   };
   
   // Toggle genre selection
@@ -180,7 +164,7 @@ const MobileSearch = () => {
   
   // Apply filters
   const applyFilters = () => {
-    performSearch(searchQuery, 1);
+    performSearch(searchQuery, 1, true);
     setShowAdvancedSearch(false);
   };
   
@@ -299,14 +283,21 @@ const MobileSearch = () => {
         {/* Search Results */}
         {initialQuery && (
           <div className="search-results-container">
-            <h4 className="search-results-title">
-              {searchResults.length > 0 
-                ? `Kết quả tìm kiếm cho "${initialQuery}"`
-                : loading 
-                  ? "Đang tìm kiếm..."
-                  : `Không tìm thấy truyện nào cho "${initialQuery}"`
-              }
-            </h4>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h4 className="search-results-title mb-0">
+                {searchResults.length > 0 
+                  ? `Kết quả tìm kiếm cho "${initialQuery}"`
+                  : loading 
+                    ? "Đang tìm kiếm..."
+                    : `Không tìm thấy truyện nào cho "${initialQuery}"`
+                }
+              </h4>
+              {totalItems > 0 && (
+                <Badge bg="primary" className="total-results">
+                  {totalItems} kết quả
+                </Badge>
+              )}
+            </div>
             
             {loading && page === 1 ? (
               <div className="text-center my-5">
@@ -315,14 +306,14 @@ const MobileSearch = () => {
             ) : error ? (
               <ErrorMessage 
                 message={error}
-                onRetry={() => performSearch(searchQuery, 1)}
+                onRetry={() => performSearch(searchQuery, 1, true)}
               />
             ) : (
               <>
                 {searchResults.length > 0 ? (
                   <Row className="comic-grid">
                     {searchResults.map((comic, index) => (
-                      <Col xs={6} key={index} className="mb-3">
+                      <Col xs={6} key={`${comic.id}-${index}`} className="mb-3">
                         <ComicCard comic={comic} />
                       </Col>
                     ))}
@@ -372,9 +363,9 @@ const MobileSearch = () => {
               <BsSearch size={48} className="text-secondary mb-3" />
               <h4>Tìm kiếm truyện</h4>
               <p className="text-muted">
-                Nhập tên truyện, tác giả hoặc nội dung bạn muốn tìm kiếm.
+                Nhập tên truyện nội dung bạn muốn tìm kiếm.
                 <br />
-                Bạn có thể sử dụng bộ lọc để tìm kiếm nâng cao.
+               
               </p>
             </div>
           </div>
