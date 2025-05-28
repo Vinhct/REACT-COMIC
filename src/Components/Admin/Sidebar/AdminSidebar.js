@@ -13,7 +13,9 @@ import {
   FaTimes,
   FaTasks,
   FaDharmachakra,
-  FaAd
+  FaAd,
+  FaMoneyBillWave,
+  FaUserTag
 } from 'react-icons/fa';
 import { useAdmin } from '../AdminContext';
 import './AdminSidebar.css';
@@ -74,9 +76,19 @@ const AdminSidebar = () => {
       icon: <FaAd />
     },
     {
+      path: '/admin/user-ads',
+      name: 'Trạng thái QC User',
+      icon: <FaUserTag />
+    },
+    {
       path: '/admin/system-banners',
       name: 'Quản lý Banner hệ thống',
       icon: <FaAd />
+    },
+    {
+      path: '/admin/payment-confirmations',
+      name: 'Quản lý Thanh toán',
+      icon: <FaMoneyBillWave />
     }
   ];
 

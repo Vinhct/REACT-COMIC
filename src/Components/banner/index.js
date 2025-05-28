@@ -1,4 +1,7 @@
 import AdBanner from './AdBanner';
 import BuyAdPage from './BuyAdPage';
-export { AdBanner, BuyAdPage };
+import PaymentStatus from './PaymentStatus';
+import VietQRTest from './VietQRTest';
+
+export { AdBanner, BuyAdPage, PaymentStatus, VietQRTest };
 export default AdBanner; 
