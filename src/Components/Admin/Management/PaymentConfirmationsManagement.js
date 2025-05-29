@@ -1,8 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spinner, Alert, Badge, Button, Modal } from 'react-bootstrap';
+import { Table, Spinner, Alert, Badge, Button, Modal, Form, Row, Col, Card } from 'react-bootstrap';
 import { supabase } from '../../../supabaseClient';
 import AdminLayout from '../AdminLayout';
 import { toast } from 'react-toastify';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const PaymentConfirmationsManagement = () => {
   const [confirmations, setConfirmations] = useState([]);
@@ -13,11 +36,95 @@ const PaymentConfirmationsManagement = () => {
   const [showManualConfirm, setShowManualConfirm] = useState(false);
   const [manualConfirmLoading, setManualConfirmLoading] = useState(false);
   const [pendingOrders, setPendingOrders] = useState([]);
+  const [revenueStats, setRevenueStats] = useState({
+    today: 0,
+    thisWeek: 0,
+    thisMonth: 0,
+    total: 0,
+    dailyData: [],
+    monthlyData: []
+  });
+  const [dateRange, setDateRange] = useState('thisMonth'); // thisMonth, last3Months, thisYear, all
 
   useEffect(() => {
     fetchConfirmations();
     fetchPendingOrders();
   }, []);
+
+  useEffect(() => {
+    calculateRevenueStats();
+  }, [confirmations, dateRange]);
+
+  const calculateRevenueStats = () => {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // Lọc theo range
+    let filteredConfirmations = [...confirmations];
+    if (dateRange === 'thisMonth') {
+      filteredConfirmations = confirmations.filter(c => 
+        new Date(c.confirmed_at) >= startOfMonth
+      );
+    } else if (dateRange === 'last3Months') {
+      const startOf3Months = new Date(now);
+      startOf3Months.setMonth(now.getMonth() - 3);
+      filteredConfirmations = confirmations.filter(c =>
+        new Date(c.confirmed_at) >= startOf3Months
+      );
+    } else if (dateRange === 'thisYear') {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      filteredConfirmations = confirmations.filter(c =>
+        new Date(c.confirmed_at) >= startOfYear
+      );
+    }
+
+    // Tính toán các thống kê
+    const todayRevenue = confirmations
+      .filter(c => new Date(c.confirmed_at) >= startOfToday)
+      .reduce((sum, c) => sum + c.confirmed_amount, 0);
+
+    const weekRevenue = confirmations
+      .filter(c => new Date(c.confirmed_at) >= startOfWeek)
+      .reduce((sum, c) => sum + c.confirmed_amount, 0);
+
+    const monthRevenue = confirmations
+      .filter(c => new Date(c.confirmed_at) >= startOfMonth)
+      .reduce((sum, c) => sum + c.confirmed_amount, 0);
+
+    const totalRevenue = filteredConfirmations
+      .reduce((sum, c) => sum + c.confirmed_amount, 0);
+
+    // Tính dữ liệu cho biểu đồ theo ngày
+    const dailyData = {};
+    filteredConfirmations.forEach(c => {
+      const date = new Date(c.confirmed_at).toLocaleDateString();
+      dailyData[date] = (dailyData[date] || 0) + c.confirmed_amount;
+    });
+
+    // Tính dữ liệu cho biểu đồ theo tháng
+    const monthlyData = {};
+    filteredConfirmations.forEach(c => {
+      const date = new Date(c.confirmed_at);
+      const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + c.confirmed_amount;
+    });
+
+    setRevenueStats({
+      today: todayRevenue,
+      thisWeek: weekRevenue,
+      thisMonth: monthRevenue,
+      total: totalRevenue,
+      dailyData: Object.entries(dailyData)
+        .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+        .slice(-30),
+      monthlyData: Object.entries(monthlyData)
+        .sort(([monthA], [monthB]) => monthA.localeCompare(monthB))
+    });
+  };
 
   const fetchConfirmations = async () => {
     setLoading(true);
@@ -156,6 +263,164 @@ const PaymentConfirmationsManagement = () => {
         </div>
 
         {error && <Alert variant="danger">{error}</Alert>}
+
+        {/* Revenue Statistics Section */}
+        <div className="mb-5">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h3>Thống kê doanh thu</h3>
+            <Form.Select 
+              style={{ width: 'auto' }}
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+            >
+              <option value="thisMonth">Tháng này</option>
+              <option value="last3Months">3 tháng gần đây</option>
+              <option value="thisYear">Năm nay</option>
+              <option value="all">Tất cả</option>
+            </Form.Select>
+          </div>
+
+          <Row className="g-4 mb-4">
+            <Col md={3}>
+              <Card className="bg-primary text-white h-100">
+                <Card.Body>
+                  <h6 className="card-title">Hôm nay</h6>
+                  <h3 className="card-text mb-0">
+                    {formatMoney(revenueStats.today)}
+                  </h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={3}>
+              <Card className="bg-success text-white h-100">
+                <Card.Body>
+                  <h6 className="card-title">Tuần này</h6>
+                  <h3 className="card-text mb-0">
+                    {formatMoney(revenueStats.thisWeek)}
+                  </h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={3}>
+              <Card className="bg-info text-white h-100">
+                <Card.Body>
+                  <h6 className="card-title">Tháng này</h6>
+                  <h3 className="card-text mb-0">
+                    {formatMoney(revenueStats.thisMonth)}
+                  </h3>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={3}>
+              <Card className="bg-secondary text-white h-100">
+                <Card.Body>
+                  <h6 className="card-title">Tổng doanh thu</h6>
+                  <h3 className="card-text mb-0">
+                    {formatMoney(revenueStats.total)}
+                  </h3>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row className="g-4">
+            <Col md={8}>
+              <Card>
+                <Card.Body>
+                  <h5 className="card-title">Biểu đồ doanh thu theo ngày</h5>
+                  <div style={{ height: '300px' }}>
+                    <Line
+                      data={{
+                        labels: revenueStats.dailyData.map(([date]) => date),
+                        datasets: [
+                          {
+                            label: 'Doanh thu',
+                            data: revenueStats.dailyData.map(([, value]) => value),
+                            fill: true,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1
+                          }
+                        ]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'top',
+                          },
+                          title: {
+                            display: false
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              callback: (value) => formatMoney(value)
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card>
+                <Card.Body>
+                  <h5 className="card-title">Thống kê chi tiết</h5>
+                  <Table striped bordered>
+                    <tbody>
+                      <tr>
+                        <td>Số đơn hàng</td>
+                        <td className="text-end">
+                          <strong>{confirmations.length}</strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Đơn hàng chờ xác nhận</td>
+                        <td className="text-end">
+                          <strong>{pendingOrders.length}</strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Giá trị trung bình/đơn</td>
+                        <td className="text-end">
+                          <strong>
+                            {formatMoney(
+                              confirmations.length
+                                ? revenueStats.total / confirmations.length
+                                : 0
+                            )}
+                          </strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Xác nhận tự động</td>
+                        <td className="text-end">
+                          <strong>
+                            {confirmations.filter(c => c.confirmation_source === 'vietqr_api').length}
+                          </strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Xác nhận thủ công</td>
+                        <td className="text-end">
+                          <strong>
+                            {confirmations.filter(c => c.confirmation_source === 'manual').length}
+                          </strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
 
         {loading ? (
           <div className="text-center py-4">
