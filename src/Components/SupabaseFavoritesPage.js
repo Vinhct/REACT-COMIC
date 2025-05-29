@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { supabase } from '../supabaseClient';
 import { useAuth } from './Include/Authentication/SupabaseAuth';
 import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
-import { FaTrash, FaBookOpen, FaUser, FaCheckCircle } from 'react-icons/fa';
 
 const SupabaseFavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -154,56 +153,32 @@ const SupabaseFavoritesPage = () => {
           {favorites.map((favorite) => (
             <ListGroup.Item 
               key={favorite.id}
-              className="d-flex align-items-center justify-content-between favorite-item px-2 py-3 mb-2"
-              style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #f0f0f0', background: '#fff', transition: 'box-shadow 0.2s' }}
+              className="d-flex justify-content-between align-items-center"
             >
-              <div className="d-flex align-items-center flex-grow-1">
-                <div className="flex-grow-1">
-                  <Link
-                    to={`/comics/${favorite.slug}`}
-                    className="text-decoration-none favorite-title"
-                    style={{ fontSize: 18, fontWeight: 600, color: '#2d3a4a', lineHeight: 1.2 }}
-                  >
-                    {favorite.name}
-                  </Link>
-                  <div className="text-muted small mt-1 mb-1 d-flex flex-wrap gap-3">
-                    <span><FaUser className="me-1" />{favorite.author || 'Không rõ'}</span>
-                    <span><FaCheckCircle className="me-1 text-success" />{favorite.status || 'Đang cập nhật'}</span>
-                  </div>
-                  <div className="d-flex flex-wrap gap-3 align-items-center mt-1">
-                    <span className="text-secondary small">Thêm vào: {new Date(favorite.created_at).toLocaleDateString("vi-VN")}</span>
-                  </div>
+              <div>
+                <Link
+                  to={`/comics/${favorite.slug}`}
+                  className="text-decoration-none"
+                >
+                  <h5 className="mb-1">{favorite.name}</h5>
+                </Link>
+                <div className="text-muted small">
+                  {favorite.author && <div>Tác giả: {favorite.author}</div>}
+                  {favorite.status && <div>Trạng thái: {favorite.status}</div>}
+                  <div>Thêm vào: {new Date(favorite.created_at).toLocaleDateString("vi-VN")}</div>
                 </div>
               </div>
               <Button
                 variant="outline-danger"
                 size="sm"
-                className="btn-remove-favorite ms-2"
                 onClick={() => handleRemoveFavorite(favorite.slug)}
-                style={{ opacity: 0, transition: 'opacity 0.2s' }}
               >
-                <FaTrash />
+                Xóa
               </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>
       </Container>
-      <style>{`
-        .favorite-item:hover {
-          box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-          border-color: #e0e0e0;
-        }
-        .favorite-item:hover .btn-remove-favorite {
-          opacity: 1 !important;
-        }
-        .favorite-title:hover {
-          color: #007bff !important;
-          text-decoration: underline;
-        }
-        @media (max-width: 600px) {
-          .favorite-title { font-size: 15px !important; }
-        }
-      `}</style>
     </>
   );
 };

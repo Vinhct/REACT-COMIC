@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { supabase } from '../supabaseClient';
 import { useAuth } from './Include/Authentication/SupabaseAuth';
 import { Menu } from "./Include/Dau-trang_Chan-trang/Menu";
-import { FaClock, FaTrash, FaBookOpen, FaUser, FaCheckCircle } from 'react-icons/fa';
 
 const SupabaseHistoryPage = () => {
   const [history, setHistory] = useState([]);
@@ -147,58 +146,33 @@ const SupabaseHistoryPage = () => {
           {history.map((item) => (
             <ListGroup.Item 
               key={item.id}
-              className="d-flex align-items-center justify-content-between history-item px-2 py-3 mb-2"
-              style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #f0f0f0', background: '#fff', transition: 'box-shadow 0.2s' }}
+              className="d-flex justify-content-between align-items-center"
             >
-              <div className="d-flex align-items-center flex-grow-1">
-                <div className="flex-grow-1">
-                  <Link
-                    to={`/comics/${item.slug}?highlight_chapter=${encodeURIComponent(item.chapter_name || item.chapter || "")}`}
-                    className="text-decoration-none history-title"
-                    style={{ fontSize: 18, fontWeight: 600, color: '#2d3a4a', lineHeight: 1.2 }}
-                  >
-                    {item.name}
-                  </Link>
-                  <div className="text-muted small mt-1 mb-1 d-flex flex-wrap gap-3">
-                    <span><FaUser className="me-1" />{item.author || 'Không rõ'}</span>
-                    <span><FaCheckCircle className="me-1 text-success" />{item.status || 'Đang cập nhật'}</span>
-                  </div>
-                  <div className="d-flex flex-wrap gap-3 align-items-center mt-1">
-                    <span className="badge bg-info text-dark"><FaBookOpen className="me-1" />{item.chapter_name || item.chapter}</span>
-                    <span className="text-secondary small"><FaClock className="me-1" />{new Date(item.last_read).toLocaleString("vi-VN")}</span>
-                  </div>
+              <div>
+                <Link
+                  to={`/comics/${item.slug}?highlight_chapter=${encodeURIComponent(item.chapter_name || item.chapter || "")}`}
+                  className="text-decoration-none"
+                >
+                  <h5 className="mb-1">{item.name}</h5>
+                </Link>
+                <div className="text-muted small">
+                  {item.author && <div>Tác giả: {item.author}</div>}
+                  {item.status && <div>Trạng thái: {item.status}</div>}
+                  <div>Chapter: {item.chapter_name || item.chapter}</div>
+                  <div>Đọc lúc: {new Date(item.last_read).toLocaleString("vi-VN")}</div>
                 </div>
               </div>
               <Button
                 variant="outline-danger"
                 size="sm"
-                className="btn-remove-history ms-2"
                 onClick={() => handleRemoveHistory(item.id)}
-                style={{ opacity: 0, transition: 'opacity 0.2s' }}
               >
-                <FaTrash />
+                Xóa
               </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>
       </Container>
-      <style>{`
-        .history-item:hover {
-          box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-          border-color: #e0e0e0;
-        }
-        .history-item:hover .btn-remove-history {
-          opacity: 1 !important;
-        }
-        .history-title:hover {
-          color: #007bff !important;
-          text-decoration: underline;
-        }
-        @media (max-width: 600px) {
-          .history-item img { width: 36px !important; height: 48px !important; margin-right: 10px !important; }
-          .history-title { font-size: 15px !important; }
-        }
-      `}</style>
     </>
   );
 };

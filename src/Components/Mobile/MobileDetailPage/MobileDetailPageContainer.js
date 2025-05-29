@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { Button, Container, Alert, Spinner, Card, Row, Col, Badge } from "react-bootstrap";
 import { auth, db } from "../../Include/Authentication/Firebase";
 import MobileMenu from "../Common/MobileMenu";
@@ -25,10 +25,13 @@ import MobileChapterViewer from "./components/MobileChapterViewer";
 
 const MobileDetailPageContainer = () => {
   const { slug } = useParams();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const highlightChapter = params.get('highlight_chapter');
   const [retryCount, setRetryCount] = useState(0);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const [activeTab, setActiveTab] = useState("info");
+  const [activeTab, setActiveTab] = useState(highlightChapter ? "chapters" : "info");
   
   // Sử dụng Supabase auth
   const { user } = useSupabaseAuth();
