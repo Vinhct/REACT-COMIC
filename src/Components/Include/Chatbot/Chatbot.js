@@ -5,7 +5,7 @@ import axios from 'axios';
 import './Chatbot.css';
 
 // API key cho Google Gemini - thay thế bằng API key thực của bạn
-const GEMINI_API_KEY = "AIzaSyAW5hW4sZaAhbKZvqEzv54engH8Y9xk5SU"; // Thay thế API key thực tại đây
+const GEMINI_API_KEY = "AIzaSyDwiXvBHJ8kwRdio87oP7oJy5yxhjLHHT0"; // Thay thế API key thực tại đây
 
 // Map cảm xúc sang thể loại truyện phù hợp - đã điều chỉnh chính xác theo API
 const emotionToGenreMap = {

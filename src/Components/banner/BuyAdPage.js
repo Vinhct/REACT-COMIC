@@ -32,13 +32,13 @@ const BuyAdPage = () => {
     const fetchPackages = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from('ad_packages').select('*').order('price', { ascending: true });
+      const { data, error } = await supabase.from('ad_packages').select('*').order('price', { ascending: true });
         if (error) throw error;
         setPackages(data || []);
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
+      setLoading(false);
       }
     };
     fetchPackages();
@@ -48,8 +48,8 @@ const BuyAdPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
       } catch (err) {
         console.error('Error fetching user:', err);
       }
@@ -302,7 +302,7 @@ const BuyAdPage = () => {
                 <div className="mb-3">
                   <Alert variant="info">
                     <b>Mã đơn hàng:</b> <span style={{color:'#6366f1', fontWeight:600}}>{orderId}</span>
-                    <br/>
+                  <br/>
                     <small>Nội dung chuyển khoản sẽ tự động điền khi quét mã QR</small>
                     {process.env.NODE_ENV === 'development' && (
                       <div className="mt-2 text-muted" style={{fontSize: '11px'}}>

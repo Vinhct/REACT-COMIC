@@ -348,4 +348,11 @@
   color: #ccc;
   font-size: 1.2rem;
   text-align: center;
+}
+
+.highlight-chapter {
+  background: #ffe066 !important;
+  font-weight: bold;
+  border-radius: 4px;
+  color: #222 !important;
 } 

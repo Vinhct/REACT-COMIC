@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
 const ChapterList = ({ item, handleReachChapter }) => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const highlightChapter = params.get('highlight_chapter');
+
+  useEffect(() => {
+    if (highlightChapter) {
+      // Đợi DOM render xong
+      setTimeout(() => {
+        const el = document.querySelector('.highlight-chapter');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 200);
+    }
+  }, [highlightChapter, item]);
+
   // Kiểm tra item tồn tại
   if (!item) {
     return (
@@ -37,7 +54,7 @@ const ChapterList = ({ item, handleReachChapter }) => {
                   chapter.server_data.length > 0 ? (
                     chapter.server_data.map((listchapter, subindex) => (
                       <div
-                        className="chapter_click"
+                        className={`chapter_click${highlightChapter && (listchapter.chapter_name === highlightChapter || listchapter.chapter === highlightChapter) ? ' highlight-chapter' : ''}`}
                         key={subindex}
                         onClick={() =>
                           handleReachChapter(
