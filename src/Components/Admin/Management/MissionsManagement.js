@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Form, Modal, Row, Col, Spinner, Alert, Badge } from 'react-bootstrap';
-import { FaPlus, FaEdit, FaTrash, FaRedo, FaSyncAlt } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaRedo, FaSyncAlt, FaExclamationTriangle } from 'react-icons/fa';
 import { withAdminAuth } from '../AdminContext';
 import { supabase } from '../../../supabaseClient';
 import AdminLayout from '../AdminLayout';
@@ -14,6 +14,8 @@ const MissionsManagement = () => {
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
   const [resetConfirmModal, setResetConfirmModal] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [resetAllConfirmModal, setResetAllConfirmModal] = useState(false);
+  const [resettingAll, setResettingAll] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -131,6 +133,30 @@ const MissionsManagement = () => {
       setError(`Lỗi khi làm mới nhiệm vụ: ${err.message}`);
     } finally {
       setResetting(false);
+    }
+  };
+
+  // Reset all missions for all users
+  const handleResetAllUserMissions = async () => {
+    try {
+      setResettingAll(true);
+      
+      const { error } = await supabase.rpc('reset_all_user_missions');
+      
+      if (error) throw error;
+      
+      setSuccessMessage('Đã làm mới toàn bộ nhiệm vụ của tất cả người dùng thành công!');
+      setResetAllConfirmModal(false);
+      
+      // Update stats and missions list
+      fetchMissions();
+      fetchMissionStats();
+      
+    } catch (err) {
+      console.error('Error resetting all user missions:', err.message);
+      setError(`Lỗi khi làm mới tất cả nhiệm vụ: ${err.message}`);
+    } finally {
+      setResettingAll(false);
     }
   };
 
@@ -311,7 +337,7 @@ const MissionsManagement = () => {
                       className="me-2"
                       onClick={() => setResetConfirmModal(true)}
                     >
-                      <FaRedo className="me-1" /> Reset Nhiệm vụ
+                      <FaRedo className="me-1" /> Reset Hàng ngày
                     </Button>
                     <Button 
                       variant="success" 
@@ -321,6 +347,18 @@ const MissionsManagement = () => {
                     </Button>
                   </Card.Body>
                 </Card>
+              </Col>
+            </Row>
+            
+            <Row className="mb-4">
+              <Col>
+                <Button 
+                  variant="danger" 
+                  className="w-100"
+                  onClick={() => setResetAllConfirmModal(true)}
+                >
+                  <FaExclamationTriangle className="me-1" /> Reset Tất Cả Nhiệm Vụ (Cẩn Thận)
+                </Button>
               </Col>
             </Row>
             
@@ -511,13 +549,7 @@ const MissionsManagement = () => {
           <Modal.Title>Xác nhận làm mới nhiệm vụ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Bạn có chắc chắn muốn làm mới tất cả nhiệm vụ? Hành động này sẽ:</p>
-          <ul>
-            <li>Reset tiến độ của tất cả nhiệm vụ về 0</li>
-            <li>Đánh dấu tất cả nhiệm vụ là chưa hoàn thành</li>
-            <li>Cho phép người dùng làm lại tất cả nhiệm vụ</li>
-          </ul>
-          <p className="text-danger fw-bold">Lưu ý: Thông thường, nhiệm vụ sẽ tự động làm mới vào 12h đêm hàng ngày.</p>
+          <p>Bạn có chắc chắn muốn làm mới nhiệm vụ?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setResetConfirmModal(false)}>
@@ -535,6 +567,65 @@ const MissionsManagement = () => {
               </>
             ) : (
               'Xác nhận làm mới'
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Reset ALL Confirmation Modal */}
+      <Modal show={resetAllConfirmModal} onHide={() => setResetAllConfirmModal(false)}>
+        <Modal.Header closeButton className="bg-danger text-white">
+          <Modal.Title>
+            <FaExclamationTriangle className="me-2" />
+            Xác nhận làm mới TẤT CẢ nhiệm vụ
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="danger">
+            <p className="fw-bold">CẢNH BÁO: Đây là thao tác nguy hiểm và không thể hoàn tác!</p>
+          </Alert>
+          
+          <p>Thao tác này sẽ:</p>
+          <ul>
+            <li>Reset tiến độ của <strong>TẤT CẢ</strong> nhiệm vụ về 0</li>
+            <li>Đánh dấu <strong>TẤT CẢ</strong> nhiệm vụ là chưa hoàn thành</li>
+            <li>Cho phép <strong>TẤT CẢ</strong> người dùng làm lại <strong>TẤT CẢ</strong> nhiệm vụ</li>
+            <li>Ảnh hưởng đến <strong>TẤT CẢ</strong> người dùng trong hệ thống</li>
+          </ul>
+          
+          <p className="text-danger fw-bold">Hãy chỉ sử dụng chức năng này khi thực sự cần thiết (ví dụ: sau khi thay đổi hệ thống nhiệm vụ).</p>
+          
+          <Form.Group className="mb-3">
+            <Form.Check 
+              type="checkbox" 
+              id="confirm-reset-all"
+              label="Tôi hiểu rằng thao tác này không thể hoàn tác và có thể ảnh hưởng đến trải nghiệm người dùng" 
+              onChange={(e) => {
+                const submitButton = document.getElementById('confirm-reset-all-button');
+                if (submitButton) {
+                  submitButton.disabled = !e.target.checked;
+                }
+              }}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setResetAllConfirmModal(false)}>
+            Hủy
+          </Button>
+          <Button 
+            id="confirm-reset-all-button"
+            variant="danger" 
+            onClick={handleResetAllUserMissions}
+            disabled={resettingAll}
+          >
+            {resettingAll ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-1" />
+                Đang làm mới...
+              </>
+            ) : (
+              'Xác nhận làm mới TẤT CẢ'
             )}
           </Button>
         </Modal.Footer>

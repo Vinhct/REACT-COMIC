@@ -4,7 +4,7 @@ import { FaRobot, FaTimes, FaChevronDown, FaChevronUp, FaPaperPlane, FaSearch, F
 import axios from 'axios';
 import './Chatbot.css';
 
-// API key cho Google Gemini - thay thế bằng API key thực của bạn
+// API key cho Google Gemini 
 const GEMINI_API_KEY = "AIzaSyDwiXvBHJ8kwRdio87oP7oJy5yxhjLHHT0"; // Thay thế API key thực tại đây
 
 // Map cảm xúc sang thể loại truyện phù hợp - đã điều chỉnh chính xác theo API

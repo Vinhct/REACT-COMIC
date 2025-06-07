@@ -1,3 +1,12 @@
+-- Tạo function để cập nhật trường updated_at
+CREATE OR REPLACE FUNCTION update_settings_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Function để reset tất cả nhiệm vụ lặp lại hàng ngày
 CREATE OR REPLACE FUNCTION reset_daily_missions()
 RETURNS void AS $$
@@ -7,104 +16,42 @@ BEGIN
     SET progress = 0,
         completed = FALSE,
         completed_at = NULL,
+        rewarded = FALSE,
         reset_at = NOW()
     WHERE mission_id IN (
         SELECT id FROM public.missions WHERE is_repeatable = TRUE
-    )
-    AND (
-        -- Chỉ reset các nhiệm vụ đã hoàn thành và đã nhận thưởng
-        (completed = TRUE AND rewarded = TRUE)
-        -- Hoặc các nhiệm vụ chưa hoàn thành nhưng đã có tiến độ (không reset các nhiệm vụ vừa mới được tạo)
-        OR (completed = FALSE AND progress > 0)
     );
 END;
 $$ LANGUAGE plpgsql;
 
--- Thay đổi quy trình claim_mission_reward - không reset ngay lập tức sau khi nhận thưởng nữa
-CREATE OR REPLACE FUNCTION claim_mission_reward(
-    p_user_id UUID,
-    p_mission_id UUID
-)
-RETURNS BOOLEAN AS $$
-DECLARE
-    v_mission_record RECORD;
-    v_user_mission_record RECORD;
-    v_reward_amount INTEGER;
-BEGIN
-    -- Kiểm tra xem nhiệm vụ có tồn tại không
-    SELECT * INTO v_mission_record
-    FROM public.missions
-    WHERE id = p_mission_id;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Nhiệm vụ không tồn tại';
-    END IF;
-    
-    -- Kiểm tra xem user có nhiệm vụ này không
-    SELECT * INTO v_user_mission_record
-    FROM public.user_missions
-    WHERE user_id = p_user_id AND mission_id = p_mission_id;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Người dùng chưa có nhiệm vụ này';
-    END IF;
-    
-    -- Kiểm tra nhiệm vụ đã hoàn thành chưa
-    IF NOT v_user_mission_record.completed THEN
-        RAISE EXCEPTION 'Nhiệm vụ chưa hoàn thành';
-    END IF;
-    
-    -- Kiểm tra đã nhận thưởng chưa
-    IF v_user_mission_record.rewarded THEN
-        RAISE EXCEPTION 'Đã nhận thưởng trước đó';
-    END IF;
-    
-    -- Lấy số lượng phần thưởng từ nhiệm vụ
-    v_reward_amount := v_mission_record.reward_amount;
-    
-    -- Cập nhật trạng thái đã nhận thưởng (nhưng không reset tiến độ ngay)
-    UPDATE public.user_missions
-    SET rewarded = TRUE
-    WHERE id = v_user_mission_record.id;
-    
-    -- Thêm lượt quay cho user
-    PERFORM add_spin_tickets(p_user_id, v_reward_amount);
-    
-    RETURN TRUE;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE;
-END;
-$$ LANGUAGE plpgsql;
-
--- Tạo function để kiểm tra nếu có cần reset nhiệm vụ hàng ngày không
--- Function này sẽ được gọi thủ công hoặc trong code
+-- Function để kiểm tra và reset nhiệm vụ hàng ngày
 CREATE OR REPLACE FUNCTION check_and_reset_missions()
 RETURNS boolean AS $$
 DECLARE
-    last_reset_date DATE;
-    current_date DATE := CURRENT_DATE;
+    last_reset_timestamp TIMESTAMPTZ;
+    current_timestamp TIMESTAMPTZ := NOW();
 BEGIN
-    -- Lấy ngày reset gần nhất từ bảng settings (nếu tồn tại)
+    -- Lấy thời điểm reset gần nhất
     BEGIN
-        SELECT value::DATE INTO last_reset_date
+        SELECT (value::TIMESTAMPTZ) INTO last_reset_timestamp
         FROM public.settings
-        WHERE key = 'last_mission_reset_date';
+        WHERE key = 'last_mission_reset_timestamp';
     EXCEPTION
         WHEN OTHERS THEN
-            last_reset_date := NULL;
+            last_reset_timestamp := NULL;
     END;
     
-    -- Nếu chưa có bản ghi hoặc ngày reset là ngày hôm qua hoặc trước đó, thực hiện reset
-    IF last_reset_date IS NULL OR last_reset_date < current_date THEN
+    -- Nếu chưa có bản ghi hoặc đã qua 00:00 của ngày mới, thực hiện reset
+    IF last_reset_timestamp IS NULL OR 
+       DATE_TRUNC('day', current_timestamp) > DATE_TRUNC('day', last_reset_timestamp) THEN
         -- Thực hiện reset
         PERFORM reset_daily_missions();
         
-        -- Cập nhật ngày reset
+        -- Cập nhật thời điểm reset
         INSERT INTO public.settings (key, value)
-        VALUES ('last_mission_reset_date', current_date::TEXT)
+        VALUES ('last_mission_reset_timestamp', current_timestamp::TEXT)
         ON CONFLICT (key)
-        DO UPDATE SET value = current_date::TEXT;
+        DO UPDATE SET value = current_timestamp::TEXT;
         
         RETURN TRUE;
     END IF;
@@ -121,16 +68,39 @@ CREATE TABLE IF NOT EXISTS public.settings (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Tạo trigger để tự động cập nhật trường updated_at
-CREATE OR REPLACE FUNCTION update_settings_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Drop trigger nếu đã tồn tại
+DROP TRIGGER IF EXISTS settings_update_timestamp ON public.settings;
 
+-- Tạo trigger mới
 CREATE TRIGGER settings_update_timestamp
 BEFORE UPDATE ON public.settings
 FOR EACH ROW
-EXECUTE FUNCTION update_settings_updated_at(); 
+EXECUTE FUNCTION update_settings_updated_at();
+
+-- Tạo extension pgcron nếu chưa có và thiết lập cron job
+DO $$
+BEGIN
+    -- Tạo extension nếu chưa có
+    CREATE EXTENSION IF NOT EXISTS pg_cron;
+    
+    -- Xóa job cũ nếu tồn tại
+    BEGIN
+        PERFORM cron.unschedule('reset-daily-missions');
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- Bỏ qua lỗi nếu job không tồn tại
+            NULL;
+    END;
+    
+    -- Tạo job mới
+    PERFORM cron.schedule(
+        'reset-daily-missions',
+        '0 0 * * *',
+        'SELECT reset_daily_missions();'
+    );
+EXCEPTION
+    WHEN insufficient_privilege THEN
+        RAISE NOTICE 'Không đủ quyền để tạo extension pg_cron hoặc schedule job';
+    WHEN undefined_function THEN
+        RAISE NOTICE 'pg_cron không khả dụng';
+END $$; 
