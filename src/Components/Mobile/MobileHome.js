@@ -37,6 +37,8 @@ const MobileHome = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       const now = new Date().toISOString();
+      console.log('📱 Mobile: Fetching banners at', now);
+      
       // Lấy banner hệ thống
       const { data: sysData } = await supabase
         .from('system_banners')
@@ -44,14 +46,47 @@ const MobileHome = () => {
         .eq('active', true)
         .eq('position', 'top');
       setSystemBanners(sysData || []);
-      // Lấy banner user
-      const { data: adData } = await supabase
+      console.log('📱 Mobile system banners:', sysData);
+      
+      // Lấy banner user - sửa lại logic
+      const { data: adData, error } = await supabase
         .from('ad_orders')
         .select('*, ad_packages(*)')
-        .eq('status', 'active')
-        .lte('start_time', now)
-        .gte('end_time', now);
-      setAdOrders(adData || []);
+        .eq('status', 'active');
+      
+      if (error) {
+        console.error('❌ Mobile banner fetch error:', error);
+        setAdOrders([]);
+        return;
+      }
+      
+      console.log('📱 Mobile raw ad data:', adData);
+      
+      // Lọc thủ công những banner còn hạn
+      const validAds = adData?.filter(order => {
+        if (!order.start_time || !order.end_time) {
+          console.log('⚠️ Mobile banner missing time:', order.id);
+          return false;
+        }
+        
+        const startTime = new Date(order.start_time);
+        const endTime = new Date(order.end_time);
+        const currentTime = new Date(now);
+        
+        const isValid = currentTime >= startTime && currentTime <= endTime;
+        console.log(`📊 Mobile Banner ${order.id}:`, {
+          package: order.ad_packages?.name,
+          position: order.ad_packages?.position,
+          isValid,
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString()
+        });
+        
+        return isValid;
+      }) || [];
+      
+      setAdOrders(validAds);
+      console.log('✅ Mobile valid ads:', validAds.length);
     };
     fetchBanners();
   }, []);
@@ -63,15 +98,46 @@ const MobileHome = () => {
         return;
       }
       const now = new Date().toISOString();
-      const { data } = await supabase
+      console.log('📱 Mobile: Checking active ads for user:', user.id, 'at', now);
+      
+      const { data, error } = await supabase
         .from('ad_orders')
-        .select('id')
+        .select('id, start_time, end_time')
         .eq('user_id', user.id)
-        .eq('status', 'active')
-        .lte('start_time', now)
-        .gte('end_time', now)
-        .maybeSingle();
-      setHasActiveAd(!!data);
+        .eq('status', 'active');
+      
+      if (error) {
+        console.error('❌ Error checking active ads:', error);
+        setHasActiveAd(false);
+        return;
+      }
+      
+      console.log('🔍 Mobile user active orders:', data);
+      
+      // Kiểm tra thủ công xem có đơn hàng nào còn trong thời hạn không
+      const hasValid = data?.some(order => {
+        if (!order.start_time || !order.end_time) {
+          console.log('⚠️ Mobile order missing time:', order);
+          return false;
+        }
+        
+        const startTime = new Date(order.start_time);
+        const endTime = new Date(order.end_time);
+        const currentTime = new Date(now);
+        
+        const isValid = currentTime >= startTime && currentTime <= endTime;
+        console.log(`📊 Mobile Order ${order.id}:`, {
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+          currentTime: currentTime.toISOString(),
+          isValid
+        });
+        
+        return isValid;
+      });
+      
+      console.log('✅ Mobile has valid active ad:', hasValid);
+      setHasActiveAd(!!hasValid);
     };
     checkActiveAd();
   }, [user]);

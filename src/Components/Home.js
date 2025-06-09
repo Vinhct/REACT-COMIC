@@ -78,15 +78,46 @@ const Home = () => {
         return;
       }
       const now = new Date().toISOString();
-      const { data } = await supabase
+      console.log('🏠 Home: Checking active ads for user:', user.id, 'at', now);
+      
+      const { data, error } = await supabase
         .from('ad_orders')
-        .select('id')
+        .select('id, start_time, end_time')
         .eq('user_id', user.id)
-        .eq('status', 'active')
-        .lte('start_time', now)
-        .gte('end_time', now)
-        .maybeSingle();
-      setHasActiveAd(!!data);
+        .eq('status', 'active');
+      
+      if (error) {
+        console.error('❌ Error checking active ads:', error);
+        setHasActiveAd(false);
+        return;
+      }
+      
+      console.log('🔍 User active orders:', data);
+      
+      // Kiểm tra thủ công xem có đơn hàng nào còn trong thời hạn không
+      const hasValid = data?.some(order => {
+        if (!order.start_time || !order.end_time) {
+          console.log('⚠️ Order missing time:', order);
+          return false;
+        }
+        
+        const startTime = new Date(order.start_time);
+        const endTime = new Date(order.end_time);
+        const currentTime = new Date(now);
+        
+        const isValid = currentTime >= startTime && currentTime <= endTime;
+        console.log(`📊 Order ${order.id}:`, {
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+          currentTime: currentTime.toISOString(),
+          isValid
+        });
+        
+        return isValid;
+      });
+      
+      console.log('✅ Has valid active ad:', hasValid);
+      setHasActiveAd(!!hasValid);
     };
     checkActiveAd();
   }, [user]);
