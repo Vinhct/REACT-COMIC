@@ -18,6 +18,7 @@ import EmailValidationChecker from './Components/EmailValidationChecker';
 import { SupabaseAuthProvider } from './Components/Include/Authentication/SupabaseAuthContext';
 // Import ChatbotProvider - sửa đường dẫn để import trực tiếp từ file
 import ChatbotProvider from './Components/Include/Chatbot/ChatbotProvider';
+import { useOnlineTracker } from './utils/useOnlineTracker';
 import MobileGenreList from './Components/Mobile/MobileGenreList';
 import MobileGenre from './Components/Mobile/MobileGenre';
 import MobileProfile from './Components/Mobile/MobileProfile';
@@ -54,9 +55,13 @@ import UserAdvertisementStatus from './Components/Admin/Management/UserAdvertise
 const MissionsPage = lazy(() => import('./Components/Missions/MissionsPage'));
 const LuckyWheelPage = lazy(() => import('./Components/Missions/LuckyWheelPage'));
 
-function App() {
+// Component wrapper để sử dụng hook
+const AppContent = () => {
+  // Khởi động online tracking
+  useOnlineTracker();
+  
   return (
-    <SupabaseAuthProvider>
+    <>
       <Router>
         <Routes>
           {/* Device detector will handle both mobile and desktop rendering */}
@@ -145,6 +150,14 @@ function App() {
         pauseOnHover
         theme="colored"
       />
+    </>
+  );
+};
+
+function App() {
+  return (
+    <SupabaseAuthProvider>
+      <AppContent />
     </SupabaseAuthProvider>
   );
 }

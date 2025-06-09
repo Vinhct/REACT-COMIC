@@ -1,0 +1,168 @@
+/* Dashboard CSS - Online Users Animations */
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.4), 0 0 30px rgba(40, 167, 69, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.2);
+  }
+}
+
+.online-pulse {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.online-pulse:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3) !important;
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.stat-card:hover::before {
+  left: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Online status indicator */
+.online-indicator {
+  position: relative;
+  display: inline-block;
+}
+
+.online-indicator::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #28a745;
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+/* Custom badges */
+.badge-online {
+  background: linear-gradient(45deg, #28a745, #20c997) !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.badge-mobile {
+  background: linear-gradient(45deg, #17a2b8, #6f42c1) !important;
+  color: white !important;
+}
+
+.badge-desktop {
+  background: linear-gradient(45deg, #ffc107, #fd7e14) !important;
+  color: white !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+  
+  .online-pulse {
+    animation-duration: 2s;
+  }
+}
+
+/* Loading animation for stats */
+.stats-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Enhanced card hover effects */
+.dashboard-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Real-time update indicator */
+.live-indicator {
+  position: relative;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.live-indicator::before {
+  content: '●';
+  color: #28a745;
+  margin-right: 5px;
+  animation: pulse 1.5s infinite;
+}
+
+/* Success message animation */
+.online-count-update {
+  animation: countUp 0.5s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+} 

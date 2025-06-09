@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Spinner, ListGroup, Badge, Alert } from 'react-bootstrap';
-import { FaBook, FaUsers, FaHeart, FaHistory, FaComments, FaStar, FaUserPlus, FaBell } from 'react-icons/fa';
+import { FaBook, FaUsers, FaHeart, FaHistory, FaComments, FaStar, FaUserPlus, FaBell, FaCircle, FaMobile, FaDesktop } from 'react-icons/fa';
 import { withAdminAuth } from './AdminContext';
 import { supabase } from '../../supabaseClient';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import AdminLayout from './AdminLayout';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Link } from 'react-router-dom';
+import { useOnlineUsersCount } from '../../utils/useOnlineTracker';
+import './Dashboard.css';
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -25,6 +27,7 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState(null);
+  const { stats: onlineStats, error: onlineError } = useOnlineUsersCount();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -117,38 +120,52 @@ const Dashboard = () => {
 
   const statsItems = [
     { 
+      title: 'Đang online', 
+      value: onlineStats.total_online || 0, 
+      subValue: `${onlineStats.authenticated_online || 0} đã đăng nhập, ${onlineStats.guest_online || 0} khách`,
+      icon: <FaCircle />, 
+      color: '#28a745',
+      gradient: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+      pulse: true
+    },
+    { 
       title: 'Tổng số truyện', 
       value: stats.comics, 
       subValue: stats.totalComicsAPI > 0 ? `${((stats.comics / stats.totalComicsAPI) * 100).toFixed(1)}% của API` : null,
       icon: <FaBook />, 
-      color: '#ff6384' 
+      color: '#ff6384',
+      gradient: 'linear-gradient(135deg, #ff6384 0%, #ff9f40 100%)'
     },
     { 
       title: 'Người dùng', 
       value: stats.users, 
       icon: <FaUsers />, 
-      color: '#36a2eb' 
+      color: '#36a2eb',
+      gradient: 'linear-gradient(135deg, #36a2eb 0%, #4bc0c0 100%)'
     },
     { 
       title: 'Lượt yêu thích', 
       value: stats.favorites, 
       subValue: stats.users > 0 ? `${((stats.favorites / stats.users)).toFixed(1)} / người dùng` : null,
       icon: <FaHeart />, 
-      color: '#4bc0c0' 
+      color: '#4bc0c0',
+      gradient: 'linear-gradient(135deg, #4bc0c0 0%, #36a2eb 100%)'
     },
     { 
       title: 'Lượt đọc', 
       value: stats.history, 
       subValue: stats.users > 0 ? `${((stats.history / stats.users)).toFixed(1)} / người dùng` : null,
       icon: <FaHistory />, 
-      color: '#ffcd56' 
+      color: '#ffcd56',
+      gradient: 'linear-gradient(135deg, #ffcd56 0%, #ff9f40 100%)'
     },
     { 
       title: 'Bình luận', 
       value: stats.comments, 
       subValue: stats.users > 0 ? `${((stats.comments / stats.users)).toFixed(1)} / người dùng` : null,
       icon: <FaComments />, 
-      color: '#9966ff' 
+      color: '#9966ff',
+      gradient: 'linear-gradient(135deg, #9966ff 0%, #cc65fe 100%)'
     }
   ];
 
@@ -160,10 +177,10 @@ const Dashboard = () => {
           {statsItems.map((item, index) => (
             <Col key={index} xxl={2} xl={3} lg={4} md={6} sm={12}>
               <Card
-                className="h-100 border-0 shadow-sm stat-card"
+                className={`h-100 border-0 shadow-sm stat-card ${item.pulse ? 'online-pulse' : ''}`}
                 style={{
                   borderRadius: 18,
-                  background: 'linear-gradient(135deg, #6a82fb 0%, #21d4fd 100%)',
+                  background: item.gradient || 'linear-gradient(135deg, #6a82fb 0%, #21d4fd 100%)',
                   minHeight: 120,
                   transition: 'transform 0.15s, box-shadow 0.15s',
                   cursor: 'pointer',
@@ -173,6 +190,16 @@ const Dashboard = () => {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 28, color: '#fff', marginBottom: 2 }}>
                       {loading ? <Spinner animation="border" size="sm" /> : item.value.toLocaleString()}
+                      {item.pulse && (
+                        <FaCircle 
+                          className="ms-2 text-white" 
+                          style={{ 
+                            fontSize: 8, 
+                            animation: 'pulse 2s infinite',
+                            filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))'
+                          }} 
+                        />
+                      )}
                     </div>
                     <div style={{ color: '#fff', fontSize: 15, fontWeight: 500 }}>{item.title}</div>
                     {item.subValue && (
@@ -235,6 +262,54 @@ const Dashboard = () => {
         <Row>
           <Col lg={4} md={12} className="mb-4">
             <Card className="h-100 shadow-sm">
+              <Card.Header className="bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span>Người dùng online</span>
+                <Badge bg="success" className="d-flex align-items-center">
+                  <FaCircle className="me-1" style={{ fontSize: 8 }} />
+                  {onlineStats.total_online || 0}
+                </Badge>
+              </Card.Header>
+              <ListGroup variant="flush">
+                <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaUsers className="me-2 text-primary" />
+                    <span>Đã đăng nhập</span>
+                  </div>
+                  <Badge bg="primary">{onlineStats.authenticated_online || 0}</Badge>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaUserPlus className="me-2 text-secondary" />
+                    <span>Khách</span>
+                  </div>
+                  <Badge bg="secondary">{onlineStats.guest_online || 0}</Badge>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaMobile className="me-2 text-info" />
+                    <span>Mobile</span>
+                  </div>
+                  <Badge bg="info">{onlineStats.mobile_online || 0}</Badge>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaDesktop className="me-2 text-warning" />
+                    <span>Desktop</span>
+                  </div>
+                  <Badge bg="warning">{onlineStats.desktop_online || 0}</Badge>
+                </ListGroup.Item>
+                {onlineError && (
+                  <ListGroup.Item>
+                    <Alert variant="danger" className="mb-0 py-2">
+                      Lỗi tải dữ liệu online: {onlineError.message}
+                    </Alert>
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card>
+          </Col>
+          <Col lg={4} md={12} className="mb-4">
+            <Card className="h-100 shadow-sm">
               <Card.Header className="bg-white fw-bold">Người dùng mới</Card.Header>
               <ListGroup variant="flush">
                 {newUsers.length === 0 && <ListGroup.Item>Không có dữ liệu</ListGroup.Item>}
@@ -251,19 +326,19 @@ const Dashboard = () => {
               </ListGroup>
             </Card>
           </Col>
-          <Col lg={8} md={12} className="mb-4">
+          <Col lg={4} md={12} className="mb-4">
             <Card className="h-100 shadow-sm">
               <Card.Header className="bg-white fw-bold">Thông báo hệ thống</Card.Header>
               <ListGroup variant="flush">
                 {notifications.length === 0 && <ListGroup.Item>Không có thông báo</ListGroup.Item>}
-                {notifications.map((noti, idx) => (
+                {notifications.slice(0, 4).map((noti, idx) => (
                   <ListGroup.Item key={noti.id} className="d-flex align-items-center">
                     <FaBell className="me-2 text-primary" />
                     <div className="flex-grow-1">
-                      <span className="fw-bold">{noti.title || 'Thông báo'}</span>
+                      <span className="fw-bold" style={{ fontSize: 14 }}>{noti.title || 'Thông báo'}</span>
                       <div className="text-muted" style={{ fontSize: 12 }}>{noti.message}</div>
                     </div>
-                    <Badge bg="light" text="dark">{new Date(noti.created_at).toLocaleString()}</Badge>
+                    <Badge bg="light" text="dark" style={{ fontSize: 10 }}>{new Date(noti.created_at).toLocaleDateString()}</Badge>
                   </ListGroup.Item>
                 ))}
               </ListGroup>
