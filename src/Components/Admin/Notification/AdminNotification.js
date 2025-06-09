@@ -9,7 +9,6 @@ const AdminNotification = () => {
   const [newOrdersCount, setNewOrdersCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [unreadNotifications, setUnreadNotifications] = useState(new Set());
   const navigate = useNavigate();
 
   // Tạo audio element cho âm thanh thông báo
@@ -34,6 +33,7 @@ const AdminNotification = () => {
       if (!error && data) {
         // Lọc ra các đơn hàng chưa có payment confirmation
         const unconfirmedOrders = data.filter(order => !order.payment_confirmations?.length);
+        setNewOrdersCount(unconfirmedOrders.length);
         setNotifications(unconfirmedOrders.map(order => ({
           id: order.id,
           message: `Đơn hàng mới #${order.id} - ${(order.payment_amount || order.ad_packages?.price).toLocaleString()}đ`,
@@ -41,9 +41,6 @@ const AdminNotification = () => {
           type: 'order',
           packageName: order.ad_packages?.name
         })));
-        // Đánh dấu tất cả là đã đọc khi load lần đầu
-        setUnreadNotifications(new Set());
-        setNewOrdersCount(0);
       }
     };
 
@@ -80,19 +77,14 @@ const AdminNotification = () => {
           .single();
 
         if (!error && orderDetails) {
-          const newNotification = {
+          // Update notifications list
+          setNotifications(prev => [{
             id: orderDetails.id,
             message: `Đơn hàng mới #${orderDetails.id} - ${(orderDetails.payment_amount || orderDetails.ad_packages?.price).toLocaleString()}đ`,
             time: new Date(orderDetails.created_at),
             type: 'order',
             packageName: orderDetails.ad_packages?.name
-          };
-
-          // Update notifications list
-          setNotifications(prev => [newNotification, ...prev]);
-
-          // Đánh dấu là chưa đọc
-          setUnreadNotifications(prev => new Set([...prev, orderDetails.id]));
+          }, ...prev]);
 
           // Update count
           setNewOrdersCount(prev => prev + 1);
@@ -110,11 +102,6 @@ const AdminNotification = () => {
       }, (payload) => {
         // Remove the notification for this order and decrease count
         setNotifications(prev => prev.filter(n => n.id !== payload.new.ad_order_id));
-        setUnreadNotifications(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(payload.new.ad_order_id);
-          return newSet;
-        });
         setNewOrdersCount(prev => Math.max(0, prev - 1));
       })
       .subscribe();
@@ -128,24 +115,12 @@ const AdminNotification = () => {
 
   const handleClick = () => {
     setIsOpen(!isOpen);
-    if (!isOpen) {
-      // Đánh dấu tất cả là đã đọc khi mở panel
-      setUnreadNotifications(new Set());
-      setNewOrdersCount(0);
-    }
   };
 
   const handleNotificationClick = (notification) => {
     if (notification.type === 'order') {
       navigate('/admin/payment-confirmations');
       setIsOpen(false);
-      // Đánh dấu thông báo này là đã đọc
-      setUnreadNotifications(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(notification.id);
-        return newSet;
-      });
-      setNewOrdersCount(prev => Math.max(0, prev - 1));
     }
   };
 
@@ -170,12 +145,12 @@ const AdminNotification = () => {
         aria-label="Notifications"
       >
         <FaBell size={24} />
-        {unreadNotifications.size > 0 && (
+        {newOrdersCount > 0 && (
           <Badge 
             bg="danger" 
             className="notification-badge"
           >
-            {unreadNotifications.size}
+            {newOrdersCount}
           </Badge>
         )}
       </Button>
@@ -184,8 +159,8 @@ const AdminNotification = () => {
         <div className="notification-panel">
           <div className="notification-header">
             <h5>Thông báo</h5>
-            {unreadNotifications.size > 0 && (
-              <Badge bg="danger">{unreadNotifications.size} mới</Badge>
+            {newOrdersCount > 0 && (
+              <Badge bg="danger">{newOrdersCount} mới</Badge>
             )}
           </div>
           <div className="notification-content">
@@ -193,7 +168,7 @@ const AdminNotification = () => {
               notifications.map(notification => (
                 <div 
                   key={notification.id}
-                  className={`notification-item ${unreadNotifications.has(notification.id) ? 'unread' : ''}`}
+                  className="notification-item"
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <FaBell className="notification-icon" />
