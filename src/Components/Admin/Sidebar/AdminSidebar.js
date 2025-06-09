@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Nav, Button } from 'react-bootstrap';
+import { Nav, Button, Badge } from 'react-bootstrap';
 import { 
   FaTachometerAlt, 
   FaBook, 
@@ -15,15 +15,50 @@ import {
   FaDharmachakra,
   FaAd,
   FaMoneyBillWave,
-  FaUserTag
+  FaUserTag,
+  FaBell
 } from 'react-icons/fa';
 import { useAdmin } from '../AdminContext';
+import { supabase } from '../../../supabaseClient';
 import './AdminSidebar.css';
 
 const AdminSidebar = () => {
   const location = useLocation();
   const { adminUser, adminSignOut } = useAdmin();
   const [collapsed, setCollapsed] = useState(false);
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
+
+  useEffect(() => {
+    // Subscribe to new payment orders
+    const subscription = supabase
+      .channel('payment-orders')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'payment_orders'
+      }, (payload) => {
+        setNewOrdersCount(prev => prev + 1);
+      })
+      .subscribe();
+
+    // Get initial count of unconfirmed orders
+    const getUnconfirmedOrders = async () => {
+      const { count, error } = await supabase
+        .from('payment_orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      
+      if (!error) {
+        setNewOrdersCount(count || 0);
+      }
+    };
+
+    getUnconfirmedOrders();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -72,7 +107,7 @@ const AdminSidebar = () => {
     },
     {
       path: '/admin/ad-orders',
-      name: 'Quản lý Quảng cáo',
+      name: 'Quản lý đơn gói QC',
       icon: <FaAd />
     },
     {
@@ -88,7 +123,21 @@ const AdminSidebar = () => {
     {
       path: '/admin/payment-confirmations',
       name: 'Quản lý Thanh toán',
-      icon: <FaMoneyBillWave />
+      icon: <FaMoneyBillWave />,
+      badge: newOrdersCount > 0 ? (
+        <Badge 
+          bg="danger" 
+          className="notification-badge"
+          style={{
+            position: 'absolute',
+            top: '-8px',
+            right: '-8px',
+            animation: newOrdersCount > 0 ? 'pulse 2s infinite' : 'none'
+          }}
+        >
+          {newOrdersCount}
+        </Badge>
+      ) : null
     }
   ];
 
@@ -98,7 +147,7 @@ const AdminSidebar = () => {
         <h3 className={collapsed ? 'd-none' : ''}>Admin Panel</h3>
         <Button 
           variant="link" 
-          className="toggle-btn" 
+          className="toggle-btn"
           onClick={toggleSidebar}
         >
           {collapsed ? <FaBars /> : <FaTimes />}
@@ -122,14 +171,18 @@ const AdminSidebar = () => {
       <Nav className="flex-column sidebar-nav">
         {navItems.map((item, index) => (
           <Nav.Item key={index}>
-            <Nav.Link 
-              as={Link} 
+            <Link
               to={item.path}
-              className={location.pathname === item.path ? 'active' : ''}
+              className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
             >
-              <span className="icon">{item.icon}</span>
-              <span className={`nav-text ${collapsed ? 'd-none' : ''}`}>{item.name}</span>
-            </Nav.Link>
+              <div className="d-flex align-items-center">
+                <span className="icon-container">
+                  {item.icon}
+                  {item.badge}
+                </span>
+                {!collapsed && <span className="nav-text ms-2">{item.name}</span>}
+              </div>
+            </Link>
           </Nav.Item>
         ))}
       </Nav>
@@ -137,11 +190,11 @@ const AdminSidebar = () => {
       <div className="sidebar-footer">
         <Button 
           variant="outline-danger" 
-          className="logout-btn" 
+          className="logout-btn w-100" 
           onClick={adminSignOut}
         >
           <FaSignOutAlt />
-          <span className={collapsed ? 'd-none' : ''}>Đăng xuất</span>
+          {!collapsed && <span className="ms-2">Đăng xuất</span>}
         </Button>
       </div>
     </div>

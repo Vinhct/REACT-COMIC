@@ -50,6 +50,8 @@ import AdOrdersManagement from './Components/Admin/Management/AdOrdersManagement
 import SystemBannersManagement from './Components/Admin/Management/SystemBannersManagement';
 import PaymentConfirmationsManagement from './Components/Admin/Management/PaymentConfirmationsManagement';
 import UserAdvertisementStatus from './Components/Admin/Management/UserAdvertisementStatus';
+import AdminRoutes from './Components/Admin/AdminRoutes';
+import Home from './Components/Home';
 
 // Lazy loaded components
 const MissionsPage = lazy(() => import('./Components/Missions/MissionsPage'));
@@ -103,40 +105,22 @@ const AppContent = () => {
           <Route path="/debug/comments" element={<CommentsDebug />} />
           
           {/* Admin routes */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin/*" 
-            element={
-              <AdminProvider>
-                <Routes>
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="users" element={<UsersManagement />} />
-                  <Route path="comics" element={<ComicsManagement />} />
-                  <Route path="favorites" element={<FavoritesManagement />} />
-                  <Route path="history" element={<HistoryManagement />} />
-                  <Route path="comments" element={<CommentsManagement />} />
-                  <Route path="missions" element={<MissionsManagement />} />
-                  <Route path="lucky-wheel" element={<LuckyWheelManagement />} />
-                  <Route path="ad-orders" element={<AdOrdersManagement />} />
-                  <Route path="system-banners" element={<SystemBannersManagement />} />
-                  <Route path="payment-confirmations" element={<PaymentConfirmationsManagement />} />
-                  <Route path="user-ads" element={<UserAdvertisementStatus />} />
-                </Routes>
-              </AdminProvider>
-            } 
-          />
-
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          
           {/* Thêm routes mới trong phần Route */}
           <Route path="/missions" element={<MissionsPage />} />
           <Route path="/lucky-wheel" element={<LuckyWheelPage />} />
           <Route path="/buy-ad" element={<BuyAdPage />} />
           <Route path="/vietqr-test" element={<VietQRTest />} />
         </Routes>
-        {/* Thêm ChatbotProvider ở đây để hiển thị trên tất cả các trang */}
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999 }}>
-          <ChatbotProvider />
-        </div>
+        {/* Chỉ hiển thị Chatbot khi không phải ở trang admin */}
+        {!window.location.pathname.includes('/admin') && (
+          <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 9999 }}>
+            <ChatbotProvider />
+          </div>
+        )}
       </Router>
       <ToastContainer
         position="top-right"
