@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, Spinner, Badge } from 'react-bootstrap';
-import { FaRobot, FaTimes, FaChevronDown, FaChevronUp, FaPaperPlane, FaSearch, FaListAlt, FaSmile, FaRandom } from 'react-icons/fa';
+import { FaRobot, FaTimes, FaChevronDown, FaChevronUp, FaPaperPlane, FaSearch, FaListAlt, FaSmile, FaRandom, FaMicrophone } from 'react-icons/fa';
 import axios from 'axios';
 import './Chatbot.css';
 
@@ -105,6 +105,10 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
   // Thêm state để theo dõi trạng thái đang tải truyện ngẫu nhiên
   const [loadingRandom, setLoadingRandom] = useState(false);
 
+  // Thêm state để theo dõi trạng thái đang ghi âm
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
+
   // Lưu API key vào localStorage khi thay đổi
   useEffect(() => {
     if (geminiApiKey && geminiApiKey.trim() !== '') {
@@ -158,32 +162,79 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
   };
 
   const handleGenreClick = async (genreName) => {
-    // Thêm tin nhắn người dùng
     const userMessage = {
       id: messages.length + 1,
       text: `Tìm truyện thể loại ${genreName}`,
       sender: 'user',
       timestamp: new Date()
     };
-    
     setMessages(prev => [...prev, userMessage]);
-    
-    // Hiển thị trạng thái đang gõ
     setIsTyping(true);
-    
-    // Gửi yêu cầu tìm kiếm
-    await onFindComic(genreName);
-    
-    // Thêm phản hồi từ bot
-    setMessages(prev => [...prev, {
-      id: prev.length + 1,
-      text: `Đang hiển thị danh sách truyện thể loại ${genreName}...`,
-      sender: 'bot',
-      timestamp: new Date()
-    }]);
-    
-    setIsTyping(false);
     setShowGenreList(false);
+
+    const genre = genreList.find(g => g.name.toLowerCase() === genreName.toLowerCase() || genreName.toLowerCase().includes(g.name.toLowerCase()));
+    if (!genre) {
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        text: `Không tìm thấy thể loại "${genreName}"!`,
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+      setIsTyping(false);
+      return;
+    }
+    try {
+      // Lấy truyện theo thể loại
+      const res = await axios.get(`https://otruyenapi.com/v1/api/the-loai/${genre.slug}/truyen`);
+      const comics = res.data?.data?.items || [];
+      if (comics.length === 0) throw new Error('Không có truyện');
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        type: 'comics',
+        comics: comics.slice(0, 3).map(comic => ({
+          name: comic.name,
+          slug: comic.slug,
+          coverImage: getComicCoverUrl(comic),
+          description: comic.description || 'Truyện tranh hấp dẫn, mời bạn đọc thử!'
+        })),
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+    } catch (err) {
+      // Nếu lỗi, fallback sang truyện ngẫu nhiên
+      try {
+        setMessages(prev => [...prev, {
+          id: prev.length + 1,
+          text: `Không thể lấy truyện cho thể loại "${genreName}". Đang gợi ý 3 truyện ngẫu nhiên cho bạn...`,
+          sender: 'bot',
+          timestamp: new Date()
+        }]);
+        const res = await axios.get('https://otruyenapi.com/v1/api/danh-sach/truyen-moi');
+        const comics = res.data?.data?.items || [];
+        // Lấy 3 truyện ngẫu nhiên
+        const shuffled = comics.sort(() => 0.5 - Math.random());
+        setMessages(prev => [...prev, {
+          id: prev.length + 1,
+          type: 'comics',
+          comics: shuffled.slice(0, 3).map(comic => ({
+            name: comic.name,
+            slug: comic.slug,
+            coverImage: getComicCoverUrl(comic),
+            description: comic.description || 'Truyện tranh hấp dẫn, mời bạn đọc thử!'
+          })),
+          sender: 'bot',
+          timestamp: new Date()
+        }]);
+      } catch (fallbackErr) {
+        setMessages(prev => [...prev, {
+          id: prev.length + 1,
+          text: `Có lỗi xảy ra khi lấy truyện thể loại "${genreName}" và cả truyện ngẫu nhiên!`,
+          sender: 'bot',
+          timestamp: new Date()
+        }]);
+      }
+    }
+    setIsTyping(false);
   };
 
   const handleEmotionClick = async (emotion) => {
@@ -374,6 +425,39 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
     }
   };
 
+  // Voice-to-text handler
+  const handleVoiceInput = () => {
+    // Check browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Trình duyệt của bạn không hỗ trợ Voice-to-Text (Web Speech API). Hãy dùng Chrome hoặc Edge mới nhất!');
+      return;
+    }
+    if (isRecording) {
+      recognitionRef.current && recognitionRef.current.stop();
+      setIsRecording(false);
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'vi-VN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(prev => prev ? prev + ' ' + transcript : transcript);
+      setIsRecording(false);
+      inputRef.current && inputRef.current.focus();
+    };
+    recognition.onerror = (event) => {
+      setIsRecording(false);
+      alert('Lỗi nhận diện giọng nói: ' + event.error);
+    };
+    recognition.onend = () => setIsRecording(false);
+    recognitionRef.current = recognition;
+    recognition.start();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -429,6 +513,25 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
     );
   };
 
+  // Thêm hàm renderComicCard
+  const renderComicCard = (comic) => (
+    <div className="comic-card">
+      <img
+        src={comic.coverImage}
+        alt={comic.name}
+        className="comic-cover"
+        onError={e => { e.target.onerror = null; e.target.src = '/logo192.png'; }}
+      />
+      <div className="comic-info">
+        <h5>{comic.name}</h5>
+        <p>{comic.description}</p>
+        <a href={`/comics/${comic.slug}`} className="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
+          Đọc ngay
+        </a>
+      </div>
+    </div>
+  );
+
   // Thêm hàm để xử lý sự kiện khi người dùng nhấp vào nút truyện ngẫu nhiên
   const handleRandomComic = async () => {
     // Thêm tin nhắn người dùng
@@ -453,11 +556,16 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
         // Chọn một truyện ngẫu nhiên từ danh sách
         const randomIndex = Math.floor(Math.random() * response.data.data.items.length);
         const randomComic = response.data.data.items[randomIndex];
-        
-        // Thêm phản hồi từ bot
+        // Thêm phản hồi từ bot dạng card truyện
         setMessages(prev => [...prev, {
           id: prev.length + 1,
-          text: `Tôi đã tìm được một truyện ngẫu nhiên cho bạn: "${randomComic.name}". Đang chuyển đến trang chi tiết...`,
+          type: 'comic',
+          comic: {
+            name: randomComic.name,
+            slug: randomComic.slug,
+            coverImage: getComicCoverUrl(randomComic),
+            description: randomComic.description || 'Truyện tranh hấp dẫn, mời bạn đọc thử!'
+          },
           sender: 'bot',
           timestamp: new Date()
         }]);
@@ -488,6 +596,17 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
       setIsTyping(false);
       setLoadingRandom(false);
     }
+  };
+
+  // Hàm lấy url ảnh bìa chuẩn
+  const getComicCoverUrl = (comic) => {
+    if (comic.thumb_url) {
+      // Nếu thumb_url là url đầy đủ thì dùng luôn, nếu không thì thêm prefix
+      return comic.thumb_url.startsWith('http')
+        ? comic.thumb_url
+        : `https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`;
+    }
+    return comic.image || comic.coverImage || comic.thumbnail || '/logo192.png';
   };
 
   return (
@@ -542,7 +661,15 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
                     className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
                   >
                     <div className="message-content">
-                      <p>{message.text}</p>
+                      {message.type === 'comics' && Array.isArray(message.comics) ? (
+                        <div className="comics-list">
+                          {message.comics.map((comic, idx) => renderComicCard(comic))}
+                        </div>
+                      ) : message.type === 'comic' && message.comic ? (
+                        renderComicCard(message.comic)
+                      ) : (
+                        <p>{message.text}</p>
+                      )}
                       {message.genres && renderGenreBadges(message.genres)}
                       {message.emotions && renderEmotionBadges(message.emotions)}
                       <span className="message-time">{formatTime(message.timestamp)}</span>
@@ -596,9 +723,19 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
                   value={input}
                   onChange={handleInputChange}
                   ref={inputRef}
+                  autoComplete="off"
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="button"
+                  className={`voice-btn${isRecording ? ' recording' : ''}`}
+                  onClick={handleVoiceInput}
+                  aria-label={isRecording ? 'Đang ghi âm...' : 'Nhấn để nói'}
+                  style={{ marginRight: 8, background: isRecording ? '#22d3ee' : '#e5e7eb', color: isRecording ? '#fff' : '#444', border: 'none', boxShadow: isRecording ? '0 0 0 4px #a5f3fc' : 'none', transition: 'all 0.18s' }}
+                >
+                  <FaMicrophone style={{ animation: isRecording ? 'pulse 1s infinite' : 'none' }} />
+                </Button>
+                <Button
+                  type="submit"
                   disabled={!input.trim() || isTyping}
                   className="send-button"
                 >

@@ -37,14 +37,14 @@
   right: 20px;
   width: 350px;
   max-height: 500px;
-  background-color: #2e1065;
-  border-radius: 10px;
+  background: #f7f7f9;
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 24px rgba(60,60,60,0.10);
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e5e7eb;
   z-index: 1051;
 }
 
@@ -54,19 +54,23 @@
 
 /* Chatbot Header */
 .chatbot-header {
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 18px 18px 0 0;
+  padding: 12px 18px;
+  color: #222;
+  font-weight: 600;
+  font-size: 1.08rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: linear-gradient(135deg, #6366f1, #ec4899);
-  color: white;
-  cursor: pointer;
+  justify-content: space-between;
 }
 
 .chatbot-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  color: #222;
+  font-weight: 700;
 }
 
 .chatbot-controls {
@@ -90,18 +94,14 @@
 
 /* Chatbot Messages */
 .chatbot-messages {
-  flex: 1;
-  padding: 15px;
+  background: #f7f7f9;
+  padding: 16px 12px 8px 12px;
+  min-height: 220px;
+  max-height: 350px;
   overflow-y: auto;
-  max-height: 300px;
-  background-color: rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .message {
-  display: flex;
   margin-bottom: 10px;
 }
 
@@ -120,24 +120,31 @@
   word-break: break-word;
 }
 
-.bot-message .message-content {
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-  color: white;
-  border-radius: 18px 18px 18px 0;
+.user-message .message-content {
+  background: #e5e7eb;
+  color: #222;
+  border-radius: 14px 14px 4px 14px;
+  padding: 10px 14px;
+  max-width: 80%;
+  margin-left: auto;
+  box-shadow: 0 1px 4px rgba(60,60,60,0.04);
 }
 
-.user-message .message-content {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-radius: 18px 18px 0 18px;
+.bot-message .message-content {
+  background: #fff;
+  color: #222;
+  border-radius: 14px 14px 14px 4px;
+  padding: 10px 14px;
+  max-width: 80%;
+  margin-right: auto;
+  box-shadow: 0 1px 4px rgba(60,60,60,0.04);
 }
 
 .message-time {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #aaa;
+  margin-top: 2px;
   display: block;
-  text-align: right;
 }
 
 /* Typing Indicator */
@@ -168,28 +175,35 @@
 /* Chatbot Input */
 .chatbot-input {
   display: flex;
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 0 0 18px 18px;
+  padding: 10px 14px;
+  border-top: 1px solid #e5e7eb;
 }
 
-.chatbot-input .form-control {
-  border: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white !important;
-  border-radius: 20px;
-  padding: 10px 15px;
-  font-size: 0.95rem;
-}
-
-.chatbot-input .form-control::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.chatbot-input .form-control:focus {
+.chatbot-input input, .chatbot-input .form-control {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  color: #222 !important;
+  font-size: 1rem;
+  padding: 7px 12px;
+  margin-right: 8px;
   box-shadow: none;
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white !important;
+}
+
+.chatbot-input input:focus, .chatbot-input .form-control:focus {
+  color: #222 !important;
+  background: #fff;
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 2px #e0e7ff;
+}
+
+.chatbot-input .form-control::placeholder, .chatbot-input input::placeholder {
+  color: #888 !important;
+  opacity: 1;
 }
 
 /* Đảm bảo text input luôn có màu trắng */
@@ -207,21 +221,21 @@
 }
 
 .send-button {
-  margin-left: 10px;
-  width: 40px;
-  height: 40px;
+  margin-left: 0;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1, #ec4899);
+  background: #6366f1;
   color: white;
   border: none;
-  transition: all 0.2s ease;
+  transition: background 0.18s;
 }
 
 .send-button:hover:not(:disabled) {
-  transform: scale(1.1);
+  background: #444;
 }
 
 .send-button:disabled {
@@ -233,84 +247,86 @@
 .quick-suggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px;
+  gap: 7px;
+  padding: 8px 10px;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #f7f7f9;
+  border-top: 1px solid #e5e7eb;
 }
 
 .quick-suggestions .btn {
   white-space: nowrap;
-  font-size: 0.8rem;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: transparent;
-  border: 1px solid rgba(99, 102, 241, 0.5);
-  color: #6366f1;
-  transition: all 0.3s ease;
+  font-size: 0.83rem;
+  padding: 4px 13px;
+  border-radius: 16px;
+  background: #e5e7eb;
+  border: none;
+  color: #444;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
 }
 
 .quick-suggestions .btn:hover {
-  background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
-  border-color: #6366f1;
-  transform: translateY(-2px);
+  background: #6366f1;
+  color: #fff;
 }
 
 /* Thêm styles cho danh sách thể loại */
 .genre-badges-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  gap: 7px;
+  margin-top: 7px;
+  margin-bottom: 7px;
 }
 
 .genre-badge {
-  background: linear-gradient(to right, #6366f1, #ec4899) !important;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-size: 0.8rem;
+  background: #e5e7eb !important;
+  color: #444;
+  padding: 5px 13px;
+  border-radius: 16px;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   white-space: nowrap;
   display: inline-block;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
 }
 
 .genre-badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+  background: #6366f1 !important;
+  color: #fff;
 }
 
 /* Styles cho badges cảm xúc */
 .emotion-badges-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  gap: 7px;
+  margin-top: 7px;
+  margin-bottom: 7px;
 }
 
 .emotion-badge {
-  background: linear-gradient(to right, #ec4899, #f59e0b) !important;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-size: 0.8rem;
+  background: #e5e7eb !important;
+  color: #444;
+  padding: 5px 13px;
+  border-radius: 16px;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   white-space: nowrap;
   display: inline-block;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
 }
 
 .emotion-badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(236, 72, 153, 0.3);
+  background: #6366f1 !important;
+  color: #fff;
 }
 
 /* Mỗi cảm xúc có một màu gradient khác nhau */
@@ -416,45 +432,48 @@ input.form-control {
 
 /* API Key Configuration */
 .api-key-input-container {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 15px;
+  background: #f3f4f6;
   border-radius: 10px;
+  padding: 10px 12px;
   margin: 10px 0;
+  border: 1px solid #e5e7eb;
 }
 
 .api-key-label {
-  color: white;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
+  color: #444;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
 }
 
 .api-key-input-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .api-key-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 5px;
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #222;
+  font-size: 0.97rem;
+  padding: 6px 10px;
 }
 
-.api-key-input:focus {
-  background: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: none !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+.api-key-save-btn, .api-key-cancel-btn {
+  border-radius: 8px;
+  font-size: 0.97rem;
+  padding: 5px 12px;
+  background: #e5e7eb;
+  color: #444;
+  border: none;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
 }
 
-.api-key-save-btn {
-  background: linear-gradient(135deg, #6366f1, #ec4899) !important;
-  border: none !important;
-}
-
-.api-key-cancel-btn {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
+.api-key-save-btn:hover, .api-key-cancel-btn:hover {
+  background: #6366f1;
+  color: #fff;
 }
 
 @media (min-width: 576px) {
@@ -465,4 +484,114 @@ input.form-control {
   .api-key-input {
     flex: 1;
   }
+}
+
+.comic-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(60,60,60,0.06);
+  border: 1px solid #e5e7eb;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.comic-card:hover {
+  box-shadow: 0 6px 18px rgba(60,60,60,0.13);
+  transform: translateY(-1px) scale(1.01);
+}
+.comic-cover {
+  width: 70px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+.comic-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+.comic-info h5 {
+  margin: 0 0 5px 0;
+  font-size: 1.04rem;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+.comic-info p {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #444;
+  opacity: 0.92;
+  line-height: 1.4;
+  max-height: 2.7em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.comic-info a.btn {
+  padding: 4px 16px;
+  font-size: 0.97rem;
+  border-radius: 18px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  font-weight: 500;
+  box-shadow: none;
+  transition: background 0.18s;
+}
+.comic-info a.btn:hover {
+  background: #444;
+  color: #fff;
+}
+.comics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.voice-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e7eb;
+  color: #444;
+  border: none;
+  margin-right: 8px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  font-size: 1.1rem;
+  box-shadow: none;
+}
+.voice-btn:hover {
+  background: #6366f1;
+  color: #fff;
+}
+.voice-btn.recording {
+  background: #22d3ee !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 4px #a5f3fc;
+}
+.voice-btn.recording svg {
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
