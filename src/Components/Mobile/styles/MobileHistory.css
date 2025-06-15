@@ -1,0 +1,99 @@
+.mobile-history-container {
+  padding: 10px;
+  max-width: 100%;
+}
+
+.mobile-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-history-card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mobile-history-content {
+  display: flex;
+  padding: 10px;
+  gap: 12px;
+  align-items: center;
+}
+
+.mobile-history-thumb {
+  width: 70px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mobile-history-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mobile-history-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comic-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comic-chapter {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.comic-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.time-read {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.delete-btn {
+  padding: 4px;
+  color: #dc3545;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  color: #dc3545;
+}
+
+/* Loading state */
+.spinner-border {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Error message */
+.alert {
+  margin: 10px 0;
+  border-radius: 8px;
+} 

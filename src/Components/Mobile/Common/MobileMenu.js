@@ -111,7 +111,7 @@ const MobileMenu = () => {
         >
           <span className="mobile-menu-icon">☰</span>
         </Button>
-        <Link to="/history" className="mobile-nav-item">
+        <Link to="/mobile/history" className="mobile-nav-item">
           <BsClockHistory />
           <span>Lịch sử</span>
         </Link>
@@ -245,14 +245,14 @@ const MobileMenu = () => {
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to="/favorites"
+                  to="/mobile/favorites"
                   onClick={() => setShowMenu(false)}
                 >
                   <BsBookmark className="me-2" /> Truyện đã lưu
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to="/history"
+                  to="/mobile/history"
                   onClick={() => setShowMenu(false)}
                 >
                   <BsClockHistory className="me-2" /> Lịch sử đọc

@@ -44,11 +44,24 @@ const DeviceDetector = () => {
     // Lưu lại loại thiết bị để sử dụng trong các route khác
     localStorage.setItem('deviceType', isMobile ? 'mobile' : 'desktop');
     
+    // Chuyển hướng các trang desktop sang mobile nếu cần
+    if (isMobile) {
+      const path = location.pathname;
+      if (path === '/history') {
+        navigate('/mobile/history');
+        return;
+      }
+      if (path === '/favorites') {
+        navigate('/mobile/favorites');
+        return;
+      }
+    }
+    
     // Cleanup
     return () => {
       window.removeEventListener('resize', checkDevice);
     };
-  }, [isMobile]);
+  }, [isMobile, location.pathname, navigate]);
   
   // Redirect search pages on initial load if needed
   useEffect(() => {

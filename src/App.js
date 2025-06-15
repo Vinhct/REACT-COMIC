@@ -27,6 +27,8 @@ import MobileLuckyWheelPage from './Components/Mobile/Missions/MobileLuckyWheelP
 import MobileSearch from './Components/Mobile/MobileSearch';
 import RankingPage from './Components/RankingPage/RankingPage';
 import MobileRankingPage from './Components/Mobile/MobileRankingPage/MobileRankingPage';
+import MobileHistoryPage from './Components/Mobile/MobileHistoryPage';
+import MobileFavoritePage from './Components/Mobile/MobileFavoritePage';
 //import GanrePageMobile from './Components/Mobile/GanrePageMobile';
 //import Category from './Components/Category';
 //import FollowPage from './Components/FollowPage';
@@ -82,6 +84,8 @@ const AppContent = () => {
           <Route path='/mobile/lucky-wheel' element={<MobileLuckyWheelPage />}></Route>
           <Route path='/mobile/search' element={<MobileSearch />}></Route>
           <Route path='/mobile/bang-xep-hang' element={<MobileRankingPage />}></Route>
+          <Route path='/mobile/history' element={<MobileHistoryPage />}></Route>
+          <Route path='/mobile/favorites' element={<MobileFavoritePage />}></Route>
           
           {/* Desktop specific routes */}
           <Route path='/genre/:slug' element={<Genre />}></Route>
