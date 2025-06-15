@@ -127,6 +127,7 @@ const useComicData = (slug, saveHistory, retryCount = 0) => {
             saveHistory({
               slug: slug,
               name: extractedItem.name || "Unknown",
+              thumb_url: extractedItem.thumb_url || "",
               timestamp: serverTimestamp(),
             });
           }

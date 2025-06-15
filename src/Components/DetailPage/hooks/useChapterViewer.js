@@ -35,11 +35,18 @@ const useChapterViewer = (saveHistory, comicName, comicSlug) => {
           // Định dạng mobile
           chapterName = response.data.chapter_name;
         }
-        
+        // Lấy thumb_url nếu có từ response hoặc truyền vào qua closure
+        let thumb_url = "";
+        if (response.data?.data?.item?.thumb_url) {
+          thumb_url = response.data.data.item.thumb_url;
+        } else if (response.data?.thumb_url) {
+          thumb_url = response.data.thumb_url;
+        }
         saveHistory({
           slug: comicSlug,
           name: comicName || "Unknown",
           chapter: chapterName,
+          thumb_url,
           timestamp: serverTimestamp(),
           chapter_api: chapter_api
         });

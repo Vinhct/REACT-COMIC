@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, ListGroup, Button, Spinner, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Spinner, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { supabase } from '../supabaseClient';
 import { useAuth } from './Include/Authentication/SupabaseAuth';
@@ -10,6 +10,32 @@ const SupabaseFavoritesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
+
+  // Force style for title text
+  useEffect(() => {
+    const forceStyles = () => {
+      const titleElements = document.querySelectorAll('.favorite-card-title, .favorite-card .card-title, .favorite-card a, .favorite-card .text-decoration-none');
+      titleElements.forEach(el => {
+        if (el) {
+          el.style.setProperty('color', '#1a202c', 'important');
+          el.style.setProperty('text-decoration', 'none', 'important');
+          el.style.setProperty('font-weight', '700', 'important');
+        }
+      });
+    };
+    
+    // Force styles after component renders
+    setTimeout(forceStyles, 100);
+    setTimeout(forceStyles, 500);
+    setTimeout(forceStyles, 1000);
+    
+    // Also force on window load
+    window.addEventListener('load', forceStyles);
+    
+    return () => {
+      window.removeEventListener('load', forceStyles);
+    };
+  }, [favorites]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -23,7 +49,7 @@ const SupabaseFavoritesPage = () => {
         setLoading(true);
         setError(null);
         
-        // Join với bảng comics để lấy thêm thông tin
+        // Join với bảng comics để lấy thêm thông tin bao gồm thumbnail
         const { data, error } = await supabase
           .from('favorites')
           .select(`
@@ -34,7 +60,8 @@ const SupabaseFavoritesPage = () => {
               name,
               description,
               author,
-              status
+              status,
+              thumbnail
             )
           `)
           .eq('user_id', user.id)
@@ -149,35 +176,71 @@ const SupabaseFavoritesPage = () => {
           </Alert>
         )}
 
-        <ListGroup>
+        <Row className="g-3">
           {favorites.map((favorite) => (
-            <ListGroup.Item 
-              key={favorite.id}
-              className="d-flex justify-content-between align-items-center"
-            >
-              <div>
-                <Link
-                  to={`/comics/${favorite.slug}`}
-                  className="text-decoration-none"
-                >
-                  <h5 className="mb-1">{favorite.name}</h5>
-                </Link>
-                <div className="text-muted small">
-                  {favorite.author && <div>Tác giả: {favorite.author}</div>}
-                  {favorite.status && <div>Trạng thái: {favorite.status}</div>}
-                  <div>Thêm vào: {new Date(favorite.created_at).toLocaleDateString("vi-VN")}</div>
+            <Col key={favorite.id} xs={12} sm={6} md={4} lg={3}>
+              <Card className="favorite-card shadow-sm border-0 h-100 p-2 d-flex flex-column justify-content-between">
+                <div>
+                  <div className="favorite-card-img-wrap mb-2">
+                    <Card.Img
+                      src={
+                        favorite.thumbnail
+                          ? (favorite.thumbnail.startsWith('http')
+                            ? favorite.thumbnail
+                            : `https://img.otruyenapi.com/uploads/comics/${favorite.thumbnail}`)
+                          : '/fallback-image.jpg'
+                      }
+                      alt={favorite.name}
+                      className="favorite-card-img"
+                      onError={e => { e.target.src = '/fallback-image.jpg'; }}
+                    />
+                  </div>
+                  <Card.Body className="p-0">
+                    <Link
+                      to={`/comics/${favorite.slug}`}
+                      className="text-decoration-none"
+                      style={{ 
+                        color: '#1a202c', 
+                        textDecoration: 'none',
+                        display: 'block'
+                      }}
+                    >
+                      <Card.Title 
+                        className="favorite-card-title mb-1 text-truncate"
+                        style={{ 
+                          color: '#1a202c', 
+                          fontWeight: '700', 
+                          fontSize: '1.1rem',
+                          textDecoration: 'none',
+                          margin: '0',
+                          padding: '0'
+                        }}
+                      >
+                        {favorite.name}
+                      </Card.Title>
+                    </Link>
+                    <div className="text-muted small mb-1">
+                      {favorite.author && <span className="me-2">Tác giả: {favorite.author}</span>}
+                      {favorite.status && <span className="me-2">Trạng thái: {favorite.status}</span>}
+                    </div>
+                    <div className="text-secondary small mb-2">
+                      <span>Thêm vào: {new Date(favorite.created_at).toLocaleDateString("vi-VN")}</span>
+                    </div>
+                  </Card.Body>
                 </div>
-              </div>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => handleRemoveFavorite(favorite.slug)}
-              >
-                Xóa
-              </Button>
-            </ListGroup.Item>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  className="w-100 rounded-pill mt-2"
+                  style={{ fontWeight: 500 }}
+                  onClick={() => handleRemoveFavorite(favorite.slug)}
+                >
+                  Xóa
+                </Button>
+              </Card>
+            </Col>
           ))}
-        </ListGroup>
+        </Row>
       </Container>
     </>
   );

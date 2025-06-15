@@ -137,7 +137,11 @@ const useSupabaseFavorites = (slug, user, comicName, thumb_url) => {
                 name: comicName || slug,
                 status: 'Đang tiến hành',
                 description: '',
-                thumbnail: `https://img.otruyenapi.com/uploads/comics/${thumb_url}`
+                thumbnail: thumb_url
+                  ? (thumb_url.startsWith('http')
+                    ? thumb_url
+                    : `https://img.otruyenapi.com/uploads/comics/${thumb_url}`)
+                  : ''
               }
             ]);
 
