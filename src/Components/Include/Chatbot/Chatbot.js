@@ -183,11 +183,31 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
       setIsTyping(false);
       return;
     }
+
+    // Thông báo đang tìm kiếm
+    setMessages(prev => [...prev, {
+      id: prev.length + 1,
+      text: `Đang tìm kiếm truyện thể loại "${genreName}" cho bạn...`,
+      sender: 'bot',
+      timestamp: new Date()
+    }]);
+
     try {
       // Lấy truyện theo thể loại
-      const res = await axios.get(`https://otruyenapi.com/v1/api/the-loai/${genre.slug}/truyen`);
+      const res = await axios.get(`https://otruyenapi.com/v1/api/the-loai/${genre.slug}?page=1`);
       const comics = res.data?.data?.items || [];
-      if (comics.length === 0) throw new Error('Không có truyện');
+      if (comics.length === 0) {
+        throw new Error('Không có truyện');
+      }
+
+      // Thông báo tìm thấy truyện
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        text: `Tìm thấy ${comics.length} truyện thuộc thể loại "${genreName}". Đây là 3 truyện gợi ý cho bạn:`,
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+
       setMessages(prev => [...prev, {
         id: prev.length + 1,
         type: 'comics',
@@ -200,35 +220,67 @@ const Chatbot = ({ onFindComic, genreList = [], genresLoaded = false }) => {
         sender: 'bot',
         timestamp: new Date()
       }]);
-    } catch (err) {
-      // Nếu lỗi, fallback sang truyện ngẫu nhiên
+    } catch (error) {
+      // Thông báo đang thử phương án khác
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        text: `Đang thử tìm trong danh sách truyện mới nhất có thể loại "${genreName}"...`,
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+      
       try {
-        setMessages(prev => [...prev, {
-          id: prev.length + 1,
-          text: `Không thể lấy truyện cho thể loại "${genreName}". Đang gợi ý 3 truyện ngẫu nhiên cho bạn...`,
-          sender: 'bot',
-          timestamp: new Date()
-        }]);
         const res = await axios.get('https://otruyenapi.com/v1/api/danh-sach/truyen-moi');
-        const comics = res.data?.data?.items || [];
-        // Lấy 3 truyện ngẫu nhiên
-        const shuffled = comics.sort(() => 0.5 - Math.random());
+        const allComics = res.data?.data?.items || [];
+        // Lọc truyện theo thể loại
+        const genreComics = allComics.filter(comic => 
+          comic.category && comic.category.some(cat => 
+            cat.name.toLowerCase() === genreName.toLowerCase() ||
+            cat.slug.toLowerCase() === genre.slug.toLowerCase()
+          )
+        );
+        
+        if (genreComics.length > 0) {
+          // Thông báo tìm thấy truyện
+          setMessages(prev => [...prev, {
+            id: prev.length + 1,
+            text: `Tìm thấy ${genreComics.length} truyện thuộc thể loại "${genreName}" trong danh sách truyện mới. Đây là một vài gợi ý cho bạn:`,
+            sender: 'bot',
+            timestamp: new Date()
+          }]);
+
+          setMessages(prev => [...prev, {
+            id: prev.length + 1,
+            type: 'comics',
+            comics: genreComics.slice(0, 3).map(comic => ({
+              name: comic.name,
+              slug: comic.slug,
+              coverImage: getComicCoverUrl(comic),
+              description: comic.description || 'Truyện tranh hấp dẫn, mời bạn đọc thử!'
+            })),
+            sender: 'bot',
+            timestamp: new Date()
+          }]);
+        } else {
+          throw new Error('Không tìm thấy truyện');
+        }
+      } catch (fallbackErr) {
+        // Thông báo không tìm thấy và gợi ý
         setMessages(prev => [...prev, {
           id: prev.length + 1,
-          type: 'comics',
-          comics: shuffled.slice(0, 3).map(comic => ({
-            name: comic.name,
-            slug: comic.slug,
-            coverImage: getComicCoverUrl(comic),
-            description: comic.description || 'Truyện tranh hấp dẫn, mời bạn đọc thử!'
-          })),
+          text: `Xin lỗi, hiện tại không tìm thấy truyện nào thuộc thể loại "${genreName}". Bạn có thể:
+1. Thử tìm với tên thể loại khác
+2. Xem danh sách thể loại bằng cách gõ "danh sách thể loại"
+3. Hoặc để tôi gợi ý một số thể loại phổ biến cho bạn`,
           sender: 'bot',
           timestamp: new Date()
         }]);
-      } catch (fallbackErr) {
+
+        // Hiển thị một số thể loại phổ biến
+        const popularGenres = genreList.slice(0, 5).map(g => g.name);
         setMessages(prev => [...prev, {
           id: prev.length + 1,
-          text: `Có lỗi xảy ra khi lấy truyện thể loại "${genreName}" và cả truyện ngẫu nhiên!`,
+          text: `Một số thể loại phổ biến: ${popularGenres.join(', ')}`,
           sender: 'bot',
           timestamp: new Date()
         }]);
